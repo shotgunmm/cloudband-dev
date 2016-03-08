@@ -1,0 +1,75 @@
+********************************************************************************
+PACKAGE-LOG: 2015-11-18 18:54:54
+NOTICE: Do NOT post to public sites or forums 
+********************************************************************************
+VERSION:	0.5.22
+WORDPRESS:	4.2.4
+PHP INFO:	5.4.13 | SAPI: cgi-fcgi
+SERVER:		Apache 
+PHP TIME LIMIT: (0) no time limit imposed 
+PHP MAX MEMORY: 5000M (128M default) 
+MEMORY STACK: 36MB 
+
+********************************************************************************
+DATABASE:
+********************************************************************************
+BUILD MODE:   PHP (query limit - 100)
+MYSQLDUMP:    Not Supported
+MYSQLTIMEOUT: 5000 
+TABLES: total:47 | filtered:0 | create:47 
+FILTERED: [] 
+SQL CREATED: 20151118_cloudband_564cc94f7dd1d7190151118185407_database.sql 
+SQL FILE SIZE: 2.7MB 
+SQL FILE TIME: 2015-11-18 18:54:55 
+SQL RUNTIME: 0.93 sec. 
+
+******************************************************************************** 
+ARCHIVE (ZIP): 
+******************************************************************************** 
+ARCHIVE DIR:  /var/www/vhosts/cloud-band.com/httpdocs 
+ARCHIVE FILE: 20151118_cloudband_564cc94f7dd1d7190151118185407_archive.zip 
+FILTERS: *OFF* 
+DIRS:  not set 
+EXTS:  not set 
+---------------------------------------- 
+COMPRESSING 
+SIZE:	90.4MB 
+STATS:	Dirs 577 | Files 4,424 | Links 0 
+SQL ADDED: 20151118_cloudband_564cc94f7dd1d7190151118185407_database.sql 
+ZipArchive Object
+(
+    [status] => 0
+    [statusSys] => 0
+    [numFiles] => 5001
+    [filename] => /var/www/vhosts/cloud-band.com/httpdocs/wp-snapshots/tmp/20151118_cloudband_564cc94f7dd1d7190151118185407_archive.zip
+    [comment] => 
+)
+ 
+COMPRESSION RESULT: '1' 
+COMPRESSED SIZE: 49.94MB 
+ARCHIVE RUNTIME: 29.27 sec. 
+MEMORY STACK: 38.25MB 
+
+******************************************************************************** 
+MAKE INSTALLER: 
+******************************************************************************** 
+Build Start 
+Build Finished 
+Preping for use 
+Template parsed with new data 
+Complete [/var/www/vhosts/cloud-band.com/httpdocs/wp-snapshots/tmp/20151118_cloudband_564cc94f7dd1d7190151118185407_installer.php] 
+Added to archive 
+
+******************************************************************************** 
+INTEGRITY CHECKS: 
+******************************************************************************** 
+SQL File: 2.7MB 
+Installer File: 317.99KB 
+Archive File: 49.94MB  
+
+********************************************************************************
+RECORD ID:[4]
+TOTAL PROCESS RUNTIME: 30.76 sec.
+PEAK PHP MEMORY USED: 40.25MB
+DONE PROCESSING => 20151118_cloudband 2015-11-18 18:55:25
+ 
