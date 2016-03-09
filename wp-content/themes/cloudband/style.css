@@ -409,6 +409,8 @@ hr.divider{
 footer #sub-footer{
   background: #363839;
   padding: 40px 0;
+  float: left;
+  width: 100%;
 }
 footer #sub-footer ul{
   text-align: center;

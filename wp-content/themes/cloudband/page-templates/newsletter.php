@@ -33,7 +33,7 @@ get_header(); ?>
 
 					<div class="col-md-7">
 						<div class="news-right">
-							<h3 class="heading"> <? the_title();?></h3>
+							<h3 class="heading"> <?php echo "NEWSLETTER "; ?><? the_title();?></h3>
 							<h2><?= $newsletter->post_title; ?></h2>
 							<div class="month-text"><?= get_the_date('F Y',$newsletter->ID) ?></div>
 							<p><?= $newsletter->post_content; ?></p>
@@ -64,7 +64,7 @@ get_header(); ?>
 									$newsletters_title = get_posts($arg);
 									foreach($newsletters_title as $news_title){     			
 										?>
-										<li><a href="<?= $news_title->link ?>"><?= $news_title->post_title ?>   <span>Read this news</span></a></li>
+										<li><a target="_blank" href="<?= $news_title->link ?>"><?= $news_title->post_title ?>   <span>Read this news</span></a></li>
 										<? } ?>      
 									</ul>
 								</div> 
