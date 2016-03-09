@@ -813,3 +813,76 @@ h1.heading strong {
   margin-top: 40px;
   text-align: center;
 }
+.read-more {
+  background-image: url("http://shotgunflatdev.com/ongoing/cloud-band/img/read.jpg");
+  box-sizing: border-box;
+  color: #ffffff;
+  float: left;
+  font-size: 16px;
+  font-weight: 700;
+  height: 46px;
+  letter-spacing: 1px;
+  padding: 12px 0;
+  text-align: center;
+  text-transform: uppercase;
+  width: 159px;
+}
+.news-left {
+  background: none repeat scroll 0 0 #f0f0f0;
+  border: 1px solid #cccccc;
+  float: left;
+  text-align: center;
+  width: 100%;
+}
+.news-right h2 {
+  color: #000000;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 12px 0;
+  margin: 0;
+}
+.news-right .month-text {
+  color: #6cacec;
+  font-size: 15px;
+  font-style: italic;
+  text-transform: capitalize;
+}
+.heading {
+  color: #94a1ae;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.content-inner {
+  box-sizing: border-box;
+  float: left;
+  padding: 60px 30px;
+  width: 100%;
+}
+.news-right h3 {
+  margin: 0;
+}
+.newsletter{
+  float: left;
+  width: 100%;
+}
+.divider-newsletter {
+  border-color: #6d7075;
+  margin: 55px 0;
+}
+#pagetitle.news ul.breadcrumbs{
+  padding: 40px 0;
+}
+#pagetitle.news .wrapper h2{
+  padding: 30px 0;
+}
+.news-right p {
+  color: #6d7075;
+  font-size: 16px;
+  line-height: 1.5;
+  padding: 15px 0 10px;
+  width: 100%;
+  margin: 0;
+}
