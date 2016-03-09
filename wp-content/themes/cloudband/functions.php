@@ -624,3 +624,9 @@ if ( is_category() || is_day() || is_month() || is_year() || is_search() || is_t
 echo '</ul></div>';
 }
 }
+ wp_enqueue_script( 'custom-js', get_template_directory_uri() . '/js/custom.js', array(), '1.0.0', true );
+/*add_filter( 'wp_image_editors', 'change_graphic_lib' );
+function change_graphic_lib($array) {
+ return array( 'WP_Image_Editor_GD', 'WP_Image_Editor_Imagick' );
+}
+wp_enqueue_script( 'jquery-ui-dialog', false, array('jquery'), false, true );*/

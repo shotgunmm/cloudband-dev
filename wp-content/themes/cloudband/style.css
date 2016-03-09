@@ -753,3 +753,63 @@ h1.heading strong {
     max-width: 88%;
     padding-bottom: 20px;
 }
+
+.left-data {
+    border-right: 1px solid #cccccc;
+}
+.read-left li {
+    padding-right: 20px;
+    list-style: none;
+}
+.read-news ul li:hover {
+    background-color: #f5f5f5;
+}
+.read-news ul li a:before {
+    background-color: #00c9ff;
+    border-radius: 50px;
+    content: "";
+    display: inline-block;
+    height: 5px;
+    margin-right: 10px;
+    vertical-align: middle;
+    width: 5px;
+}
+.read-news ul li a {
+    background-image: url("http://shotgunflatdev.com/ongoing/cloud-band/img/arrow-1.png");
+    background-position: right center;
+    background-repeat: no-repeat;
+    box-sizing: border-box;
+    color: #35383d;
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    padding: 10px 0 15px 15px;
+    width: 100%;
+}
+.read-news ul li a span {
+    color: #00c9ff;
+    display: none;
+    float: right;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding-right: 36px;
+    padding-top: 10px;
+    text-decoration: underline;
+    text-transform: uppercase;
+}
+.read-news ul li:hover a span {
+    display: inline-block;
+}
+#main-content img {
+  max-width: 100%;
+}
+.left-data:last-child {
+  border: medium none;
+}
+.read-left > ul {
+  padding: 0;
+}
+.down-arrow {
+  margin-top: 40px;
+  text-align: center;
+}
