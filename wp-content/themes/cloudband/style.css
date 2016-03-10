@@ -84,7 +84,7 @@ header{
   color: #25afef;
 }
 #main-header{
-  border-bottom: 1px solid #25afef;
+  bordFer-bottom: 1px solid #25afef;
 }
 #main-header .row{
   padding-bottom: 0;
@@ -528,6 +528,8 @@ input.wpcf7-form-control.wpcf7-captchar{border:1px solid #000 !important;margin-
 .sub-menu{ margin:0; position:absolute; left:0; top:100%; width:200px; padding:12px 0; background: #25afef; display:none;}
 .sub-menu li	{ list-style:none; padding:0 5px; }
 .sub-menu li a{ height:auto; line-height:20px; padding:5px 15px; display:block;}
+footer {float: left;width: 100%;}
+
 
 @media(max-width:991px) {
 .row{
@@ -565,6 +567,10 @@ hr.divider			{ background-size:100% auto;}
   .tabs-content	.nav > li > a	{ height:auto; line-height:normal; font-size:14px; padding-bottom:10px;}
   #pagetitle .wrapper h2		{ font-size:27px;}
 }
+@media(max-width:1024px) {
+body .read-news ul li:hover a span{display: none;}
+}
+
 /* MEDIA QUERIES */
 @media(max-width:767px) {
 
@@ -632,6 +638,16 @@ input.css-checkbox[type="checkbox"] + label.css-label{font-size:14px;}
 
 	#main-content					{ padding-top:0;}
 	header							{ position:relative;}
+body #pagetitle.news ul.breadcrumbs{
+    padding: 10px 0;
+}
+body .content-inner{padding: 30px 20px  0px;}
+body .news-left{margin-bottom: 10px;}
+body .divider-newsletter { margin: 30px 0;}
+body .left-data{border: none;}
+
+.content-inner .read-news ul li a{font-size: 16px;}
+.down-arrow{margin-top: 20px;}
 }
 
 
