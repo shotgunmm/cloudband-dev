@@ -101,7 +101,7 @@
     		<?php _e('Filters:', $this -> plugin_name); ?>
     		<select style="max-width:200px;" name="history_id">
     			<option value=""><?php _e('All History Emails', $this -> plugin_name); ?></option>
-    			<?php if ($histories = $History -> select()) : ?>
+    			<?php if ($histories = $History -> select(10)) : ?>
     				<?php foreach ($histories as $history_id => $history_subject) : ?>
     					<option <?php echo (!empty($_GET['history_id']) && $_GET['history_id'] == $history_id) ? 'selected="selected"' : ''; ?> value="<?php echo $history_id; ?>"><?php echo $history_subject; ?></option>
     				<?php endforeach; ?>

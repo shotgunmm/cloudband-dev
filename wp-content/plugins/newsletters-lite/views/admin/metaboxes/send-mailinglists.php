@@ -17,7 +17,7 @@ $count_users = count_users();
 	<!-- Groups, Roles and Mailing Lists -->
 	<div id="mailingliststabs-subscribers">
 		<div id="groupsdiv">
-            <?php if ($groups = $wpmlGroup -> select()) : ?>
+            <?php if ($groups = $this -> Group() -> select()) : ?>
                 <div><label class="selectit" style="font-weight:bold;"><input type="checkbox" id="groupsselectall" name="groupsselectall" value="1" onclick="jqCheckAll(this, 'post', 'groups'); update_subscribers();" /> <?php _e('Select all Groups', $this -> plugin_name); ?></label></div>
                 <div class="scroll-list">
                     <?php foreach ($groups as $group_id => $group_title) : ?>

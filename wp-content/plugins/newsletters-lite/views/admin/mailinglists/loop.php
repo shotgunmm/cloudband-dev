@@ -23,7 +23,7 @@
 				</span>
                 
                 <span id="setgroupactiondiv" style="display:none;">
-                	<?php if ($groupsselect = $wpmlGroup -> select()) : ?>
+                	<?php if ($groupsselect = $this -> Group() -> select()) : ?>
                 		<label>
 	                		<?php _e('Group:', $this -> plugin_name); ?>
 	                    	<select name="setgroup_id" id="setgroup_id" class="action">
@@ -191,16 +191,15 @@
 							<td><label for="checklist<?php echo $list -> id; ?>"><?php echo $FieldsList -> count_by_list($list -> id); ?></label></td>
 							<?php if (apply_filters($this -> pre . '_admin_mailinglists_groupcolumn', true)) : ?>
 			                    <td>
-			                    	<?php $Db -> model = $wpmlGroup -> model; ?>
 			                    	<?php if (!empty($list -> group_id)) : ?>
-			                        	<?php echo $Html -> link(__($Db -> field('title', array('id' => $list -> group_id))), '?page=' . $this -> sections -> groups . '&amp;method=view&amp;id=' . $list -> group_id); ?>
+			                        	<?php echo $Html -> link(__($this -> Group() -> field('title', array('id' => $list -> group_id))), '?page=' . $this -> sections -> groups . '&amp;method=view&amp;id=' . $list -> group_id); ?>
 			                        <?php else : ?>
 			                        	<?php _e('none', $this -> plugin_name); ?>
 			                        <?php endif; ?>
 			                    </td>
-								<td><label for="checklist<?php echo $list -> id; ?>"><span style="color:<?php echo (empty($list -> privatelist) || $list -> privatelist == "N") ? 'red;">' . __('No', $this -> plugin_name) : 'green;">' . __('Yes', $this -> plugin_name); ?></span></label></td>
+								<td><label for="checklist<?php echo $list -> id; ?>"><span class="<?php echo (empty($list -> privatelist) || $list -> privatelist == "N") ? 'newsletters_error"><i class="fa fa-times"></i>' : 'newsletters_success"><i class="fa fa-check"></i>'; ?></span></label></td>
 								<td>
-									<label for="checklist<?php echo $list -> id; ?>"><span style="color:<?php echo (empty($list -> paid) || $list -> paid == "N") ? 'red;">' . __('No', $this -> plugin_name) : 'green;">' . __('Yes', $this -> plugin_name); ?></span></label>
+									<label for="checklist<?php echo $list -> id; ?>"><span class="<?php echo (empty($list -> paid) || $list -> paid == "N") ? 'newsletters_error"><i class="fa fa-times"></i>' : 'newsletters_success"><i class="fa fa-check"></i>'; ?></span></label>
 									<?php if (!empty($list -> paid) && $list -> paid == "Y") : ?>
 										<?php 
 										

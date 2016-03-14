@@ -60,7 +60,7 @@ class wpmlMailinglist extends wpMailPlugin {
 	var $modified = "0000-00-00 00:00:00";
 	
 	function wpmlMailinglist($data = array()) {
-		global $wpdb, $Db, $FieldsList, $wpmlGroup;
+		global $wpdb, $Db, $FieldsList;
 	
 		$this -> table = $this -> pre . $this -> controller;	
 	
@@ -71,8 +71,7 @@ class wpmlMailinglist extends wpMailPlugin {
 				switch ($key) {
 					case 'group_id'			:
 						if (!empty($val)) {						
-							$Db -> model = $wpmlGroup -> model;							
-							$this -> group = $Db -> find(array('id' => $val));	
+							$this -> group = $this -> Group() -> find(array('id' => $val));	
 						}
 						break;	
 				}
@@ -358,9 +357,13 @@ class wpmlMailinglist extends wpMailPlugin {
 		$this -> data[$this -> model] = (object) $r;
 		extract($r, EXTR_SKIP);
 	
-		if (!empty($data)) {
-			if ($validate == true) {
-				if (empty($title)) { $this -> errors['title'] = __('Please fill in a title', $this -> plugin_name); }
+		if (!empty($data)) {			
+			if ($validate == true) {				
+				if (empty($title)) { $this -> errors['title'] = __('Please fill in a title', $this -> plugin_name); }				
+				elseif (is_array($title) && !array_filter($title)) {
+					$this -> errors['title'] = __('Please fill in a title', $this -> plugin_name); 	
+				}				
+				
 				if (empty($privatelist)) { $this -> errors['privatelist'] = __('Please select private status', $this -> plugin_name); }
 				
 				if (empty($paid)) {
@@ -378,6 +381,7 @@ class wpmlMailinglist extends wpMailPlugin {
 			}
 			
 			$this -> errors = apply_filters($this -> pre . '_mailinglist_validation', $this -> errors, $this -> data[$this -> model]);
+			
 			if (empty($this -> errors)) {
 				$created = $modified = $this -> gen_date();
 				
@@ -405,6 +409,50 @@ class wpmlMailinglist extends wpMailPlugin {
 					return true;
 				}
 			}
+		}
+		
+		return false;
+	}
+	
+	function paid_stamp($interval = null, $now = null) {
+		
+		if (empty($now)) {
+			$now = time();
+		}
+		
+		if (!empty($interval)) {
+			switch ($interval) {
+				case 'daily'					:
+					$stamp = strtotime("+1 day", $now);
+					break;
+				case 'weekly'					:
+					$stamp = strtotime("+1 week", $now);
+					break;
+				case 'monthly'					:
+					$stamp = strtotime("+1 month", $now);
+					break;
+				case '2months'					:
+					$stamp = strtotime("+2 months", $now);
+					break;
+				case '3months'					:
+					$stamp = strtotime("+3 months", $now);
+					break;
+				case 'biannually'				:
+					$stamp = strtotime("+6 months", $now);
+					break;
+				case '9months'					:
+					$stamp = strtotime("+9 months", $now);
+					break;
+				case 'yearly'					:
+					$stamp = strtotime("+1 year", $now);
+					break;
+				case 'once'						:
+				default							:
+					$stamp = strtotime("+99 years", $now);
+					break;
+			}
+			
+			return $stamp;
 		}
 		
 		return false;

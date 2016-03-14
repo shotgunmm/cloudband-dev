@@ -86,22 +86,44 @@
 		            <tr>
 		            	<th><label for="categoriesselectall"><?php _e('Post Categories', $this -> plugin_name); ?></label></th>
 		                <td>
-		                	<?php if ($cats = get_categories(array('hide_empty' => 0, 'pad_counts' => 1))) : ?>
-		                    	<?php $categories = maybe_unserialize($latestpostssubscription -> categories); ?>
-								<div>
-									<input type="checkbox" name="categoriesselectall" value="1" id="categoriesselectall" onclick="jqCheckAll(this, '<?php echo $this -> sections -> settings; ?>', 'categories');" />
-									<label for="categoriesselectall"><strong><?php _e('Select All', $this -> plugin_name); ?></strong></label>
-		                        </div>
-		                    	<div class="scroll-list">
-		                        	<?php foreach ($cats as $category) : ?>
-		                            	<label><input <?php echo (!empty($categories) && in_array($category -> cat_ID, $categories)) ? 'checked="checked"' : ''; ?> type="checkbox" name="categories[]" value="<?php echo $category -> cat_ID; ?>" id="categories_<?php echo $category -> cat_ID; ?>" /> <?php echo $category -> cat_name; ?></label><br/>
-		                            <?php endforeach; ?>
-		                        </div>
-		                        
-		                        <span class="howto"><?php _e('categories for posts to be taken from.', $this -> plugin_name); ?></span>
-		                    <?php else : ?>
-		                    	<p class="newsletters_error"><?php _e('No categories are available', $this -> plugin_name); ?></p>
-		                    <?php endif; ?>
+			                <?php global $sitepress, $newsletters_languageplugin; ?>
+			                <?php if ($this -> language_do() && $newsletters_languageplugin == "wpml") : ?>
+			                	<?php if ($languages = $this -> language_getlanguages()) : ?>
+			                		<?php $categories = maybe_unserialize($latestpostssubscription -> categories); ?>
+									<div>
+										<input type="checkbox" name="categoriesselectall" value="1" id="categoriesselectall" onclick="jqCheckAll(this, '<?php echo $this -> sections -> settings; ?>', 'categories');" />
+										<label for="categoriesselectall"><strong><?php _e('Select All', $this -> plugin_name); ?></strong></label>
+			                        </div>
+			                		<?php foreach ($languages as $language) : ?>
+			                			<div><?php echo $this -> language_flag($language); ?> <strong><?php echo $this -> language_name($language); ?></strong></div>
+			                			<?php $sitepress -> switch_lang($language); ?>
+			                			<?php if ($cats = get_categories(array('hide_empty' => 0, 'pad_counts' => 1))) : ?>
+					                    	<div class="scroll-list">
+					                        	<?php foreach ($cats as $category) : ?>
+					                            	<label><input <?php echo (!empty($categories) && in_array($category -> cat_ID, $categories)) ? 'checked="checked"' : ''; ?> type="checkbox" name="categories[]" value="<?php echo $category -> cat_ID; ?>" id="categories_<?php echo $category -> cat_ID; ?>" /> <?php echo $category -> cat_name; ?></label><br/>
+					                            <?php endforeach; ?>
+					                        </div>
+			                			<?php endif; ?>
+			                		<?php endforeach; ?>
+			                	<?php endif; ?>
+			                <?php else : ?>
+			                	<?php if ($cats = get_categories(array('hide_empty' => 0, 'pad_counts' => 1))) : ?>
+			                    	<?php $categories = maybe_unserialize($latestpostssubscription -> categories); ?>
+									<div>
+										<input type="checkbox" name="categoriesselectall" value="1" id="categoriesselectall" onclick="jqCheckAll(this, '<?php echo $this -> sections -> settings; ?>', 'categories');" />
+										<label for="categoriesselectall"><strong><?php _e('Select All', $this -> plugin_name); ?></strong></label>
+			                        </div>
+			                    	<div class="scroll-list">
+			                        	<?php foreach ($cats as $category) : ?>
+			                            	<label><input <?php echo (!empty($categories) && in_array($category -> cat_ID, $categories)) ? 'checked="checked"' : ''; ?> type="checkbox" name="categories[]" value="<?php echo $category -> cat_ID; ?>" id="categories_<?php echo $category -> cat_ID; ?>" /> <?php echo $category -> cat_name; ?></label><br/>
+			                            <?php endforeach; ?>
+			                        </div>
+			                        
+			                        <span class="howto"><?php _e('categories for posts to be taken from.', $this -> plugin_name); ?></span>
+			                    <?php else : ?>
+			                    	<p class="newsletters_error"><?php _e('No categories are available', $this -> plugin_name); ?></p>
+			                    <?php endif; ?>
+			                <?php endif; ?>
 		                </td>
 		            </tr>
 		            <?php
@@ -258,7 +280,7 @@
 	                    	<div class="scroll-list">
 	                        	<label><input type="radio" name="theme_id" value="0" id="theme_id_0" /> <?php _e('NONE', $this -> plugin_name); ?></label><br/>
 	                        	<?php foreach ($themes as $theme) : ?>
-	                            	<label><input <?php echo ((!empty($theme) && $theme -> id == $latestpostssubscription -> theme_id) || $theme -> id == $default_theme_id) ? 'checked="checked"' : ''; ?> type="radio" name="theme_id" value="<?php echo $theme -> id; ?>" id="theme_id_<?php echo $theme -> id; ?>" /> <?php echo $theme -> title; ?></label> <a class="" href="" onclick="jQuery.colorbox({iframe:true, width:'80%', height:'80%', href:'<?php echo home_url(); ?>/?wpmlmethod=themepreview&amp;id=<?php echo $theme -> id; ?>'}); return false;"><i class="fa fa-eye fa-fw"></i></a> <a href="" onclick="jQuery.colorbox({title:'<?php echo sprintf(__('Edit Template: %s', $this -> plugin_name), $theme -> title); ?>', href:wpmlajaxurl + '?action=newsletters_themeedit&amp;id=<?php echo $theme -> id; ?>'}); return false;" class=""><i class="fa fa-pencil fa-fw"></i></a><br/>
+	                            	<label><input <?php echo ((!empty($theme) && $theme -> id == $latestpostssubscription -> theme_id) || (empty($latestpostssubscription -> theme_id) && $theme -> id == $default_theme_id)) ? 'checked="checked"' : ''; ?> type="radio" name="theme_id" value="<?php echo $theme -> id; ?>" id="theme_id_<?php echo $theme -> id; ?>" /> <?php echo $theme -> title; ?></label> <a class="" href="" onclick="jQuery.colorbox({iframe:true, width:'80%', height:'80%', href:'<?php echo home_url(); ?>/?wpmlmethod=themepreview&amp;id=<?php echo $theme -> id; ?>'}); return false;"><i class="fa fa-eye fa-fw"></i></a> <a href="" onclick="jQuery.colorbox({title:'<?php echo sprintf(__('Edit Template: %s', $this -> plugin_name), $theme -> title); ?>', href:wpmlajaxurl + '?action=newsletters_themeedit&amp;id=<?php echo $theme -> id; ?>'}); return false;" class=""><i class="fa fa-pencil fa-fw"></i></a><br/>
 	                            <?php endforeach; ?>
 	                        </div>
 	                    <?php else : ?>

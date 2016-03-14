@@ -75,7 +75,7 @@ if ($this -> language_do()) {
                 <tr>
                 	<th><label for="Mailinglist.group_id"><?php _e('Group', $this -> plugin_name); ?></label></th>
                     <td>
-                    	<?php if ($groupsselect = $wpmlGroup -> select()) : ?>
+                    	<?php if ($groupsselect = $this -> Group() -> select()) : ?>
                         	<?php echo $Form -> select('Mailinglist[group_id]', $groupsselect); ?>
                             <span class="howto"><small><?php _e('(optional)', $this -> plugin_name); ?></small> <?php _e('Put this mailing list into a group of lists.', $this -> plugin_name); ?></span>
                         <?php else : ?>

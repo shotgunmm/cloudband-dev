@@ -29,7 +29,8 @@ if (!class_exists('wpMailCheckinit')) {
 			return false;
 		}
 		
-		function ci_initialization() {																				
+		function ci_initialization() {		
+																					
 			/* RSS Feeds */
 			if ($this -> get_option('rssfeed') == "Y" && !is_admin()) { 
 				global $wp_rewrite;
@@ -139,6 +140,7 @@ if (!class_exists('wpMailCheckinit')) {
 			add_shortcode('newsletters_meta', array($Shortcode, 'meta'));
 			add_shortcode('newsletters_date', array($Shortcode, 'datestring'));
 			add_shortcode('newsletters_post', array($Shortcode, 'posts_single'));
+			add_shortcode('newsletters_sendas', array($Shortcode, 'posts_sendas'));
 			add_shortcode('newsletters_posts', array($Shortcode, 'posts_multiple'));
 			add_shortcode('newsletters_post_thumbnail', array($Shortcode, 'post_thumbnail'));	
 			add_shortcode('newsletters_post_permalink', array($Shortcode, 'post_permalink'));
@@ -172,48 +174,56 @@ if (!class_exists('wpMailCheckinit')) {
 			
 			/* Ajax */
 			if (is_admin()) {
-				add_action('wp_ajax_newsletters_admin_mode', array($this, 'ajax_admin_mode'));
-				add_action('wp_ajax_newsletters_change_themefolder', array($this, 'ajax_change_themefolder'));
-				add_action('wp_ajax_newsletters_delete_option', array($this, 'ajax_delete_option'));
-				add_action('wp_ajax_newsletters_pause_queue', array($this, 'ajax_pause_queue'));
-				add_action('wp_ajax_newsletters_autocomplete_histories', array($this, 'ajax_autocomplete_histories'));
-				add_action('wp_ajax_newsletters_load_new_editor', array($this, 'ajax_load_new_editor'));
 				
-				add_action('wp_ajax_newsletters_latestposts_save', array($this, 'ajax_latestposts_save'));
-				add_action('wp_ajax_newsletters_latestposts_settings', array($this, 'ajax_latestposts_settings'));
-				add_action('wp_ajax_newsletters_latestposts_delete', array($this, 'ajax_latestposts_delete'));
+				if (defined('DOING_AJAX')) {
+					add_action('wp_ajax_newsletters_forms_createform', array($this, 'ajax_forms_createform'));
+					add_action('wp_ajax_newsletters_forms_addfield', array($this, 'ajax_forms_addfield'));
+					add_action('wp_ajax_newsletters_forms_deletefield', array($this, 'ajax_forms_deletefield'));
 				
-				add_action('wp_ajax_newsletters_mailinglist_save', array($this, 'ajax_mailinglist_save'));
-				add_action('wp_ajax_newsletters_tinymce_snippet', array($this, 'ajax_tinymce_snippet'));
-				add_action('wp_ajax_newsletters_tinymce_dialog', array($this, 'ajax_tinymce_dialog'));
-				add_action('wp_ajax_newsletters_order_fields', array($this, 'ajax_order_fields'));
-				add_action('wp_ajax_newsletters_themeedit', array($this, 'ajax_themeedit'));
-				add_action('wp_ajax_newsletters_addcontentarea', array($this, 'ajax_addcontentarea'));
-				add_action('wp_ajax_newsletters_deletecontentarea', array($this, 'ajax_deletecontentarea'));
-				add_action('wp_ajax_subscribercount', array($this, 'ajax_subscribercount'));
-				add_action('wp_ajax_newsletters_subscribercountdisplay', array($this, 'ajax_subscribercountdisplay'));
-				add_action('wp_ajax_wpmltestsettings', array($this, 'ajax_testsettings'));
-				add_action('wp_ajax_wpmldkimwizard', array($this, 'ajax_dkimwizard'));
-				add_action('wp_ajax_wpmltestbouncesettings', array($this, 'ajax_testbouncesettings'));
-				add_action('wp_ajax_wpmlhistory_iframe', array($this, 'ajax_historyiframe'));
-				
-				$createpreview = $this -> get_option('createpreview');
-				if (!empty($createpreview) && $createpreview == "Y") {
-					add_action('wp_ajax_wpmlpreviewrunner', array($this, 'ajax_previewrunner'));
+					add_action('wp_ajax_newsletters_admin_mode', array($this, 'ajax_admin_mode'));
+					add_action('wp_ajax_newsletters_change_themefolder', array($this, 'ajax_change_themefolder'));
+					add_action('wp_ajax_newsletters_delete_option', array($this, 'ajax_delete_option'));
+					add_action('wp_ajax_newsletters_pause_queue', array($this, 'ajax_pause_queue'));
+					add_action('wp_ajax_newsletters_autocomplete_histories', array($this, 'ajax_autocomplete_histories'));
+					add_action('wp_ajax_newsletters_load_new_editor', array($this, 'ajax_load_new_editor'));
+					
+					add_action('wp_ajax_newsletters_latestposts_save', array($this, 'ajax_latestposts_save'));
+					add_action('wp_ajax_newsletters_latestposts_changestatus', array($this, 'ajax_latestposts_changestatus'));
+					add_action('wp_ajax_newsletters_latestposts_settings', array($this, 'ajax_latestposts_settings'));
+					add_action('wp_ajax_newsletters_latestposts_delete', array($this, 'ajax_latestposts_delete'));
+					
+					add_action('wp_ajax_newsletters_mailinglist_save', array($this, 'ajax_mailinglist_save'));
+					add_action('wp_ajax_newsletters_tinymce_snippet', array($this, 'ajax_tinymce_snippet'));
+					add_action('wp_ajax_newsletters_tinymce_dialog', array($this, 'ajax_tinymce_dialog'));
+					add_action('wp_ajax_newsletters_order_fields', array($this, 'ajax_order_fields'));
+					add_action('wp_ajax_newsletters_themeedit', array($this, 'ajax_themeedit'));
+					add_action('wp_ajax_newsletters_addcontentarea', array($this, 'ajax_addcontentarea'));
+					add_action('wp_ajax_newsletters_deletecontentarea', array($this, 'ajax_deletecontentarea'));
+					add_action('wp_ajax_subscribercount', array($this, 'ajax_subscribercount'));
+					add_action('wp_ajax_newsletters_subscribercountdisplay', array($this, 'ajax_subscribercountdisplay'));
+					add_action('wp_ajax_wpmltestsettings', array($this, 'ajax_testsettings'));
+					add_action('wp_ajax_wpmldkimwizard', array($this, 'ajax_dkimwizard'));
+					add_action('wp_ajax_wpmltestbouncesettings', array($this, 'ajax_testbouncesettings'));
+					add_action('wp_ajax_wpmlhistory_iframe', array($this, 'ajax_historyiframe'));
+					
+					$createpreview = $this -> get_option('createpreview');
+					if (!empty($createpreview) && $createpreview == "Y") {
+						add_action('wp_ajax_wpmlpreviewrunner', array($this, 'ajax_previewrunner'));
+					}
+					
+					add_action('wp_ajax_newsletters_spamscorerunner', array($this, 'ajax_spamscorerunner'));
+					add_action('wp_ajax_newsletters_gauge', array($this, 'ajax_gauge'));
+					add_action('wp_ajax_wpmllatestposts_preview', array($this, 'ajax_latestposts_preview'));
+					add_action('wp_ajax_newsletters_lpsposts', array($this, 'ajax_lps_posts'));
+					add_action('wp_ajax_newsletters_delete_lps_post', array($this, 'ajax_delete_lps_post'));
+					add_action('wp_ajax_wpmlwelcomestats', array($this, 'ajax_welcomestats'));
+					add_action('wp_ajax_wpmlexecutemail', array($this, 'ajax_executemail'));
+					add_action('wp_ajax_wpmlqueuemail', array($this, 'ajax_queuemail'));
+					add_action('wp_ajax_wpmlsetvariables', array($this, 'ajax_setvariables'));
+					add_action('wp_ajax_wpmlgetposts', array($this, 'ajax_getposts'));
+					add_action('wp_ajax_newsletters_api_newkey', array($this, 'api_newkey'));
 				}
-				
-				add_action('wp_ajax_newsletters_spamscorerunner', array($this, 'ajax_spamscorerunner'));
-				add_action('wp_ajax_newsletters_gauge', array($this, 'ajax_gauge'));
-				add_action('wp_ajax_wpmllatestposts_preview', array($this, 'ajax_latestposts_preview'));
-				add_action('wp_ajax_newsletters_lpsposts', array($this, 'ajax_lps_posts'));
-				add_action('wp_ajax_newsletters_delete_lps_post', array($this, 'ajax_delete_lps_post'));
-				add_action('wp_ajax_wpmlwelcomestats', array($this, 'ajax_welcomestats'));
-				add_action('wp_ajax_wpmlexecutemail', array($this, 'ajax_executemail'));
-				add_action('wp_ajax_wpmlqueuemail', array($this, 'ajax_queuemail'));
-				add_action('wp_ajax_wpmlsetvariables', array($this, 'ajax_setvariables'));
-				add_action('wp_ajax_wpmlgetposts', array($this, 'ajax_getposts'));
-				add_action('wp_ajax_newsletters_api_newkey', array($this, 'api_newkey'));
-			}		
+			}	
 			
 			add_action('wp_ajax_newsletters_api', array($this, 'api_init'));
 			add_action('wp_ajax_nopriv_newsletters_api', array($this, 'api_init'));
@@ -239,7 +249,7 @@ if (!class_exists('wpMailCheckinit')) {
 			add_action('wp_ajax_newsletters_posts_by_category', array($this, 'ajax_posts_by_category'));
 			add_action('wp_ajax_newsletters_template_iframe', array($this, 'ajax_template_iframe'));
 			
-			$this -> updating_plugin();
+			if (is_admin()) $this -> updating_plugin();
 			
 			return true;
 		}

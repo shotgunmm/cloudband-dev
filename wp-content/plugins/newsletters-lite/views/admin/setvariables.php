@@ -155,7 +155,7 @@
                 <td><?php _e('Display the total number of subscribers in the database.', $this -> plugin_name); ?>
                 <?php _e('Optional, <code>list</code> parameter to specify the mailing list ID', $this -> plugin_name); ?></td>
             </tr>
-            <?php $Db -> model = 'Field'; ?>
+            <?php $Db -> model = $Field -> model; ?>
             <?php $fields = $Db -> find_all(false, array('id', 'title', 'slug'), array('title', "ASC")); ?>
             <?php if (!empty($fields)) : ?>
                 <?php foreach ($fields as $field) : ?>
@@ -173,8 +173,8 @@
 
 <script type="text/javascript">
 function wpmlpost_insert() {
-	var post_id = prompt('<?php _e('What is the ID of the post you want to insert?', $this -> plugin_name); ?>');
-	var eftype = prompt('<?php _e('Do you want to insert a full post or excerpt? Use "full" or "excerpt" to specify.', $this -> plugin_name); ?>');
+	var post_id = prompt('<?php echo esc_html(__('What is the ID of the post you want to insert?', $this -> plugin_name)); ?>');
+	var eftype = prompt('<?php echo esc_html(__('Do you want to insert a full post or excerpt? Use "full" or "excerpt" to specify.', $this -> plugin_name)); ?>');
 	
 	if (post_id) {
 		wpml_tinymcetag('[wpmlpost post_id="' + post_id + '" eftype="' + eftype + '"]');

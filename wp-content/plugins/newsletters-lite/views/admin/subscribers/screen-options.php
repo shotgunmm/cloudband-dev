@@ -16,6 +16,7 @@ $show_avatars = get_option('show_avatars');
 			<h5><?php _e('Show on screen', $this -> plugin_name); ?></h5>
 	        <div class="metabox-prefs">
 	        	<label><input <?php echo (empty($show_avatars)) ? 'disabled="disabled"' : ''; ?> <?php echo (!empty($curcustomfields) && in_array('gravatars', $curcustomfields)) ? 'checked="checked"' : ''; ?> type="checkbox" name="custom[]" value="gravatars" id="custom_gravatars" /> <?php _e('Avatars', $this -> plugin_name); ?></label>
+	        	<label><input <?php echo (!empty($curcustomfields) && in_array('format', $curcustomfields)) ? 'checked="checked"' : ''; ?> type="checkbox" name="custom[]" value="format" id="custom_format" /> <?php _e('Format (HTML/TEXT)', $this -> plugin_name); ?></label>
 	        	<label><input <?php echo (!empty($curcustomfields) && in_array('mandatory', $curcustomfields)) ? 'checked="checked"' : ''; ?> type="checkbox" name="custom[]" value="mandatory" id="custom_mandatory" /> <?php _e('Mandatory', $this -> plugin_name); ?></label>
 	        	<?php foreach ($fields as $field) : ?>
 	            	<label><input <?php echo (!empty($curfields) && in_array($field -> id, $curfields)) ? 'checked="checked"' : ''; ?> type="checkbox" name="fields[]" value="<?php echo $field -> id; ?>" id="fields_<?php echo $field -> id; ?>" /> <?php echo __($field -> title); ?></label>

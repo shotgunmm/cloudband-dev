@@ -22,12 +22,14 @@ jQuery(document).ready(function(){
 	});
 });
 
-function newsletters_tinymce_content(contentid) {
+function newsletters_tinymce_content(contentid) {	
 	if (jQuery("#wp-" + contentid + "-wrap").hasClass("tmce-active")) {
-		return tinyMCE.activeEditor.getContent();
-	} else {
-		return jQuery('#' + contentid).val();
+		if (typeof(tinyMCE.activeEditor) == "object" && typeof(tinyMCE.activeEditor.getContent) == "function") {
+			return tinyMCE.activeEditor.getContent();
+		}
 	}
+	
+	return jQuery('#' + contentid).val();
 }
 
 function newsletters_change_filter(section, filter, value) {

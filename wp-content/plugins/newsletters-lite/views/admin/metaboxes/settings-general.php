@@ -24,7 +24,41 @@ $tracking_image_file = $this -> get_option('tracking_image_file');
 			<th><label for="<?php echo $this -> pre; ?>smtpfromname"><?php _e('From Name', $this -> plugin_name); ?></label>
 			<?php echo $Html -> help(__('Use your business name, website name or even your own name which will appear to the recipient in their email/webmail client so that they immediately know from whom the email was sent.', $this -> plugin_name)); ?></th>
 			<td>
-            	<input class="widefat" type="text" id="<?php echo $this -> pre; ?>smtpfromname" name="smtpfromname" value="<?php echo esc_attr(stripslashes($this -> get_option('smtpfromname'))); ?>" />
+				<?php if ($this -> language_do()) : ?>
+					<?php 
+					
+					$el = $this -> language_getlanguages(); 
+					$smtpfromname = $this -> get_option('smtpfromname');
+					
+					?>
+					<div id="smtpfromnametabs">
+						<ul>
+							<?php $tabnumber = 1; ?>
+			                <?php foreach ($el as $language) : ?>
+			                 	<li><a href="#smtpfromnametab<?php echo $tabnumber; ?>"><?php echo $this -> language_flag($language); ?></a></li>   
+			                    <?php $tabnumber++; ?>
+			                <?php endforeach; ?>
+			            </ul>
+			            
+			            <?php $tabnumber = 1; ?>
+			            <?php foreach ($el as $language) : ?>
+			            	<div id="smtpfromnametab<?php echo $tabnumber; ?>">
+			            		<input type="text" name="smtpfromname[<?php echo $language; ?>]" value="<?php echo esc_attr(stripslashes($this -> language_use($language, $smtpfromname))); ?>" id="smtpfromname_<?php echo $language; ?>" class="widefat" />
+			            	</div>
+			            	<?php $tabnumber++; ?>
+			            <?php endforeach; ?>
+					</div>
+					
+					<script type="text/javascript">
+					jQuery(document).ready(function() {
+						if (jQuery.isFunction(jQuery.fn.tabs)) {
+							jQuery('#smtpfromnametabs').tabs();
+						}
+					});
+					</script>
+				<?php else : ?>
+            		<input class="widefat" type="text" id="<?php echo $this -> pre; ?>smtpfromname" name="smtpfromname" value="<?php echo esc_attr(stripslashes($this -> get_option('smtpfromname'))); ?>" />
+            	<?php endif; ?>
                 <span class="howto"><?php _e('This is the name that will be displayed in the From field to your subscribers.', $this -> plugin_name); ?></span>
             </td>
 		</tr>
@@ -32,12 +66,46 @@ $tracking_image_file = $this -> get_option('tracking_image_file');
 			<th><label for="smtpfrom"><?php _e('From Address', $this -> plugin_name); ?></label>
 			<?php echo $Html -> help(__('This email address is used for the "From:" header in all outgoing emails and it will appear in the recipient email/webmail client as the sender from which the email was sent.', $this -> plugin_name)); ?></th>
 			<td>
-            	<input onkeyup="jQuery('#updatereturnpath_div').show(); if (jQuery('#updatereturnpath').attr('checked')) { jQuery('#bounceemail').val(jQuery(this).val()); }" class="widefat" type="text" id="smtpfrom" name="smtpfrom" value="<?php echo esc_attr(stripslashes($this -> get_option('smtpfrom'))); ?>" />
-            	
-            	<div id="updatereturnpath_div" style="display:none;">
-            		<label><input onclick="jQuery('#bounceemail').val(jQuery('#smtpfrom').val());" type="checkbox" name="updatereturnpath" value="1" id="updatereturnpath" /> <?php _e('Update "Bounce Receival Email" setting with this value as well?', $this -> plugin_name); ?></label>
-            		<?php echo $Html -> help(__('Many email servers requires the "Bounce Receival Email" (Return-Path) header value to be the same as the "From Address" (From) header value else it may not send out emails. If your emails are not going out, try making the "Bounce Receival Email" (Return-Path) and "From Address" (From) exactly the same using this checkbox.', $this -> plugin_name)); ?>
-            	</div>
+				<?php if ($this -> language_do()) : ?>
+					<?php 
+					
+					$el = $this -> language_getlanguages(); 
+					$smtpfrom = $this -> get_option('smtpfrom');
+					
+					?>
+					<div id="smtpfromtabs">
+						<ul>
+							<?php $tabnumber = 1; ?>
+			                <?php foreach ($el as $language) : ?>
+			                 	<li><a href="#smtpfromtab<?php echo $tabnumber; ?>"><?php echo $this -> language_flag($language); ?></a></li>   
+			                    <?php $tabnumber++; ?>
+			                <?php endforeach; ?>
+			            </ul>
+			            
+			            <?php $tabnumber = 1; ?>
+			            <?php foreach ($el as $language) : ?>
+			            	<div id="smtpfromtab<?php echo $tabnumber; ?>">
+			            		<input type="text" name="smtpfrom[<?php echo $language; ?>]" value="<?php echo esc_attr(stripslashes($this -> language_use($language, $smtpfrom))); ?>" id="smtpfrom_<?php echo $language; ?>" class="widefat" />
+			            	</div>
+			            	<?php $tabnumber++; ?>
+			            <?php endforeach; ?>
+					</div>
+					
+					<script type="text/javascript">
+					jQuery(document).ready(function() {
+						if (jQuery.isFunction(jQuery.fn.tabs)) {
+							jQuery('#smtpfromtabs').tabs();
+						}
+					});
+					</script>
+				<?php else : ?>
+            		<input onkeyup="jQuery('#updatereturnpath_div').show(); if (jQuery('#updatereturnpath').attr('checked')) { jQuery('#bounceemail').val(jQuery(this).val()); }" class="widefat" type="text" id="smtpfrom" name="smtpfrom" value="<?php echo esc_attr(stripslashes($this -> get_option('smtpfrom'))); ?>" />
+            		
+            		<div id="updatereturnpath_div" style="display:none;">
+	            		<label><input onclick="jQuery('#bounceemail').val(jQuery('#smtpfrom').val());" type="checkbox" name="updatereturnpath" value="1" id="updatereturnpath" /> <?php _e('Update "Bounce Receival Email" setting with this value as well?', $this -> plugin_name); ?></label>
+	            		<?php echo $Html -> help(__('Many email servers requires the "Bounce Receival Email" (Return-Path) header value to be the same as the "From Address" (From) header value else it may not send out emails. If your emails are not going out, try making the "Bounce Receival Email" (Return-Path) and "From Address" (From) exactly the same using this checkbox.', $this -> plugin_name)); ?>
+	            	</div>
+            	<?php endif; ?>
                 
                 <span class="howto"><?php _e('This is the From email address that your subscribers will see.', $this -> plugin_name); ?></span>
             </td>
@@ -52,7 +120,7 @@ $tracking_image_file = $this -> get_option('tracking_image_file');
 	</tbody>
 </table>
 
-<div class="advanced-setting" id="replytodifferent_div" style="display:<?php echo (!empty($replytodifferent)) ? 'block' : 'none'; ?>;">
+<div id="replytodifferent_div" style="display:<?php echo (!empty($replytodifferent)) ? 'block' : 'none'; ?>;">
 	<table class="form-table">
 		<tbody>
 			<tr>

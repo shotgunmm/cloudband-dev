@@ -30,7 +30,12 @@ $sendonpublishef = (empty($_POST[$this -> pre . 'sendonpublishef'])) ? get_post_
 	</div>
 	
 	<div id="newsletters_sendasnewsletter_div" style="display:<?php echo (!empty($newsletters_sendasnewsletter)) ? 'block' : 'none'; ?>;">
-		<?php if ($this -> is_plugin_active('qtranslate') || $this -> is_plugin_active('qtranslate-x')) : ?>
+		
+		<div class="misc-pub-section">
+			<p><a class="button button-secondary" href="<?php echo admin_url('admin.php?page=' . $this -> sections -> settings_templates . '#sendasdiv'); ?>" target="_blank"><i class="fa fa-edit"></i> <?php _e('Edit the System Email Layout Used', $this -> plugin_name); ?></a> <?php echo $Html -> help(__('The system email layout used for sending a post/page as a newsletter can be changed according to your needs. Click the button to edit it.', $this -> plugin_name)); ?></p>
+		</div>
+		
+		<?php if ($this -> language_do()) : ?>
 			<div class="misc-pub-section">
 			<p><strong><?php _e('Language', $this -> plugin_name); ?></strong></h4>
 		    <p><?php _e('Choose which title/content in the editor above should be sent to the mailing list(s) chosen below.', $this -> plugin_name); ?></p>

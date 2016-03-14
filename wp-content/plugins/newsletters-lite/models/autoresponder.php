@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists('wpmlAutoresponder')) {
-class wpmlAutoresponder extends wpMailPlugin {
+class wpmlAutoresponder extends wpmlDbHelper {
 
 	var $model = 'Autoresponder';
 	var $controller = 'autoresponders';
@@ -63,7 +63,7 @@ class wpmlAutoresponder extends wpMailPlugin {
 			//}
 		}
 		
-		$Db -> model = $this -> model;
+		if (!empty($this -> model) && !empty($Db -> model)) $Db -> model = $this -> model;
 	}
 	
 	function defaults() {

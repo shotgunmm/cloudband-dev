@@ -21,6 +21,7 @@ class wpmlSubscribersList extends wpMailPlugin {
 		'authkey'				=>	"VARCHAR(32) NOT NULL DEFAULT ''",
 		'authinprog'			=>	"ENUM('Y','N') NOT NULL DEFAULT 'N'",
 		'paid_date'				=>	"DATETIME NOT NULL DEFAULT '0000-00-00'",
+		'order_id'				=>	"INT(11) NOT NULL DEFAULT '0'",
 		'ppsubscription'		=>	"ENUM('Y','N') NOT NULL DEFAULT 'N'",
 		'paid_sent'				=>	"INT(11) NOT NULL DEFAULT '0'",
 		'reminded'				=>	"INT(11) NOT NULL DEFAULT '0'",
@@ -38,6 +39,7 @@ class wpmlSubscribersList extends wpMailPlugin {
 		'authkey'				=>	array("VARCHAR(32)", "NOT NULL DEFAULT ''"),
 		'authinprog'			=>	array("ENUM('Y','N')", "NOT NULL DEFAULT 'N'"),
 		'paid_date'				=>	array("DATETIME", "NOT NULL DEFAULT '0000-00-00'"),
+		'order_id'				=>	array("INT(11)", "NOT NULL DEFAULT '0'"),
 		'ppsubscription'		=>	array("ENUM('Y','N')", "NOT NULL DEFAULT 'N'"),
 		'paid_sent'				=>	array("INT(11)", "NOT NULL DEFAULT '0'"),
 		'reminded'				=>	array("INT(11)", "NOT NULL DEFAULT '0'"),
@@ -59,7 +61,7 @@ class wpmlSubscribersList extends wpMailPlugin {
 				
 				switch ($dkey) {
 					case 'list_id'		:
-						$Db -> model = 'Mailinglist';
+						$Db -> model = $Mailinglist -> model;
 						$this -> mailinglist = $Db -> find(array('id' => $dval));
 						break;
 				}

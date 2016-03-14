@@ -4,8 +4,8 @@
 	
 	<div class="tablenav">
 		<div class="alignleft">
-			<a href="?page=<?php echo $this -> sections -> groups; ?>&amp;method=save&amp;id=<?php echo $group -> id; ?>" title="<?php _e('Change the details of this group.', $this -> plugin_name); ?>" class="button"><?php _e('Change', $this -> plugin_name); ?></a>
-			<a href="?page=<?php echo $this -> sections -> groups; ?>&amp;method=delete&amp;id=<?php echo $group -> id; ?>" title="<?php _e('Remove this group permanently', $this -> plugin_name); ?>" class="button button-highlighted" onclick="if (!confirm('<?php _e('Are you sure you wish to remove this group?', $this -> plugin_name); ?>')) { return false; }"><?php _e('Delete', $this -> plugin_name); ?></a>
+			<a href="?page=<?php echo $this -> sections -> groups; ?>&amp;method=save&amp;id=<?php echo $group -> id; ?>" class="button"><i class="fa fa-pencil"></i> <?php _e('Edit', $this -> plugin_name); ?></a>
+			<a href="?page=<?php echo $this -> sections -> groups; ?>&amp;method=delete&amp;id=<?php echo $group -> id; ?>" class="button button-highlighted" onclick="if (!confirm('<?php _e('Are you sure you wish to remove this group?', $this -> plugin_name); ?>')) { return false; }"><i class="fa fa-times"></i> <?php _e('Delete', $this -> plugin_name); ?></a>
 		</div>
 	</div>
 	<table class="widefat">

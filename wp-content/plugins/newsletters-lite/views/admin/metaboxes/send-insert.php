@@ -59,7 +59,7 @@ $inserttabs = apply_filters($this -> pre . '_admin_createnewsletter_inserttabs',
 			</p>
 			
 			<div id="ptypeglobal" style="display:block;">
-				<?php if ($this -> is_plugin_active('qtranslate') || $this -> is_plugin_active('qtranslate-x')) : ?>
+				<?php if ($this -> language_do()) : ?>
 					<label for=""><?php _e('Language:', $this -> plugin_name); ?></label>
 		        	<?php if ($el = $this -> language_getlanguages()) : ?>
 		                <?php foreach ($el as $language) : ?>
@@ -334,15 +334,13 @@ $inserttabs = apply_filters($this -> pre . '_admin_createnewsletter_inserttabs',
 	<?php if (!empty($inserttabs['snippets'])) : ?>
 		<div id="inserttabs-3">
 			<h4><?php echo apply_filters('newsletters_admin_tabheading_createnewsletter_insertsnippets', __('Insert Snippets', $this -> plugin_name)); ?> <?php echo $Html -> help(apply_filters('newsletters_admin_tooltip_createnewsletter_insertsnippets', __('Below are all your email snippets. Click on the snippet to insert it into the newsletter and the shortcode will be replaced with the content of the email snippet. Alternatively click "Load into Editor" to load the email snippet into the editor in full.', $this -> plugin_name))); ?></h4>
-			
-			<?php $Db -> model = $Template -> model; ?>
-			<?php if ($templates = $Db -> find_all(false, array('id', 'title'), array('title', "ASC"))) : ?>
-				<?php $templates = apply_filters('newsletters_admin_createnewsletter_snippets', $templates); ?>
+			<?php if ($snippets = $this -> Template() -> find_all(false, array('id', 'title'), array('title', "ASC"))) : ?>
+				<?php $snippets = apply_filters('newsletters_admin_createnewsletter_snippets', $snippets); ?>
 				<ul class="insertfieldslist">
-					<?php foreach ($templates as $template) : ?>
+					<?php foreach ($snippets as $snippet) : ?>
 						<li>
-							<a href="<?php echo apply_filters($this -> pre . '_admin_createnewsletter_snippetbuttonhref', "", $template); ?>" class="press button button-secondary" onclick='<?php echo apply_filters($this -> pre . '_admin_createnewsletter_snippetbuttononclick', 'wpml_tinymcetag("[newsletters_snippet id=\"' . $template -> id . '\"]"); return false;', $template); ?>'><?php echo __($template -> title); ?></a>
-							<?php if (apply_filters($this -> pre . '_admin_createnewsletter_loadintoeditorlinks', true)) : ?><small><a href="?page=<?php echo $this -> sections -> send; ?>&method=template&id=<?php echo $template -> id; ?>" class=""><?php _e('Load into Editor', $this -> plugin_name); ?></a></small><?php endif; ?>
+							<a href="<?php echo apply_filters($this -> pre . '_admin_createnewsletter_snippetbuttonhref', "", $snippet); ?>" class="press button button-secondary" onclick='<?php echo apply_filters($this -> pre . '_admin_createnewsletter_snippetbuttononclick', 'wpml_tinymcetag("[newsletters_snippet id=\"' . $snippet -> id . '\"]"); return false;', $snippet); ?>'><?php echo __($snippet -> title); ?></a>
+							<?php if (apply_filters($this -> pre . '_admin_createnewsletter_loadintoeditorlinks', true)) : ?><small><a href="?page=<?php echo $this -> sections -> send; ?>&method=snippet&id=<?php echo $snippet -> id; ?>" class=""><?php _e('Load into Editor', $this -> plugin_name); ?></a></small><?php endif; ?>
 						</li>
 					<?php endforeach; ?>
 				</ul>

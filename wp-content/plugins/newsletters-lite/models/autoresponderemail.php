@@ -1,7 +1,7 @@
 <?php
 
 if (!class_exists('wpmlAutoresponderemail')) {
-class wpmlAutoresponderemail extends wpMailPlugin {
+class wpmlAutoresponderemail extends wpmlDbHelper {
 	
 	var $model = "Autoresponderemail";
 	var $controller = "autoresponderemails";
@@ -34,7 +34,7 @@ class wpmlAutoresponderemail extends wpMailPlugin {
 	var $indexes = array('autoresponder_id', 'list_id', 'subscriber_id', 'status');
 	
 	function wpmlAutoresponderemail($data = array()) {
-		global $wpdb, $Db, $Autoresponder, $Subscriber, $SubscribersList;
+		global $wpdb, $Db, $Subscriber, $SubscribersList;
 		
 		$this -> table = $this -> pre . $this -> controller;	
 		
@@ -49,7 +49,7 @@ class wpmlAutoresponderemail extends wpMailPlugin {
 							$this -> subscriber = $Db -> find(array('id' => $dval));
 							break;
 						case 'autoresponder_id'			:
-							$Db -> model = $Autoresponder -> model;
+							$Db -> model = $this -> Autoresponder() -> model;
 							$this -> autoresponder = $Db -> find(array('id' => $dval));
 							break;	
 					}

@@ -64,16 +64,18 @@ $newsletters_is_management = true;
 jQuery(document).ready(function() { 
 	jQuery('.newsletters-management .newsletters-fieldholder, .entry-content .newsletters-fieldholder, .entry .newsletters-fieldholder').addClass('col-md-6'); 
 
-	jQuery('#subscribersavefieldsform').ajaxForm({
-		url: wpmlajaxurl + "action=managementsavefields",
-		//data: jQuery('#subscribersavefieldsform').serialize(),
-		type: "POST",
-		cache: false,
-		success: function(response) {							
-			jQuery('#savefields').html(response);
-			jQuery('#savefieldsbutton').prop('disabled', false);
-			wpml_scroll('#managementtabs');
-		}
-	});	
+	if (jQuery.isFunction(jQuery.fn.ajaxForm)) {
+		jQuery('#subscribersavefieldsform').ajaxForm({
+			url: wpmlajaxurl + "action=managementsavefields",
+			//data: jQuery('#subscribersavefieldsform').serialize(),
+			type: "POST",
+			cache: false,
+			success: function(response) {							
+				jQuery('#savefields').html(response);
+				jQuery('#savefieldsbutton').prop('disabled', false);
+				wpml_scroll('#managementtabs');
+			}
+		});	
+	}
 });
 </script>

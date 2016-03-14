@@ -51,10 +51,10 @@ function random_link($query)
 // }on_sent_ok: "var link=localStorage.getItem('dnlink');localStorage.setItem('whiteform','true');location = localStorage.getItem('dnlink');"
 
 	// if($_SERVER['REQUEST_URI'] == "/resources/white-papers/"){
-	// 	?><script>
+	// 	?><!-- script>
 
 	// 	if(localStorage.getItem('whiteform') == "true"){ 
-	// 			console.log('<?php echo "s";?>');
+	// 			console.log('<?php //echo "s";?>');
 				
 	// 			//localStorage.setItem('whiteform','false');
 	// 	}else{
@@ -63,8 +63,8 @@ function random_link($query)
 	// 		window.location = "http://ecosystem.cloud-band.com/download-white-paper/";
 	// 	}
 	// 			//console.log(localStorage.getItem('whiteform'));
-	// 			//console.log('<?php echo "s";?>');
-	// 		</script>
+	// 			//console.log('<?php //echo "s";?>');
+	// 		</script -->
 	 	<?php
 	// }
 }

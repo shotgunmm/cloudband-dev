@@ -79,7 +79,7 @@ $bouncemethod = $this -> get_option('bouncemethod');
             	<th>
                 	<?php
 					
-					$Db -> model = $Autoresponderemail -> model;
+					$Db -> model = $this -> Autoresponderemail() -> model;
 					$autoresponderemailcount = $Db -> count(array('status' => "unsent"));
 					
 					?>

@@ -28,7 +28,7 @@ class wpmlAutorespondersList extends wpMailPlugin {
 	var $indexes = array('autoresponder_id', 'list_id');
 	
 	function wpmlAutorespondersList($data = array()) {
-		global $Db, $Autoresponder, $Mailinglist;
+		global $Db, $Mailinglist;
 		
 		$this -> table = $this -> pre . $this -> controller;	
 		

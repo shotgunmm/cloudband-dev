@@ -133,6 +133,47 @@ $managementshowsubscriptions = $this -> get_option('managementshowsubscriptions'
                 <span class="howto"><?php _e('The subject of the email when a subscriber authenticates.', $this -> plugin_name); ?></span>
             </td>
         </tr>
+        <tr>
+	        <th><label for="authenticatelinktext"><?php _e('Authenticate Link Text', $this -> plugin_name); ?></label></th>
+	        <td>
+		        <?php if ($this -> language_do()) : ?>
+            		<?php 
+					
+					$el = $this -> language_getlanguages(); 
+					$authenticatelinktext = $this -> get_option('authenticatelinktext');
+					
+					?>
+					<div id="authenticatelinktexttabs">
+						<ul>
+							<?php $tabnumber = 1; ?>
+			                <?php foreach ($el as $language) : ?>
+			                 	<li><a href="#authenticatelinktexttab<?php echo $tabnumber; ?>"><?php echo $this -> language_flag($language); ?></a></li>   
+			                    <?php $tabnumber++; ?>
+			                <?php endforeach; ?>
+			            </ul>
+			            
+			            <?php $tabnumber = 1; ?>
+			            <?php foreach ($el as $language) : ?>
+			            	<div id="authenticatelinktexttab<?php echo $tabnumber; ?>">
+			            		<input type="text" name="authenticatelinktext[<?php echo $language; ?>]" value="<?php echo esc_attr(stripslashes($this -> language_use($language, $authenticatelinktext))); ?>" id="authenticatelinktext_<?php echo $language; ?>" class="widefat" />
+			            	</div>
+			            	<?php $tabnumber++; ?>
+			            <?php endforeach; ?>
+					</div>
+					
+					<script type="text/javascript">
+					jQuery(document).ready(function() {
+						if (jQuery.isFunction(jQuery.fn.tabs)) {
+							jQuery('#authenticatelinktexttabs').tabs();
+						}
+					});
+					</script>
+            	<?php else : ?>
+            		<input type="text" class="widefat" name="authenticatelinktext" value="<?php echo esc_attr(stripslashes($this -> get_option('authenticatelinktext'))); ?>" id="authenticatelinktext" />
+            	<?php endif; ?>
+		        <span class="howto"><?php _e('Text of the link in the Manage Subscriptions authentication email', $this -> plugin_name); ?></span>
+	        </td>
+        </tr>
         <tr class="advanced-setting">
 	        <th><label for="managementauthtype_3"><?php _e('Authentication Type', $this -> plugin_name); ?></label></th>
 	        <td>

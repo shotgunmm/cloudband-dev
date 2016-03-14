@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>CloudBand Newsletter - Alcatel-Lucent</title>
+<meta charset="UTF-8">
+</head>
+
+<body style="margin:0;padding:0;" link="#2978bd" bgcolor="#f0f0f0">
+<style>
+p{margin:6px 0;}
+</style>
+<table bgcolor="#f0f0f0" border="0" width="100%">
+<tbody><tr><td>
+<table align="center" bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" width="600">
+<tbody><tr><td align="center" bgcolor="#f0f0f0" valign="top"><img src="cbEcosystem201506_files/69a851d91115ac05fbc94f05fbcfeff7.gif" alt="Alcatel-Lucent" height="60" width="600"></td></tr>
+<tr><td height="10" bgcolor="#f0f0f0"></td></tr>
+<tr><td>
+<table border="0" cellpadding="12" cellspacing="0" width="600">
+<tbody><tr bgcolor="#0069aa"><td style="font:bold 22px/26px Trebuchet MS;color:#ffffff;">
+CLOUDBAND ECOSYSTEM
+<br>
+<span style="font:18px/22px Trebuchet MS;color:#ffffff;">
+EDITION 17</span>
+</td></tr>
+</tbody></table>
+</td></tr>
+
+<tr><td align="left" bgcolor="#ffffff" valign="top">
+<table border="0" cellpadding="12" cellspacing="0" width="600">
+<tbody><tr><td valign="top" width="382">
+
+<table border="0" cellpadding="0" cellspacing="0" width="382">
+<tbody><tr><td height="10" align="left" bgcolor="#ffffff" valign="top"></td></tr>
+<tr><td style="font:14px/18px Trebuchet MS; color:#333;" align="left" bgcolor="#ffffff" valign="top"> <!-- Issue Copy -->
+
+Dear Ecosystem Members and Friends, 
+<br><br>
+CloudBand 3.0 is out! Production ready, capable of supporting live 
+operations, and more than ever committed to openness with the use of 
+OpenStack Heat.
+<br><br>
+It’s definitely a milestone! 
+<br><br>
+Our next goal is to provide full life cycle management. By working with 
+the whole OpenStack community, we will accelerate Heat maturity to be 
+able to dynamically heal for example. We will also continue the dialog 
+with our own CloudBand community members to collect thoughts and 
+technical inputs. I encourage you to reach out if you are not already 
+part of that discussion.
+<br><br>
+Let’s work on this together!
+<br><br>
+Valerie<br>
+<a href="mailto:Valerie.noto@alcatel-lucent.com" _label="EmailVal">Valerie.noto@alcatel-lucent.com</a>
+
+
+
+
+<br><br>
+<strong>Follow us on Twitter:</strong>
+<br><br>
+<a href="http://twitter.com/valerienoto" _label="twitter-valerienoto"><img src="cbEcosystem201506_files/1279246f6227e3163849d8c36f52efb6.gif" alt="" height="14" border="0" width="14"></a> <a href="http://twitter.com/valerienoto" _label="twitter-valerienoto">@valerienoto</a><br>
+
+
+<!-- End Issue Copy -->
+</td></tr>
+<tr><td height="10" bgcolor="#ffffff"></td></tr>
+</tbody></table>
+</td>
+<td valign="top" width="182"> <!-- right column -->
+
+<table style="border:1px solid #c3b9a5;" border="0" cellpadding="6" cellspacing="0">
+<tbody><tr><td>
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr><td height="10"></td></tr>
+<tr><td><a href="http://ecosystem.cloud-band.com/" _label="website" style="font:14px/18px Trebuchet MS;color:#3387bb;">CloudBand Ecosystem Website</a>
+</td></tr>
+
+<tr><td height="10"></td></tr>
+<tr><td style="font:bold 12px/24px Trebuchet MS;color:#333;">Follow Us:
+
+<table border="0" cellpadding="2" cellspacing="0">
+<tbody><tr><td valign="middle"><a href="http://twitter.com/ALU_Cloud"><img src="cbEcosystem201506_files/1279246f6227e3163849d8c36f52efb6.gif" alt="" height="14" border="0" width="14"></a>
+</td><td valign="middle"><a href="http://twitter.com/ALU_Cloud" style="font:14px/18px Trebuchet MS;color:#3387bb;">Twitter@ALU_Cloud</a>
+</td></tr>
+<tr><td valign="middle"><a href="http://www.linkedin.com/groups/Carrier-Cloud-4397691?trk=my_groups-b-grp-v"><img src="cbEcosystem201506_files/6d42ed2cc98e3dca6deccc5d0212a3af.gif" alt="" height="14" border="0" width="14"></a>
+</td><td valign="middle"><a href="http://www.linkedin.com/groups/Carrier-Cloud-4397691?trk=my_groups-b-grp-v" style="font:14px/18px Trebuchet MS;color:#3387bb;">LinkedIn</a>
+</td></tr>
+</tbody></table>
+
+</td></tr>
+<tr><td height="10"></td></tr>
+</tbody></table>
+
+</td></tr>
+</tbody></table>
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="10" bgcolor="#f0f0f0"></td></tr>
+
+
+<tr><td bgcolor="#ffffff">
+<a name="sec1"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="600">
+<tbody><tr bgcolor="#0069aa"><td height="25" width="15"></td><td style="font:bold 14px/18px Trebuchet MS;color:#fff;" align="left">
+CLOUDBAND 3.0 Launch
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="12" cellspacing="0" width="600">
+<tbody><tr><td style="font: 14px/18px Trebuchet MS;"> 
+<!--copy -->
+As service providers adopt network functions virtualization (NFV) and 
+move NFV platforms &amp; applications into production, their focus 
+shifts from feasibility studies to lean operations and reliable service 
+delivery.   The CloudBand 3.0 NFV platform has been specifically 
+designed to simplify and de-risk the move from proof-of-concept to 
+production
+<br><br>
+This new release has been optimized to fully address three major Service Provider requirements: 
+<ol>
+<li>Production ready: A stable, pre-integrated, high-availability 
+platform with rigid quality assurance processes and automated software 
+regression testing; <br><br></li>
+<li>Low entry threshold: A ready-to-use solution tailored for initially,
+ single virtual network function (VNF) deployments and scalable from 
+there to support multiple VNFs and large, distributed geographies; <br><br></li>
+<li>Field-proven openness: CloudBand supports NFV infrastructures and VNFs from Alcatel-Lucent as well as many other vendors</li>
+</ol>
+<a href="https://www.youtube.com/watch?v=Y6VCgMkgDr4" _label="watch">Watch</a>
+  Ron Haberman, General Manager for our CloudBand business unit, talking
+ about what CloudBand 3.0 means for the Service Provider. 
+
+
+
+<!-- end copy --> 
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="10" bgcolor="#f0f0f0"></td></tr>
+
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="0" cellspacing="0" width="600">
+<tbody><tr bgcolor="#0069aa"><td height="25" width="15"></td><td style="font:bold 14px/18px Trebuchet MS;color:#fff;" align="left">
+EVENT: tmforumLive! , Nice on June 1-4
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="12" cellspacing="0" width="600">
+<tbody><tr><td style="font:14px/18px Trebuchet MS;"> 
+<!--copy -->
+
+We were present with 4 major demos at the tmforumLive! :
+<ul>
+<li><b>SERVICE ORCHESTRATION FOR HYBRID VPN &amp; VIRTUALIZED SERVICES</b><br>
+How to accelerate operations for virtualized services with a demo 
+connecting cloud nodes using SDN technology to traditional IP routers to
+ form a hybrid VPN and launch vIMS based communication services.<br><br> </li>
+
+<li><b>ANALYTICS-DRIVEN SERVICE ASSURANCE WITH AUTO-RECOVERY &amp; PREDICTIVE PERFORMANCE</b><br>
+How network intelligence and real-time performance management and big 
+data  analytics can enable service assurance to maximize customer 
+satisfaction for LTE, VoLTE, and dynamic virtualized services.  <br><br></li>
+
+
+<li><b>LEAN OPERATIONS FOR VIRTUALIZED NETWORK FUNCTIONS</b><br>
+Lean NFV &amp; SDN cloud resource management in action from technical 
+readiness to daily operations in a live end-to-end environment from the 
+user through the cloud.  <br><br></li>
+
+<li><b>IMPROVING THE END-TO-END CUSTOMER EXPERIENCE FOR VoLTE FOR MOTIVE CEM (ANALYTICS FOCUS)</b><br>
+Planning, fulfillment, assurance, care and monetization use cases 
+related to launching LTE/VoLTE/RCS, as well as dealing with multi-access
+ technologies like Wi-Fi/VoWiFiv.
+</li></ul>
+ 
+If you missed any of our demos from tmforumLive! There’s no problem. <a href="http://bit.ly/1HyyC17" _label="learnMore">Learn more here  </a>
+
+
+<!-- end copy -->
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="10" bgcolor="#f0f0f0"></td></tr>
+
+
+
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="0" cellspacing="0" width="600">
+<tbody><tr bgcolor="#0069aa"><td height="25" width="15"></td><td style="font:bold 14px/18px Trebuchet MS;color:#fff;" align="left">
+Bell Labs NFV Consulting Services
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="12" cellspacing="0" width="600">
+<tbody><tr><td style="font:14px/18px Trebuchet MS;"> 
+<!--copy -->
+Made up of a team of experts from Bell Labs, the Bell Labs Consulting 
+Services is dedicated to advising the Industry on the Path to Network 
+2020.
+<br><br>
+In the coming years, enormous successes are within reach: Customers are 
+fully connected, businesses are rapidly digitizing, and the Internet of 
+Things has only begun to take shape. These shifts will place the network
+ in a central role within the growth of any business, making short-term 
+success largely determined by its capabilities.
+<br><br>
+Bell Labs consultants help our customers make the right decisions in a 
+technology-focused world. We understand the technology intimately, it's 
+in our DNA, and we understand how it correlates to the economics of your
+ business and the opportunities that lie ahead.
+<br><br>
+We help our customers by connecting deep technology insights to their 
+most critical financial decisions. The road to 2020 starts with Bell 
+Labs Consulting.
+<br><br>
+<a href="https://www.bell-labs.com/consulting/" _label="bellLabs">Learn more</a> about Bell Labs Consulting Services
+
+<!-- end copy -->
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="10" bgcolor="#f0f0f0"></td></tr>
+
+
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="0" cellspacing="0" width="600">
+<tbody><tr bgcolor="#0069aa"><td height="25" width="15"></td><td style="font:bold 14px/18px Trebuchet MS;color:#fff;" align="left">
+Interview with  Bhaskar Gorti
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="12" cellspacing="0" width="600">
+<tbody><tr><td style="font:14px/18px Trebuchet MS;"> 
+
+At the recent NFV World Congress,  Bhaskar Gorti, President, IP 
+Platforms Business Group, Alcatel-Lucent, shared the company´s vision 
+about the service providers´ journey towards virtualization and 
+presented Alcatel-Lucent strategy with regards to some key aspects of 
+this transformation, in particular  the need for service provider to be 
+able to manage a hybrid environment,  the importance of  rethinking the 
+OSS/BSS function, and the customer experience taking a central role 
+right at the heart of the operator´s operations.
+<br><br>
+Check out Bashkar´s interview <a href="http://www.telecomtv.com/articles/nfv-world-congress/alcatel-lucent-provides-operators-with-the-oxygen-to-innovate-12473/" _label="interview">here</a>.
+
+
+ 
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="10" bgcolor="#f0f0f0"></td></tr>
+
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="0" cellspacing="0" width="600">
+<tbody><tr bgcolor="#0069aa"><td height="25" width="15"></td><td style="font:bold 14px/18px Trebuchet MS;color:#fff;" align="left">
+CloudBand Ecosystem Members Interviews
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="12" cellspacing="0" width="600">
+<tbody><tr><td style="font:14px/18px Trebuchet MS;"> 
+
+Watch the first video series of ecosystem members sharing their vision 
+on how the market is moving towards NFV, the challenges and the 
+opportunities it represents for their company.
+<ul>
+
+<li>Michael O'Malley, VP Carrier and Business Development Strategy, 
+Radware:  « Radware was an early investor in both NFV and SDN 
+technology. We see these technologies as a great way to add value to our
+ customers in our two main areas which are load balancing and security. »
+  <a href="http://www.telecomtv.com/articles/security/why-a-network-wide-cyber-defence-strategy-is-key-12496/" _label="view1">View here</a><br><br></li>
+
+<li>Cam Cullen VP Marketing Procera: “  The move to NFV will need a 
+level of integration for which operators will preferably want to rely on
+ a partner capable of doing it.  Procera is working with Alcatel-Lucent,
+ because as NFV rolls on,  Alcatel-Lucent is indeed likely going to be 
+the company to whom the service provider will turn to  in order to 
+organize their transformation to NFV. » <a href="http://www.telecomtv.com/articles/nfv-world-congress/procera-keen-to-turn-into-a-pure-software-vendor-12498/" _label="view2">View here</a><br><br></li>
+
+<li>For Peter Margaris, Head of Service Provider Product Marketing, F5, 
+«The entire NFV evolution is ecosystem driven,  where service providers 
+are trying to establish vendor agnostic network architectures. A healthy
+ ecosystem driven by partner collaboration is crucial for successful 
+commercialization of these solutions, and for F5, working with a strong 
+ecosystem partner like CloudBand is essential. » <a href="http://www.telecomtv.com/articles/nfv-world-congress/using-nfv-to-reach-the-services-existing-technology-cant-12497/" _label="view3">View here</a><br><br></li>
+
+<li>Alistair Scott, Director CTO office JDSU, sees the model of 
+engagement with Service Provider rapidly changing from a traditional 
+“waterfall” supply model towards a more “agile” collaborative model. 
+Check out Alistair interview and what JDSU has so far achieved with 
+CloudBand:  <a href="http://www.telecomtv.com/articles/nfv/helping-service-providers-change-platforms-from-transport-to-innovation-12574/" _label="view4">View here</a><br><br></li>
+
+</ul>
+
+
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="10" bgcolor="#f0f0f0"></td></tr>
+
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="0" cellspacing="0" width="600">
+<tbody><tr bgcolor="#0069aa"><td height="25" width="15"></td><td style="font:bold 14px/18px Trebuchet MS;color:#fff;" align="left">
+MARK YOUR CALENDAR
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="12" cellspacing="0" width="600">
+<tbody><tr><td style="font:14px/18px Trebuchet MS;"> 
+
+Alcatel-Lucent will be present at two main events this fall:
+<ul>
+<li><a href="http://www.layer123.com/sdn" _label="event1">Layer 1,2,3  SDN &amp; openflow in Dusseldorf Congress</a>  12-16 October 2015 | Swissôtel Düsseldorf, Germany<br><br></li>
+
+<li><a href="http://broadbandworldforum.com/" _label="event2">Broadband World Forum London</a>, 20-22 October 2015, EXCEL, LONDON, UK</li>
+</ul>
+
+We will share more details about these events in the upcoming newsletters.
+
+
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="10" bgcolor="#f0f0f0"></td></tr>
+
+
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="0" cellspacing="0" width="600">
+<tbody><tr bgcolor="#0069aa"><td height="25" width="15"></td><td style="font:bold 14px/18px Trebuchet MS;color:#fff;" align="left">
+Webinar:  The Economic Impact of NFV and SDN on Your Network and Business Strategy
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="12" cellspacing="0" width="600">
+<tbody><tr><td style="font:14px/18px Trebuchet MS;"> 
+
+The excitement over NFV and SDN has created renewed interest in the 
+networking business and has fanned debate regarding potential winners 
+and losers. However, there has been only limited analysis of the 
+potential economic and competitive impact of these technologies on the 
+network, operations and the bottom-line.
+<br><br>
+In this joint live webinar, Arthur D. Little and Bell Labs will discuss:
+<ul>
+<li>Research and outcomes from the ground breaking report</li>
+<li>Key actions and strategies that operators should adopt to navigate the transformed market landscape</li>
+<li>The value of fusing carrier networks with the cloud ecosystem, as enabled by NFV and SDN technologies</li>
+</ul>
+You can review the webinar <a href="http://webform.alcatel-lucent.com/r/?id=hed872f,282c611e,282c6658" _label="webinar">here</a>.
+
+
+
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="10" bgcolor="#f0f0f0"></td></tr>
+
+</tbody></table>
+</td></tr></tbody></table>
+
+
+
+</body></html>

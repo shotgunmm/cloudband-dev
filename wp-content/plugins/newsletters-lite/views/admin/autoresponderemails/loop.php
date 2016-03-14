@@ -143,7 +143,7 @@
 	                        	<?php $difference = $Html -> time_difference($aemail -> senddate, $Html -> gen_date("Y-m-d H:i:s"), $aemail -> autoresponder -> delayinterval); ?>
 	                            <?php if ($difference >= 0) { $daysstring = __('This autoresponder email is due in ' . $difference . ' ' . $aemail -> autoresponder -> delayinterval . ' only.', $this -> plugin_name); } else { $daysstring = ""; }; ?>
 	                        	<strong><?php echo $Html -> link($aemail -> subscriber -> email, '?page=' . $this -> sections -> subscribers . '&amp;method=view&amp;id=' . $aemail -> subscriber_id, array('class' => "row-title")); ?></strong>
-	                        	<?php if (!empty($aemail -> active)) : ?>(<span class="<?php echo $this -> pre; ?><?php echo ($aemail -> active == "Y") ? 'success' : 'error'; ?>"><?php echo ($aemail -> active == "Y") ? __('active', $this -> plugin_name) : __('inactive', $this -> plugin_name); ?></span>)<?php endif; ?>
+	                        	<?php if (!empty($aemail -> active)) : ?>(<span class="newsletters_<?php echo ($aemail -> active == "Y") ? 'success' : 'error'; ?>"><?php echo ($aemail -> active == "Y") ? __('active', $this -> plugin_name) : __('inactive', $this -> plugin_name); ?></span>)<?php endif; ?>
 	                            <div class="row-actions">
 	                            	<?php $sendtext = ($aemail -> status == "unsent") ? __('Send Now', $this -> plugin_name) : __('Send Again', $this -> plugin_name); ?>
 	                            	<span class="edit"><?php echo $Html -> link($sendtext, '?page=' . $this -> sections -> autoresponderemails . '&amp;method=send&amp;id=' . $aemail -> id, array('onclick' => "if (!confirm('" . __('Are you sure you want to send this autoresponder email now?', $this -> plugin_name) . " " . $daysstring . "')) { return false; }")); ?> |</span>
@@ -155,9 +155,9 @@
 	                        </td>
 	                        <td>
 	                        	<?php if ($aemail -> status == "sent") : ?>
-	                            	<span class="newsletters_success"><?php _e('Sent', $this -> plugin_name); ?></span>
+	                            	<span class="newsletters_success"><i class="fa fa-check"></i> <?php _e('Sent', $this -> plugin_name); ?></span>
 	                            <?php else : ?>
-	                            	<span class="newsletters_error"><?php _e('Unsent', $this -> plugin_name); ?></span>
+	                            	<span class="newsletters_error"><i class="fa fa-times"></i> <?php _e('Unsent', $this -> plugin_name); ?></span>
 	                            <?php endif; ?>
 	                        </td>
 	                        <td>

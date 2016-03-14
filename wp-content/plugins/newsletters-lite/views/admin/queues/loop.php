@@ -9,7 +9,7 @@ $queue_status = $this -> get_option('queue_status');
 		<div class="tablenav">
 			<div class="alignleft actions">
 				<?php if (empty($queue_status) || $queue_status == "unpause") : ?>
-					<a id="newsletters_pause_queue_button" href="" onclick="newsletters_pause_queue('pause'); return false;" class="button"><i class="fa fa-pause"></i> <?php _e('Pause', $this -> plugin_name); ?></a>
+					<a id="newsletters_pause_queue_button" href="" onclick="newsletters_pause_queue('pause'); return false;" class="button"><i id="pausequeueicon" class="fa fa-pause"></i> <?php _e('Pause', $this -> plugin_name); ?></a>
 				<?php else : ?>
 					<a id="newsletters_pause_queue_button" href="" onclick="newsletters_pause_queue('unpause'); return false;" class="button"><i class="fa fa-play"></i> <?php _e('Unpause', $this -> plugin_name); ?></a>
 				<?php endif; ?>
@@ -28,6 +28,9 @@ $queue_status = $this -> get_option('queue_status');
 		
 		<script type="text/javascript">
 		function newsletters_pause_queue(status) {
+			
+			jQuery('#newsletters_pause_queue_button').attr('disabled', "disabled").find('i').attr('class', "fa fa-refresh fa-spin");
+			
 			jQuery.ajax({
 				url: newsletters_ajaxurl + '?action=newsletters_pause_queue',
 				data: {status:status},
@@ -45,7 +48,7 @@ $queue_status = $this -> get_option('queue_status');
 							var pause_queue_action = 'unpause';
 						}
 						
-						jQuery('#newsletters_pause_queue_button').html(pause_queue_html).attr('onclick', "newsletters_pause_queue('" + pause_queue_action + "'); return false;");		
+						jQuery('#newsletters_pause_queue_button').removeAttr('disabled').html(pause_queue_html).attr('onclick', "newsletters_pause_queue('" + pause_queue_action + "'); return false;");		
 					}
 				}
 			});

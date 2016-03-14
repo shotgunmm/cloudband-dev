@@ -5,7 +5,7 @@ class wpmlMetaboxHelper extends wpMailPlugin {
 	
 	var $name = 'Metabox';
 	
-	public function __construct() {
+	/*public function __construct() {
 		if (!empty($this -> models)) {
 			foreach ($this -> models as $model) {
 				$classname = $this -> pre . $model;
@@ -20,7 +20,7 @@ class wpmlMetaboxHelper extends wpMailPlugin {
 				$this -> {$model} -> $method($args[0]);
 			}
 		}
-	}
+	}*/
 	
 	function wpmlMetaboxHelper() {
 		return true;
@@ -114,6 +114,33 @@ class wpmlMetaboxHelper extends wpMailPlugin {
 		$this -> render('metaboxes' . DS . 'welcome' . DS . 'unsubscribes', array('total' => $total), true, 'admin');
 	}
 	
+	/* Forms */
+	function forms_fields() {
+		
+		$this -> render('metaboxes' . DS . 'forms' . DS . 'fields', false, true, 'admin');
+	}
+	
+	function forms_submit() {
+		
+		$this -> render('metaboxes' . DS . 'forms' . DS . 'submit', false, true, 'admin');
+	}
+	
+	function forms_form() {
+		
+		$this -> render('metaboxes' . DS . 'forms' . DS . 'form', false, true, 'admin');
+	}
+	
+	function forms_field($post = null, $metabox = null) {
+		global $Db, $Field;
+		
+		$form_field = $metabox['args']['form_field'];
+		$Db -> model = $Field -> model;
+		$field = $Db -> find(array('id' => $form_field -> field_id));
+		
+		$this -> render('metaboxes' . DS . 'forms' . DS . 'field', array('form_field' => $form_field, 'field' => $field), true, 'admin');
+	}
+	
+	/* Send */
 	function send_spamscore() {
 		$this -> render('metaboxes' . DS . 'send' . DS . 'spamscore', false, true, 'admin');
 	}
@@ -124,6 +151,10 @@ class wpmlMetaboxHelper extends wpMailPlugin {
 	
 	function send_theme() {
 		$this -> render('metaboxes' . DS . 'send-theme', false, true, 'admin');	
+	}
+	
+	function send_author() {
+		$this -> render('metaboxes' . DS . 'send' . DS . 'author', false, true, 'admin');
 	}
 	
 	function send_insert() {
@@ -169,6 +200,7 @@ class wpmlMetaboxHelper extends wpMailPlugin {
 		$this -> render('metaboxes' . DS . 'templates-submit', false, true, 'admin');
 	}
 	
+	/* Settings */
 	function settings_language() {
 		$this -> render('metaboxes' . DS . 'settings-language', false, true, 'admin');
 	}
@@ -285,12 +317,20 @@ class wpmlMetaboxHelper extends wpMailPlugin {
 		$this -> render('metaboxes' . DS . 'settings-customcss', false, true, 'admin');	
 	}
 	
+	function settings_templates_sendas() {
+		$this -> render('metaboxes' . DS . 'templates' . DS . 'sendas', false, true, 'admin');
+	}
+	
 	function settings_templates_posts() {
 		$this -> render('metaboxes' . DS . 'templates' . DS . 'posts', false, true, 'admin');
 	}
 	
 	function settings_templates_latestposts() {
 		$this -> render('metaboxes' . DS . 'templates' . DS . 'latestposts', false, true, 'admin');
+	}
+	
+	function settings_templates_authenticate() {
+		$this -> render('metaboxes' . DS . 'templates' . DS . 'authenticate', false, true, 'admin');
 	}
 	
 	function settings_templates_confirm() {

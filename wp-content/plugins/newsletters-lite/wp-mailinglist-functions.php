@@ -96,11 +96,14 @@ if (!function_exists('wpml_get_mailinglists')) {
 
 if (!function_exists('newsletters_get_snippets')) {
 	function newsletters_get_snippets() {
-		global $wpdb, $Db, $Template;
-		$Db -> model = $Template -> model;
-		
-		if ($snippets = $Db -> find_all()) {
-			return $snippets;
+		global $wpdb, $Db;
+			
+		if (class_exists('wpMail')) {	
+			$wpMail = new wpMail();
+			
+			if ($snippets = $wpMail -> Template() -> find_all()) {
+				return $snippets;
+			}
 		}
 		
 		return false;

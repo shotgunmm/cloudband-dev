@@ -87,7 +87,7 @@ var $Password = '';
 var $FromName = 'admin';
 var $From = 'admin@null.com';
 var $Sender = '';
-var $Priority = 3;
+var $Priority = null;
 var $WordWrap = 75;
 var $language = 'en';
 

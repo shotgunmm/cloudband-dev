@@ -3,8 +3,8 @@ Contributors: contrid
 Donate link: http://tribulant.com
 Tags: newsletters, email, bulk email, mailing list, subscribers, newsletter, optin, subscribe, marketing, auto newsletter, automatic newsletter, autoresponder, campaign, email, email alerts, email subscription, emailing, follow up, newsletter signup, newsletter widget, newsletters, post notification, subscription, bounce, latest posts, insert posts into newsletter
 Requires at least: 3.8
-Tested up to: 4.3.1
-Stable tag: 4.5.5.9
+Tested up to: 4.4
+Stable tag: 4.5.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html 
 
@@ -97,7 +97,7 @@ Thank you for these wonderful people who contributed in translating the plugin:
 * Spanish (es_ES) by Juan Llamosas
 * French (fr_FR) by Kim Gjerstad
 * Hungarian (hu_HU) by <a href="http://www.idsign.hu">iD Sign | Gergely Almasi</a>
-* Italian (it_IT) by Johnny
+* Italian (it_IT) by <a href="http://www.playcodestudio.com">Matteo Galli | Playcode</a>, Johnny
 * Lithuanian (lt_LT) by Tomas
 * Dutch (nl_NL) by <a href="http://www.webzenz.nl">Ronald de Caluwe | WebZenz</a>
 * Brazilian Portuguese (pt_BR) by Vitor Argos
@@ -148,6 +148,79 @@ Installing the WordPress Newsletter plugin is simple. Follow these steps:
 10. Dashboard widget for quick overview
 
 == Changelog ==
+
+= 4.5.7 =
+* ADD: Multilingual from name/address
+* ADD: "All Categories" selection for multiple posts shortcode
+* ADD: Pause/resume latest posts subscription instances
+* ADD: Change/set the author/user of a newsletter
+* ADD: WPML and newsletters, setting to exclude posts where language not available
+* ADD: Update custom fields on user import 
+* IMPROVE: Redirect main window from iFrame and Popup offsite forms
+* IMPROVE: Enable date_default_timezone_set() to ensure timezone of plugin and settings match
+* IMPROVE: Improved CSS inline styles to prevent @media CSS from being inlined
+* IMPROVE: Review X-Priority, X-Mailer and List-Unsubscribe email headers
+* IMPROVE: phpMailer update to 5.2.14
+* IMPROVE: Newsletter stats
+* IMPROVE: Review automatic inline styler if a connection isn't made 
+* FIX: Cannot save "Authenticate Link Text" setting
+* FIX: Do not fill date field (datepicker) if date is empty (0000-00-00)
+* FIX: Unsubscription notifications not sending from Manage Subscriptions page
+* FIX: Default theme/template not selected when loading a snippet into editor
+* FIX: Only ISO-8859-1 should be UTF-8 encoded upon import
+* FIX: Auto delete inactive subscriptions not working
+* FIX: Could not schedule cron hook, please check the settings
+* FIX: Bulk delete bounced subscribers not working
+* FIX: Fatal error: Call to undefined function mb_convert_encoding()
+* FIX: Latest posts subscription multiple schedules and wrong times
+* FIX: Snippet not loaded in editor
+* FIX: Shortcode [newsletters_if...] not populating content areas
+* FIX: When saving a custom field with options Fatal error: Call to a member function save() on a non-object
+* FIX: Input fields missing in some admin sections
+* FIX: Some tables on new installations not created
+* FIX: Some post titles are not linking to the posts correctly
+* FIX: Text area/block custom field loses formatting in newsletter
+* FIX: Import users doesn't update existing subscribers with new meta values
+* FIX: Latest posts subscription firing twice
+* FIX: WPML + latest posts subscription wrong language
+* FIX: Redirect on subscribe not working for offsite code 
+
+= 4.5.6.2 =
+* FIX: Some database tables not creating
+
+= 4.5.6.1 =
+* ADD: "Open in New Window" link/button next to preview when viewing history/draft 
+* IMPROVE: Do not send autoresponder emails upon import immediately
+* IMPROVE: Better pause/unpause indicator on button in queue 
+* FIX: Send as Newsletter" blank content
+* FIX: Incorrect colour on "Reads" on chart line mode 
+
+= 4.5.6 =
+* ADD: "Format" column under Subscribers in admin
+* ADD: Setting to turn On/Off post attachments
+* ADD: Custom system email template for "Send as Newsletter" from post, page, etc.
+* ADD: Format (HTML/TEXT) bulk action under Newsletters > Subscribers section 
+* IMPROVE: Show read/opened stats in graphs/charts throughout
+* IMPROVE: Validate email addresses on import
+* IMPROVE: Do not change/execute date_default_timezone_set()
+* IMPROVE: Don't use send as default template on latest post subscription
+* IMPROVE: "Continue editing" checkbox for email snippets
+* IMPROVE: "Send" link in table/list of email snippets
+* IMPROVE: Authentication email system template 
+* FIX: Overlay/enlarge loading graphic not showing in admin
+* FIX: Shortcodes outside newsletters_post_loop repeat inside the loop
+* FIX: Some post/metaboxes hidden with CSS on Create Newsletter page
+* FIX: System emails on Default are not using system default but default, blank instead
+* FIX: Bit.ly error handling, do not replace original URL
+* FIX: [newsletters_post_thumbnail...] size parameter not effective for loop
+* FIX: Email queue history emails list too big/long
+* FIX: Newsletter custom post types still show public archive
+* FIX: Post snippet overwrite
+* FIX: Cron schedule does not stay set
+* FIX: TypeError: null is not an object (evaluating 'tinyMCE.activeEditor.getContent')
+* FIX: Preview not showing, metaboxes breaking
+* FIX: Do not output lite limit messages in Ajax calls
+* FIX: No paragraphs and broken ASCII characters in TEXT version 
 
 = 4.5.5.9 =
 * IMPROVE: New file upload custom field and procedure for subscribers

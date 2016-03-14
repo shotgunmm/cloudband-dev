@@ -12,5 +12,8 @@
 			<input id="publish" type="submit" class="button button-primary button-large" name="save" value="<?php _e('Save Snippet', $this -> plugin_name); ?>" />
 		</div>
 		<br class="clear" />
+		<div style="text-align:right; margin:15px 0 5px 0;">
+			<label><input style="min-width:0;" <?php echo (!empty($_REQUEST['continueediting'])) ? 'checked="checked"' : ''; ?> type="checkbox" name="continueediting" value="1" id="continueediting" /> <?php _e('Continue editing?', $this -> plugin_name); ?></label>
+		</div>
 	</div>
 </div>

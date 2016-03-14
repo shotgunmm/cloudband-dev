@@ -20,6 +20,10 @@ $paidsubscriptions = $this -> get_option('subscriptions');
 						<option value="mandatory"><?php _e('Set as Mandatory', $this -> plugin_name); ?></option>
 						<option value="notmandatory"><?php _e('Set as not Mandatory', $this -> plugin_name);?></option>
 					</optgroup>
+					<optgroup label="<?php _e('Format', $this -> plugin_name); ?>">
+						<option value="html"><?php _e('Set as HTML', $this -> plugin_name); ?></option>
+						<option value="text"><?php _e('Set as TEXT', $this -> plugin_name); ?></option>
+					</optgroup>
 					<optgroup label="<?php _e('Status', $this -> plugin_name); ?>">
 						<option value="active"><?php _e('Activate', $this -> plugin_name); ?></option>
 						<option value="inactive"><?php _e('Deactivate', $this -> plugin_name); ?></option>
@@ -59,6 +63,7 @@ $paidsubscriptions = $this -> get_option('subscriptions');
 			'email'					=>	__('Email Address', $this -> plugin_name),
 			'registered'			=>	__('User', $this -> plugin_name),
 			'mandatory'				=>	__('Mandatory', $this -> plugin_name),
+			'format'				=>	__('Format', $this -> plugin_name),
 			'lists'					=>	__('List(s)', $this -> plugin_name),
 			'bouncecount'			=>	__('Bounces', $this -> plugin_name),
 		);
@@ -114,6 +119,7 @@ $paidsubscriptions = $this -> get_option('subscriptions');
 									}
 									break;
 								case 'mandatory'				:
+								case 'format'					:
 								case 'gravatars'				:
 									if (empty($screen_custom) || (!empty($screen_custom) && !in_array($column_name, $screen_custom))) {
 										break;
@@ -207,13 +213,26 @@ $paidsubscriptions = $this -> get_option('subscriptions');
 										<?php endif; ?>
 										<?php
 										break;
+									case 'format'							:
+										?>
+										<?php if (!empty($screen_custom) && in_array('format', $screen_custom)) : ?>
+											<td>
+												<?php if (empty($subscriber -> format) || $subscriber -> format == "html") : ?>
+													<?php _e('HTML', $this -> plugin_name); ?>
+												<?php elseif ($subscriber -> format == "text") : ?>
+													<?php _e('TEXT', $this -> plugin_name); ?>
+												<?php endif; ?>
+											</td>
+										<?php endif; ?>
+										<?php
+										break;
 									case 'lists'							:
 										?>
 										<td>
 											<?php if (!empty($subscriber -> Mailinglist)) : ?>
 												<?php $m = 1; ?>
 												<?php foreach ($subscriber -> Mailinglist as $list) : ?>
-													<?php echo $Html -> link(__($list -> title), '?page=' . $this -> sections -> lists . '&amp;method=view&amp;id=' . $list -> id); ?> (<?php echo ($SubscribersList -> field('active', array('subscriber_id' => $subscriber -> id, 'list_id' => $list -> id)) == "Y") ? '<span class="newsletters_success">' . __('active', $this -> plugin_name) : '<span class="newsletters_error">' . __('inactive', $this -> plugin_name); ?></span>)
+													<?php echo $Html -> link(__($list -> title), '?page=' . $this -> sections -> lists . '&amp;method=view&amp;id=' . $list -> id); ?> <?php echo ($SubscribersList -> field('active', array('subscriber_id' => $subscriber -> id, 'list_id' => $list -> id)) == "Y") ? '<span class="newsletters_success">' . $Html -> help(__('Active', $this -> plugin_name), '<i class="fa fa-check"></i>') : '<span class="newsletters_error">' . $Html -> help(__('Inactive', $this -> plugin_name), '<i class="fa fa-times"></i>'); ?></span>
 													<?php if ($m < count($subscriber -> Mailinglist)) : ?>
 														<?php echo ', '; ?>
 													<?php endif; ?>

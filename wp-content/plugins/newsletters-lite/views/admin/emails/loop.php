@@ -317,26 +317,26 @@
 			                    <?php endif; ?>
 		                    </td>
 		                    <td>
-		                    	<span class="<?php echo $this -> pre; ?><?php echo ($email -> status == "sent") ? 'success' : 'error'; ?>"><?php echo ($email -> status == "sent") ? __('Sent', $this -> plugin_name) : __('Unsent', $this -> plugin_name); ?></span>
+		                    	<span class="newsletters_<?php echo ($email -> status == "sent") ? 'success' : 'error'; ?>"><?php echo ($email -> status == "sent") ? '<i class="fa fa-check"></i> ' . __('Sent', $this -> plugin_name) : '<i class="fa fa-times"></i> ' . __('Unsent', $this -> plugin_name); ?></span>
 		                    </td>
 		                    <td>
-		                    	<?php echo (!empty($email -> read) && $email -> read == "Y") ? '<span class="newsletters_success">' . __('Yes', $this -> plugin_name) : '<span class="newsletters_error">' . __('No', $this -> plugin_name); ?></span>
+		                    	<?php echo (!empty($email -> read) && $email -> read == "Y") ? '<span class="newsletters_success"><i class="fa fa-check"></i>' : '<span class="newsletters_error"><i class="fa fa-times"></i>'; ?></span>
 		                    </td>
 		                    <td>
 		                    	<?php
 		                    	
 		                    	if (!empty($email -> subscriber_id)) {
-		                    		$clicked = $this -> Click -> count(array('history_id' => $email -> history_id, 'subscriber_id' => $email -> subscriber_id));
+		                    		$clicked = $this -> Click() -> count(array('history_id' => $email -> history_id, 'subscriber_id' => $email -> subscriber_id));
 								} elseif (!empty($user)) {
-									$clicked = $this -> Click -> count(array('history_id' => $email -> history_id, 'user_id' => $email -> user_id));
+									$clicked = $this -> Click() -> count(array('history_id' => $email -> history_id, 'user_id' => $email -> user_id));
 								}
 								
-								echo (empty($clicked)) ? '<span class="' . $this -> pre . 'error">' . __('No', $this -> plugin_name) . '</span>' : '<span class="' . $this -> pre . 'success">' . __('Yes', $this -> plugin_name) . '</span> (<a href="?page=' . $this -> sections -> clicks . '&amp;history_id=' . $email -> history_id . '&amp;subscriber_id=' . $email -> subscriber_id . '">' . $clicked . '</a>)'; 
+								echo (empty($clicked)) ? '<span class="newsletters_error"><i class="fa fa-times"></i></span>' : '<span class="newsletters_success"><i class="fa fa-check"></i></span> (<a href="?page=' . $this -> sections -> clicks . '&amp;history_id=' . $email -> history_id . '&amp;subscriber_id=' . $email -> subscriber_id . '">' . $clicked . '</a>)'; 
 		                    	
 		                    	?>
 		                    </td>
 		                    <td>
-		                    	<?php echo (!empty($email -> bounced) && $email -> bounced == "Y") ? '<span class="' . $this -> pre . 'error">' . __('Yes', $this -> plugin_name) . '</span>' : '<span class="newsletters_success">' . __('No', $this -> plugin_name) . '</span>'; ?>
+		                    	<?php echo (!empty($email -> bounced) && $email -> bounced == "Y") ? '<span class="newsletters_error"><i class="fa fa-check"></i></span>' : '<span class="newsletters_success"><i class=" fa fa-times"></i></span>'; ?>
 		                    </td>
 		                    <td>
 		                    	<abbr title="<?php echo $email -> created; ?>"><?php echo $Html -> gen_date(false, strtotime($email -> created)); ?></abbr>

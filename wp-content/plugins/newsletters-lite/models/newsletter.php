@@ -204,7 +204,10 @@ if (!class_exists('newsletters_lite')) {
 				if (empty($data -> id) && $list_count >= $newsletters_lite_listlimit) {
 					$error = sprintf(__('Mailing list limit of %s has been reached, you can %s for unlimited.', $this -> plugin_name), $newsletters_lite_listlimit, '<a href="' . admin_url('admin.php?page=' . $this -> sections -> lite_upgrade) . '">Upgrade to PRO</a>');
 					$errors['limit'] = $error;
-					$this -> render_error($error);
+					
+					if (!defined('DOING_AJAX')) {
+						$this -> render_error($error);
+					}
 				}
 			}
 			
@@ -248,7 +251,10 @@ if (!class_exists('newsletters_lite')) {
 				if ($subscriber_count >= $newsletters_lite_subscriberlimit) {
 					$error = sprintf(__('Subscriber limit of %s has been reached, you can %s for unlimited.', $this -> plugin_name), $newsletters_lite_subscriberlimit, '<a href="' . admin_url('admin.php?page=' . $this -> sections -> lite_upgrade) . '">Upgrade to PRO</a>');
 					$errors['limit'] = $error;
-					$this -> render_error($error);
+					
+					if (!defined('DOING_AJAX')) {
+						$this -> render_error($error);
+					}
 				}
 			}
 			
@@ -263,7 +269,10 @@ if (!class_exists('newsletters_lite')) {
 			if ($field_count >= 2 && empty($data -> id)) {
 				$error = sprintf(__('Additional custom fields are only available in the PRO version, you can %s for unlimited.', $this -> plugin_name), '<a href="' . admin_url('admin.php?page=' . $this -> sections -> lite_upgrade) . '">Upgrade to PRO</a>');
 				$errors['limit'] = $error;
-				$this -> render_error($error);
+				
+				if (!defined('DOING_AJAX')) {
+					$this -> render_error($error);
+				}
 			}
 			
 			return $errors;

@@ -16,7 +16,8 @@
 						$ebouncedperc = (!empty($etotal)) ? (($ebounced / $etotal) * 100) : 0; 
 						$eunsubscribed = $wpdb -> get_var("SELECT COUNT(DISTINCT `email`) FROM `" . $wpdb -> prefix . $Unsubscribe -> table . "` WHERE `history_id` = '" . $history -> id . "'");
 						$eunsubscribeperc = (!empty($etotal)) ? (($eunsubscribed / $etotal) * 100) : 0;
-						$clicks = $this -> Click -> count(array('history_id' => $history -> id));
+						$clicks = $this -> Click() -> count(array('history_id' => $history -> id));
+						$options = array();
 							
 						$data = array(
 							array(

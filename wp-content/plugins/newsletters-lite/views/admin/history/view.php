@@ -78,7 +78,7 @@ $todate = (empty($_GET['to'])) ? $Html -> gen_date("Y-m-d", time()) : $_GET['to'
 					<tr class="<?php echo $class = (empty($class)) ? 'alternate' : ''; ?>">
 						<th><?php _e('From', $this -> plugin_name); ?></th>
 						<td>
-							<?php echo (empty($history -> fromname)) ? $this -> get_option('smtpfromname') : $history -> fromname; ?>; <?php echo (empty($history -> from)) ? $this -> get_option('smtpfrom') : $history -> from; ?>
+							<?php echo (empty($history -> fromname)) ? __($this -> get_option('smtpfromname')) : $history -> fromname; ?>; <?php echo (empty($history -> from)) ? __($this -> get_option('smtpfrom')) : $history -> from; ?>
 						</td>
 					</tr>
 				<?php endif; ?>
@@ -194,7 +194,7 @@ $todate = (empty($_GET['to'])) ? $Html -> gen_date("Y-m-d", time()) : $_GET['to'
 	            		</td>
 	            	</tr>
 	            <?php endif; ?>
-	            <?php $Db -> model = $Autoresponder -> model; ?>
+	            <?php $Db -> model = $this -> Autoresponder() -> model; ?>
 	            <?php if ($autoresponders = $Db -> find_all(array('history_id' => $history -> id))) : ?>
 	            	<tr class="<?php echo $class = (empty($class)) ? 'alternate' : ''; ?>">
 		            	<th><?php _e('Autoresponders', $this -> plugin_name); ?>
@@ -216,7 +216,7 @@ $todate = (empty($_GET['to'])) ? $Html -> gen_date("Y-m-d", time()) : $_GET['to'
 						global $wpdb; $Db -> model = $Email -> model;
 						$etotal = $Db -> count(array('history_id' => $history -> id));
 						$eread = $Db -> count(array('read' => "Y", 'history_id' => $history -> id));
-						$tracking = (($eread/$etotal) * 100);
+						$tracking = ((!empty($etotal)) ? (($eread/$etotal) * 100) : 0);
 						
 						$query = "SELECT SUM(`count`) FROM `" . $wpdb -> prefix . $Bounce -> table . "` WHERE `history_id` = '" . $history -> id . "'";
 						
@@ -241,7 +241,7 @@ $todate = (empty($_GET['to'])) ? $Html -> gen_date("Y-m-d", time()) : $_GET['to'
 						}
 						
 						$eunsubscribeperc = (!empty($etotal)) ? (($eunsubscribed / $etotal) * 100) : 0;
-						$clicks = $this -> Click -> count(array('history_id' => $history -> id));
+						$clicks = $this -> Click() -> count(array('history_id' => $history -> id));
 						
 						?>
 						<?php 
@@ -326,7 +326,7 @@ $todate = (empty($_GET['to'])) ? $Html -> gen_date("Y-m-d", time()) : $_GET['to'
     <?php $this -> render('emails' . DS . 'loop', array('history' => $history, 'emails' => $emails, 'paginate' => $paginate), true, 'admin'); ?>
     
     <!-- History Preview -->
-    <h3><?php _e('Preview', $this -> plugin_name); ?></h3>
+    <h3><?php _e('Preview', $this -> plugin_name); ?> <a href="<?php echo admin_url('admin-ajax.php?action=' . $this -> pre . 'history_iframe&id=' . $history -> id); ?>" target="_blank" class="add-new-h2"><?php _e('Open in New Window', $this -> plugin_name); ?></a></h3>
 	<?php $multimime = $this -> get_option('multimime'); ?>
 	<?php if (!empty($history -> text) && $multimime == "Y") : ?>  
 		<h4><?php _e('TEXT Version', $this -> plugin_name); ?></h4>  

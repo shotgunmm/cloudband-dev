@@ -19,24 +19,23 @@ class wpmlHtmlHelper extends wpMailPlugin {
         // Create the full array with sizes and crop info
         foreach( $get_intermediate_image_sizes as $_size ) {
 
-                if ( in_array( $_size, array( 'thumbnail', 'medium', 'large' ) ) ) {
-	                
-						$sizes[$_size]['title'] = ucfirst($_size);
-                        $sizes[ $_size ]['width'] = get_option( $_size . '_size_w' );
-                        $sizes[ $_size ]['height'] = get_option( $_size . '_size_h' );
-                        $sizes[ $_size ]['crop'] = (bool) get_option( $_size . '_crop' );
+            if ( in_array( $_size, array( 'thumbnail', 'medium', 'large' ) ) ) {
+                
+					$sizes[$_size]['title'] = ucfirst($_size);
+                    $sizes[ $_size ]['width'] = get_option( $_size . '_size_w' );
+                    $sizes[ $_size ]['height'] = get_option( $_size . '_size_h' );
+                    $sizes[ $_size ]['crop'] = (bool) get_option( $_size . '_crop' );
 
-                } elseif ( isset( $_wp_additional_image_sizes[ $_size ] ) ) {
+            } elseif ( isset( $_wp_additional_image_sizes[ $_size ] ) ) {
 
-                        $sizes[ $_size ] = array(
-	                        	'title'			=>	$_size,
-                                'width' 		=> 	$_wp_additional_image_sizes[ $_size ]['width'],
-                                'height' 		=> 	$_wp_additional_image_sizes[ $_size ]['height'],
-                                'crop' 			=>  $_wp_additional_image_sizes[ $_size ]['crop']
-                        );
+                    $sizes[ $_size ] = array(
+                        	'title'			=>	$_size,
+                            'width' 		=> 	$_wp_additional_image_sizes[ $_size ]['width'],
+                            'height' 		=> 	$_wp_additional_image_sizes[ $_size ]['height'],
+                            'crop' 			=>  $_wp_additional_image_sizes[ $_size ]['crop']
+                    );
 
-                }
-
+            }
         }
 
         // Get only 1 size if found
@@ -486,10 +485,10 @@ class wpmlHtmlHelper extends wpMailPlugin {
 		
 		$args = (empty($args)) ? array() : $args;
 	
-		if (!empty($hook) && $schedules = wp_get_schedules()) {	
+		if (!empty($hook) && $schedules = wp_get_schedules()) {			
 			if ($hookinterval = wp_get_schedule($hook, $args)) {
 				if ($hookschedule = wp_next_scheduled($hook, $args)) {				
-					return $schedules[$hookinterval]['display'] . ' - <strong>' . date_i18n("Y-m-d H:i:s", $hookschedule) . '</strong>';
+					return $schedules[$hookinterval]['display'] . '<br/><small><b>' . date_i18n("Y-m-d H:i:s", $hookschedule) . '</b></small>';
 				} else {
 					return __('This task does not have a next schedule.', $this -> plugin_name);	
 				}
@@ -806,9 +805,45 @@ class wpmlHtmlHelper extends wpMailPlugin {
 		
 		if (!empty($name)) {				
 			if ($mn = $this -> strip_mn($name)) {
-				global ${$mn[1]};
+				
+				$model = $mn[1];
+				$field = $mn[2];
+				
+				global ${$mn[1]}, $Db;
+				
+				if (!empty($Db -> {$model} -> data)) {
+					if (is_array($Db -> {$model} -> data) && !empty($Db -> {$model} -> data[$model])) {					
+						$value = $Db -> {$model} -> data[$model] -> {$field};
+					} else {					
+						$value = $Db -> {$model} -> data -> {$field};
+					}
+				} else {
+					if (is_array(${$mn[1]} -> data) && !empty(${$mn[1]} -> data[$mn[1]])) {					
+						$value = ${$mn[1]} -> data[$mn[1]] -> {$mn[2]};
+					} else {					
+						$value = ${$mn[1]} -> data -> {$mn[2]};
+					}
+				}
+				
+				if ($this -> language_do() && !empty($language)) {					
+					if ($mn[2] == "fieldoptions") {												
+						$alloptions = maybe_unserialize($value);
+						$optionarray = array();
+						
+						if (!empty($alloptions)) {
+							foreach ($alloptions as $alloption) {
+								$alloptionsplit = $this -> language_split($alloption);
+								$optionarray[] = trim($alloptionsplit[$language]);
+							}
+						}
+						
+						return trim(@implode("\r\n", $optionarray));
+					} else {						
+						return $this -> language_use($language, $value);
+					}
+				}
 
-				if (is_array(${$mn[1]} -> data) && !empty(${$mn[1]} -> data[$mn[1]])) {					
+				/*if (is_array(${$mn[1]} -> data) && !empty(${$mn[1]} -> data[$mn[1]])) {					
 					$value = ${$mn[1]} -> data[$mn[1]] -> {$mn[2]};
 				} else {					
 					$value = ${$mn[1]} -> data -> {$mn[2]};
@@ -830,7 +865,7 @@ class wpmlHtmlHelper extends wpMailPlugin {
 					} else {						
 						return $this -> language_use($language, $value);
 					}
-				}
+				}*/
 			}
 		}
 
@@ -840,8 +875,14 @@ class wpmlHtmlHelper extends wpMailPlugin {
 	function has_field_error($name = null) {
 		if (!empty($name)) {
 			if ($mn = $this -> strip_mn($name)) {
-				global ${$mn[1]};
-				if (!empty(${$mn[1]} -> errors[$mn[2]])) {
+				global ${$mn[1]}, $Db;
+				
+				$model = $mn[1];
+				$field = $mn[2];
+				
+				if (!empty($Db -> {$model}() -> errors[$field])) {
+					return true;
+				} elseif (!empty(${$mn[1]} -> errors[$mn[2]])) {
 					return true;
 				}
 			}
@@ -853,8 +894,16 @@ class wpmlHtmlHelper extends wpMailPlugin {
 	function field_error($name = null) {
 		if (!empty($name)) {		
 			if ($mn = $this -> strip_mn($name)) {
-				global ${$mn[1]};
-				if (!empty(${$mn[1]} -> errors[$mn[2]])) {
+				global ${$mn[1]}, $Db;
+				
+				$model = $mn[1];
+				$field = $mn[2];
+				
+				if (!empty($Db -> {$model}() -> errors[$field])) {
+					ob_start();
+					echo '<div class="alert alert-danger ui-state-error ui-corner-all"><p><i class="fa fa-exclamation-triangle"></i> ' . $Db -> {$model}() -> errors[$field] . '</p></div>';
+					return ob_get_clean();
+				} elseif (!empty(${$mn[1]} -> errors[$mn[2]])) {
 					ob_start();
 					echo '<div class="alert alert-danger ui-state-error ui-corner-all"><p><i class="fa fa-exclamation-triangle"></i> ' . ${$mn[1]} -> errors[$mn[2]] . '</p></div>';
 					return ob_get_clean();

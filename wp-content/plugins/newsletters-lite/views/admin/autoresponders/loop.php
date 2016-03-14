@@ -2,7 +2,7 @@
 	<form action="?page=<?php echo $this -> sections -> autoresponders; ?>&amp;method=mass" onsubmit="if (!confirm('<?php _e('Are you sure you want to execute this action on the selected autoresponders?', $this -> plugin_name); ?>')) { return false; }" method="post">
     	<div class="tablenav">
         	<div class="alignleft actions">
-            	<a href="?page=<?php echo $this -> sections -> autoresponderemails; ?>" class="button"><?php _e('Autoresponder Emails', $this -> plugin_name); ?></a>
+            	<a href="?page=<?php echo $this -> sections -> autoresponderemails; ?>" class="button"><i class="fa fa-envelope"></i> <?php _e('Autoresponder Emails', $this -> plugin_name); ?></a>
         	</div>
         	<div class="alignleft actions">
 				<select name="action">
@@ -181,9 +181,9 @@
 	                        </td>
 	                        <td>
 	                        	<?php if (!empty($autoresponder -> alwayssend) && $autoresponder -> alwayssend == "Y") : ?>
-	                        		<span class="newsletters_success"><?php _e('Yes', $this -> plugin_name); ?></span>
+	                        		<span class="newsletters_success"><i class="fa fa-check"></i></span>
 	                        	<?php else : ?>
-	                        		<span class="newsletters_error"><?php _e('No', $this -> plugin_name); ?></span>
+	                        		<span class="newsletters_error"><i class="fa fa-times"></i></span>
 	                        	<?php endif; ?>
 	                        </td>
 	                        <td>
@@ -195,9 +195,9 @@
 	                        </td>
 	                        <td>
 	                        	<?php if (!empty($autoresponder -> status) && $autoresponder -> status == "inactive") : ?>
-	                            	<span class="newsletters_error"><?php _e('Inactive', $this -> plugin_name); ?></span>
+	                            	<span class="newsletters_error"><i class="fa fa-times"></i></span>
 	                            <?php else : ?>
-	                            	<span class="newsletters_success"><?php _e('Active', $this -> plugin_name); ?></span>
+	                            	<span class="newsletters_success"><i class="fa fa-check"></i></span>
 	                            <?php endif; ?>
 	                        </td>
 	                        <td><abbr title="<?php echo $autoresponder -> modified; ?>"><?php echo $Html -> gen_date(false, strtotime($autoresponder -> modified)); ?></abbr></td>

@@ -1,6 +1,6 @@
 <?php
 
-global $wpdb, $Mailinglist, $Template;
+global $wpdb, $Mailinglist;
 
 ?>
 
@@ -485,7 +485,7 @@ global $wpdb, $Mailinglist, $Template;
 								<td>
 									<?php
 									
-									$templatesquery = "SELECT * FROM " . $wpdb -> prefix . $Template -> table . " ORDER BY title ASC";
+									$templatesquery = "SELECT * FROM " . $wpdb -> prefix . $this -> Template() -> table . " ORDER BY title ASC";
 									$templates = $wpdb -> get_results($templatesquery);
 									
 									?>

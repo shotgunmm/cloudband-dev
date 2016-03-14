@@ -39,17 +39,17 @@ $previewemail = (empty($_POST['previewemail'])) ? $this -> get_option('adminemai
 					<?php echo $Html -> help(__('Change the From Name and From Address that this email is being sent from as it will appear in the email/webmail clients of the recipients.', $this -> plugin_name)); ?>
 				</span>
 				<span id="sendfrom-value">
-					<abbr title="<?php echo (empty($_POST['from'])) ? $this -> get_option('smtpfrom') : $_POST['from']; ?>"><?php echo (empty($_POST['fromname'])) ? $this -> get_option('smtpfromname') : $_POST['fromname']; ?></abbr>
+					<abbr title="<?php echo (empty($_POST['from'])) ? __($this -> get_option('smtpfrom')) : $_POST['from']; ?>"><?php echo (empty($_POST['fromname'])) ? __($this -> get_option('smtpfromname')) : $_POST['fromname']; ?></abbr>
 				</span>
 				
-				<div id="sendfromdiv" class="hide-if-js" style="display:none;">
+				<div id="sendfromdiv" class="" style="display:none;">
 					<div class="form-field">
 						<label for="smtpfromname"><?php _e('From Name:', $this -> plugin_name); ?></label>
-						<input type="text" name="smtpfromname" value="<?php echo (empty($_POST['fromname'])) ? $this -> get_option('smtpfromname') : $_POST['fromname']; ?>" id="smtpfromname" />
+						<input type="text" name="smtpfromname" value="<?php echo (empty($_POST['fromname'])) ? __($this -> get_option('smtpfromname')) : $_POST['fromname']; ?>" id="smtpfromname" />
 					</div>
 					<div class="form-field">
 						<label for="smtpfrom"><?php _e('From Email:', $this -> plugin_name); ?></label>
-						<input type="text" name="smtpfrom" value="<?php echo (empty($_POST['from'])) ? $this -> get_option('smtpfrom') : $_POST['from']; ?>" id="smtpfrom" />
+						<input type="text" name="smtpfrom" value="<?php echo (empty($_POST['from'])) ? __($this -> get_option('smtpfrom')) : $_POST['from']; ?>" id="smtpfrom" />
 					</div>
 					<p>
 						<input type="button" name="changesendfrom" id="changesendfrom" class="button button-secondary" value="<?php _e('Ok', $this -> plugin_name); ?>" />
@@ -105,7 +105,7 @@ $previewemail = (empty($_POST['previewemail'])) ? $this -> get_option('adminemai
 						<?php echo $Html -> help(__('This newsletter can be automatically repeated at a specified interval, starting on a specific date and the repeat can also be limited. Click "Edit" to configure this as a recurring newsletter. To cancel, empty all the fields and click "Ok".', $this -> plugin_name)); ?>
 					</span>
 					
-					<div id="sendrecurringdiv" class="hide-if-js" style="display:none;">
+					<div id="sendrecurringdiv" class="" style="display:none;">
 						<div class="form-field">
 							<?php _e('Every', $this -> plugin_name); ?>
 							<input type="text" name="sendrecurringvalue" value="<?php echo esc_attr(stripslashes($_POST['sendrecurringvalue'])); ?>" id="sendrecurringvalue" class="widefat" style="width:45px;" /> 
@@ -188,7 +188,7 @@ $previewemail = (empty($_POST['previewemail'])) ? $this -> get_option('adminemai
             	
             	<?php echo $Html -> help(__('You can choose to send this newsletter immediately or you can click the "Edit" link to change the date/time to a future date/time at which it will be sent.', $this -> plugin_name)); ?>
             	
-				<div id="timestampdiv" class="hide-if-js" style="display:none;">
+				<div id="timestampdiv" class="" style="display:none;">
 					<p class="howto"><?php echo sprintf(__('Current time is %s', $this -> plugin_name), '<strong>' . $Html -> gen_date("Y-m-d H:i:s", time()) . '</strong>'); ?></p>
 					<?php touch_time(0, 0, 0, 0); ?>
 					<?php $senddate = (empty($_POST['senddate']) || strtotime($_POST['senddate']) <= time()) ? $Html -> gen_date("Y-m-d H:i:s", time()) : $_POST['senddate']; ?>

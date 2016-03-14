@@ -64,7 +64,7 @@ class wpmlFormHelper extends wpMailPlugin {
 		$r = wp_parse_args($options, $defaults);
 		extract($r, EXTR_SKIP);
 		
-		if ($Html -> has_field_error($name)) {
+		if ($Html -> has_field_error($name)) {			
 			$class .= ' newsletters_fielderror';
 		}
 		

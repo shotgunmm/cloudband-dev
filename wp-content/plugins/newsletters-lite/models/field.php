@@ -86,7 +86,7 @@ class wpmlField extends wpMailPlugin {
 						$this -> initialize_classes();
 						$this -> newfieldoptions = false;
 						if (!empty($field_id)) {							
-							if ($fieldoptions = $this -> Option -> find_all(array('field_id' => $field_id), false, array('order', "ASC"))) {
+							if ($fieldoptions = $this -> Option() -> find_all(array('field_id' => $field_id), false, array('order', "ASC"))) {
 								if (is_admin() && $_GET['page'] == $this -> sections -> fields) {
 									$this -> newfieldoptions = $fieldoptions;
 								} else {
@@ -635,9 +635,9 @@ class wpmlField extends wpMailPlugin {
 									$o++;
 								}
 								
-								$Db -> model = $this -> Option -> model;
-								$this -> Option -> save($newfieldoption_data);								
-								$this -> Option -> errors = false;
+								$Db -> model = $this -> Option() -> model;
+								$this -> Option() -> save($newfieldoption_data);								
+								$this -> Option() -> errors = false;
 							}
 						}
 					}
@@ -674,10 +674,10 @@ class wpmlField extends wpMailPlugin {
 		global $wpdb, $FieldsList, $Html;
 		include $this -> plugin_base() . DS . 'includes' . DS . 'variables.php';
 			
-		if ($fields = $FieldsList -> fields_by_list($data['list_id'], "order", "ASC", true, true)) {									
+		if ($fields = $FieldsList -> fields_by_list($data['list_id'], "order", "ASC", true, true)) {												
 			if (!empty($fields)) {				
-				foreach ($fields as $field) {														
-					if ($field -> required == "Y") {							
+				foreach ($fields as $field) {																			
+					if ($field -> required == "Y") {													
 						if (empty($field -> errormessage)) {
 							$field -> errormessage = __('Please fill in ', $this -> plugin_name) . $field -> title;
 						}
@@ -708,7 +708,7 @@ class wpmlField extends wpMailPlugin {
 										break;
 								}
 								break;
-							default					:							
+							default					:														
 								if (empty($field -> validation) || $field -> validation == "notempty") {
 									if (empty($data[$field -> slug])) {
 										$this -> errors[$field -> slug] = __($field -> errormessage);

@@ -113,10 +113,10 @@
 							</td>
 							<td>
 								<?php if (!empty($click -> link_id)) : ?>
-									<?php $link = $this -> Link -> find(array('id' => $click -> link_id)); ?>
+									<?php $link = $this -> Link() -> find(array('id' => $click -> link_id)); ?>
 									<?php echo $Html -> link($link -> link, $link -> link, array('target' => "_blank")); ?>
 								<?php elseif (!empty($click -> referer)) : ?>
-									<?php echo $this -> Click -> referer_name($click -> referer); ?>
+									<?php echo $this -> Click() -> referer_name($click -> referer); ?>
 								<?php else : ?>
 									<?php _e('None', $this -> plugin_name); ?>
 								<?php endif; ?>

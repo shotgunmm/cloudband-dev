@@ -1,3 +1,36 @@
+/* Forms BEG */
+
+.newsletters ul#form_addedfields {
+	
+}
+
+.newsletters ul#form_addedfields li {
+	
+}
+
+.newsletters ul#form_availablefields {
+	
+}
+
+.newsletters ul#form_availablefields li {
+	float: left;
+	width: 50%;
+}
+
+.newsletters ul#form_availablefields li input {
+	width: 90%;
+}
+
+.newsletters_delete_handle {
+	float: right;
+	top: 5px;
+	position: relative;
+	right: 0;
+	display: inline-block;
+}
+
+/* Forms END */
+
 .newsletters .btn-file {
     position: relative;
     overflow: hidden;
@@ -765,11 +798,15 @@ table tbody tr.arow {
     display: block;
 }
 
-.wpmlerror, .newsletters_error {
+.wpmlerror, 
+.newsletters_error, 
+.newsletters_error a {
     color: #CC0000 !important;
 }
 
-.wpmlsuccess, .newsletters_success {
+.wpmlsuccess, 
+.newsletters_success, 
+.newsletters_success a {
     color: #629632 !important;
 }
 

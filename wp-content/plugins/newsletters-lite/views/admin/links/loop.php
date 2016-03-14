@@ -78,7 +78,7 @@
 								</div>
 							</td>
 							<td>
-								<?php echo $Html -> link($this -> Click -> count(array('link_id' => $link -> id)), '?page=' . $this -> sections -> clicks . '&amp;link_id=' . $link -> id); ?>
+								<?php echo $Html -> link($this -> Click() -> count(array('link_id' => $link -> id)), '?page=' . $this -> sections -> clicks . '&amp;link_id=' . $link -> id); ?>
 							</td>
 							<td>
 								<abbr title="<?php echo $link -> created; ?>"><?php echo $Html -> gen_date("Y-m-d", strtotime($link -> created)); ?></abbr>

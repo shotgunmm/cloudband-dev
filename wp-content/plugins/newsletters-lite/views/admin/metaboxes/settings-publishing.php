@@ -2,12 +2,19 @@
 
 <?php
 	
+$showpostattachments = $this -> get_option('showpostattachments');
 $excerpt_settings = $this -> get_option('excerpt_settings');	
 	
 ?>
 
 <table class="form-table">
 	<tbody>
+		<tr>
+			<th><label for="showpostattachments"><?php _e('Show Attachments of Newsletter on Post', $this -> plugin_name); ?></label></th>
+			<td>
+				<label><input <?php echo (!empty($showpostattachments)) ? 'checked="checked"' : ''; ?> type="checkbox" name="showpostattachments" value="1" id="showpostattachments" /> <?php _e('Yes, show attachments of newsletter published as post below the post.', $this -> plugin_name); ?></label>
+			</td>
+		</tr>
 		<tr>
 			<th><label for="excerpt_settings"><?php _e('Custom Excerpt Settings', $this -> plugin_name); ?></label>
 			<?php echo $Html -> help(__('By turning this on, you can specify your own excerpt length and more text. If you leave it off, the default excerpt length and more text defined by the system, a template or the plugin will be used.', $this -> plugin_name)); ?></th>

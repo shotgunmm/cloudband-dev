@@ -6,37 +6,54 @@ $email_templates = array();
 
 $email_templates['posts'] = array(
 	'subject'					=>	false,
-	'message'					=>	'<div class="wpmlposts">
-	[newsletters_post_loop]
-		<div class="wpmlpost">
-			<h3><a href="[newsletters_post_link]" title="[newsletters_post_title]">[newsletters_post_title]</a></h3>
-			[newsletters_post_date_wrapper]<p><small>Posted on [newsletters_post_date format="F jS, Y"] by [newsletters_post_author]</small></p>[/newsletters_post_date_wrapper]
-			<div class="wpmlpost_content">
-				[newsletters_post_thumbnail]
-				<p>[newsletters_post_excerpt]</p>
+	'message'					=>	
+	'<div class="wpmlposts">
+		[newsletters_post_loop]
+			<div class="wpmlpost">
+				<h3><a href="[newsletters_post_link]" title="[newsletters_post_title]">[newsletters_post_title]</a></h3>
+				[newsletters_post_date_wrapper]<p><small>Posted on [newsletters_post_date format="F jS, Y"] by [newsletters_post_author]</small></p>[/newsletters_post_date_wrapper]
+				<div class="wpmlpost_content">
+					[newsletters_post_thumbnail]
+					[newsletters_post_excerpt]
+				</div>
 			</div>
-		</div>
-		<hr style="visibility:hidden; clear:both;" />
-	[/newsletters_post_loop]
-</div>',
+			<hr style="visibility:hidden; clear:both;" />
+		[/newsletters_post_loop]
+	</div>',
 );
 
 $email_templates['latestposts'] = array(
 	'subject'					=>	false,
-	'message'					=>	'<div class="wpmlposts">
-	[newsletters_post_loop]
-		<h2>[newsletters_category_heading]</h2>
-		<div class="wpmlpost">
-			<h3><a href="[newsletters_post_link]" title="[newsletters_post_title]">[newsletters_post_title]</a></h3>
-			[newsletters_post_date_wrapper]<p><small>Posted on [newsletters_post_date format="F jS, Y"] by [newsletters_post_author]</small></p>[/newsletters_post_date_wrapper]
-			<div class="wpmlpost_content">
-				[newsletters_post_thumbnail]
-				<p>[newsletters_post_excerpt]</p>
+	'message'					=>	
+	'<div class="wpmlposts">
+		[newsletters_post_loop]
+			<h2>[newsletters_category_heading]</h2>
+			<div class="wpmlpost">
+				<h3><a href="[newsletters_post_link]" title="[newsletters_post_title]">[newsletters_post_title]</a></h3>
+				[newsletters_post_date_wrapper]<p><small>Posted on [newsletters_post_date format="F jS, Y"] by [newsletters_post_author]</small></p>[/newsletters_post_date_wrapper]
+				<div class="wpmlpost_content">
+					[newsletters_post_thumbnail]
+					[newsletters_post_excerpt]
+				</div>
 			</div>
-		</div>
-		<hr style="visibility:hidden; clear:both;" />
-	[/newsletters_post_loop]
-</div>',
+			<hr style="visibility:hidden; clear:both;" />
+		[/newsletters_post_loop]
+	</div>',
+);
+
+$email_templates['sendas'] = array(
+	'subject'					=>	false,
+	'message'					=>	
+	'<div class="newsletter_posts">
+		[newsletters_post_loop]
+			<div class="newsletter_post newsletter_sendas">
+				[newsletters_post_date_wrapper]<p><small>Posted on [newsletters_post_date format="F jS, Y"] by [newsletters_post_author]</small></p>[/newsletters_post_date_wrapper]
+				<div class="newsletter_post_content">
+					[newsletters_post_excerpt]
+				</div>
+			</div>
+		[/newsletters_post_loop]
+	</div>',
 );
 
 /* Subscriber confirmation email */
@@ -84,6 +101,11 @@ $email_templates['schedule'] = array(
 $email_templates['subscribe'] = array(
 	'subject'					=>	"New Subscription",
 	'message'					=>	"Good day Administrator,\r\n\r\nA user/visitor has just subscribed to: [wpmlmailinglist].\r\nThe email address of this subscriber is: [wpmlemail].\r\n\r\n[wpmlcustomfields]\r\n\r\nAll the best,\r\n[wpmlblogname]",
+);
+
+$email_templates['authenticate'] = array(
+	'subject'					=>	"Authenticate Email Address",
+	'message'					=>	'Please authenticate your subscriber account by clicking the link below.\r\n\r\n[newsletters_authenticate]\r\n\r\nOnce you authenticate, you can manage your subscriptions and additional subscriber information.\r\n\r\nAll the best,\r\n[wpmlblogname]',
 );
 
 $email_templates = apply_filters('newsletters_email_templates', $email_templates);

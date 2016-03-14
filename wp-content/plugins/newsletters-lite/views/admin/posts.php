@@ -1,9 +1,9 @@
 <div class="wrap newsletters">
 	<div style="width:600px;">
-		<h2><?php _e('Posts Logged', $this -> plugin_name); ?></h2>
+		<h1><?php _e('Posts Logged', $this -> plugin_name); ?></h1>
 		
 		<?php if (!empty($latestpostssubscription)) : ?>
-			<h3><?php echo $latestpostssubscription -> subject; ?></h3>
+			<h2><?php echo $latestpostssubscription -> subject; ?></h2>
 		<?php endif; ?>
 		
 		<?php if (!empty($posts)) : ?>

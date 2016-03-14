@@ -5,6 +5,7 @@
 global $wp_roles;
 $mailinglists = $Mailinglist -> select(true); 
 $importuserslists = $this -> get_option('importuserslists');
+$importusers_updateall = $this -> get_option('importusers_updateall');
 
 ?>
 
@@ -111,6 +112,13 @@ $importuserslists = $this -> get_option('importuserslists');
 					<?php endif; ?>
 				</div>
 				<span class="howto"><?php _e('Map user meta by selection or custom key to import into custom fields.', $this -> plugin_name); ?></span>
+			</td>
+		</tr>
+		<tr>
+			<th><label for="importusers_updateall"><?php _e('Update All Subscribers', $this -> plugin_name); ?></label></th>
+			<td>
+				<label><input <?php echo (!empty($importusers_updateall)) ? 'checked="checked"' : ''; ?> type="checkbox" name="importusers_updateall" value="1" id="importusers_updateall" /> <?php _e('Yes, update all subscribers with user meta values', $this -> plugin_name); ?></label>
+				<span class="howto"><?php _e('Turn on to update all existing subscribers with user meta values.', $this -> plugin_name); ?></span>
 			</td>
 		</tr>
 	</tbody>

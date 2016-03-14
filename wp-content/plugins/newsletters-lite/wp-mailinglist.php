@@ -3,7 +3,7 @@
 /*
 Plugin Name: Newsletters
 Plugin URI: http://tribulant.com/plugins/view/1/wordpress-newsletter-plugin
-Version: 4.5.5.9
+Version: 4.5.7
 Description: This newsletter software allows users to subscribe to mutliple mailing lists on your WordPress website. Send newsletters manually or from posts, manage newsletter templates, view a complete history with tracking, import/export subscribers, accept paid subscriptions and much more.
 Author: Tribulant Software
 Author URI: http://tribulant.com
@@ -88,12 +88,12 @@ if (!class_exists('wpMail')) {
 		}
 		
 		function tiny_mce_before_init($init_array = array()) {
-			global $wpdb, $Db, $Html, $post, $Template, $Mailinglist;
+			global $wpdb, $Db, $Html, $post, $Mailinglist;
 		
 			$init_array['content_css'] .= "," . $this -> render_url('css/editor-style.css', 'admin', false);
 
 			$snippets = array();
-			$templatesquery = "SELECT * FROM " . $wpdb -> prefix . $Template -> table . " ORDER BY title ASC";
+			$templatesquery = "SELECT * FROM " . $wpdb -> prefix . $this -> Template() -> table . " ORDER BY title ASC";
 			$templates = $wpdb -> get_results($templatesquery);
 			
 			foreach ($templates as $template) {
@@ -136,12 +136,17 @@ if (!class_exists('wpMail')) {
 			$categories_args = array('hide_empty' => 0, 'show_count' => 1);
 			if ($categories = get_categories($categories_args)) {
 				$newsletters_categories = array();
+				$newsletters_posts_categories = array();
 				$newsletters_categories[]= array('text' => __('- Select -', $this -> plugin_name), 'value' => false);
+				$newsletters_posts_categories[] = array('text' => __('All Categories', $this -> plugin_name), 'value' => false);
 				foreach ($categories as $category) {
 					$newsletters_categories[] = array('text' => __($category -> name), 'value' => $category -> cat_ID);
+					$newsletters_posts_categories[] = array('text' => __($category -> name), 'value' => $category -> cat_ID);
 				}
 				$newsletters_categories = json_encode($newsletters_categories);
+				$newsletters_posts_categories = json_encode($newsletters_posts_categories);
 				$init_array['newsletters_post_categories'] = $newsletters_categories;
+				$init_array['newsletters_posts_categories'] = $newsletters_posts_categories;
 			}
 			
 			$init_array['newsletters_loading_image'] = $this -> url() . '/images/loading.gif';
@@ -239,8 +244,8 @@ if (!class_exists('wpMail')) {
 					}
 				}
 				
-				$smtpfrom = (empty($history -> from)) ? $this -> get_option('smtpfrom') : $history -> from;
-				$smtpfromname = (empty($history -> fromname)) ? $this -> get_option('smtpfromname') : $history -> fromname;
+				$smtpfrom = (empty($history -> from)) ? __($this -> get_option('smtpfrom')) : $history -> from;
+				$smtpfromname = (empty($history -> fromname)) ? __($this -> get_option('smtpfromname')) : $history -> fromname;
 				
 				if (!empty($newsletters_plaintext)) {
 					$phpmailer -> ContentType = "text/plain";
@@ -253,7 +258,6 @@ if (!class_exists('wpMail')) {
 				
 				$phpmailer -> Body = $this -> inlinestyles(apply_filters($this -> pre . '_send_body', stripslashes($phpmailer -> Body), $phpmailer, $wpmlhistory_id));
 				$phpmailer -> Sender = $this -> get_option('bounceemail');
-				//$phpmailer -> From = $smtpfrom;
 				$phpmailer -> SetFrom($smtpfrom, $smtpfromname);
 				
 				// Should the Reply-To header be different?
@@ -596,16 +600,18 @@ if (!class_exists('wpMail')) {
 		function custom_post_types() {
 			$custompostslug = $this -> get_option('custompostslug');
 			$custompostslug = (empty($custompostslug)) ? 'newsletter' : $custompostslug;
+			
 			$custompostarchive = $this -> get_option('custompostarchive');
+			$public = ((!empty($custompostarchive)) ? true : false);
 			
 			$newsletter_args = array(
 				'label'					=>	__('Newsletters', $this -> plugin_name),
 				'labels'				=>	array('name' => __('Newsletters', $this -> plugin_name), 'singular_name' => __('Newsletter', $this -> plugin_name)),
 				'description'			=>	__('Emails/newsletters', $this -> plugin_name),
-				'public'				=>	true,
+				'public'				=>	$public,
 				'show_ui'				=>	false,
 				'hierarchical'			=>	false,
-				'has_archive'			=>	((!empty($custompostarchive)) ? true : false),
+				'has_archive'			=>	$public,
 				'rewrite'				=>	array('slug' => $custompostslug, 'with_front' => false),
 				'supports'				=>	array('title', 'editor', 'excerpt', 'custom-fields', 'thumbnail', 'page-attributes'),
 			);
@@ -614,7 +620,7 @@ if (!class_exists('wpMail')) {
 		}
 		
 		function init() {		
-			global $Db, $Email, $Html, $History, $Mailinglist, $wpmlOrder, $Subscriber, $SubscribersList;			
+			global $Db, $Email, $Html, $History, $Mailinglist, $Subscriber, $SubscribersList;			
 			//$this -> init_textdomain();
 			
 			$managementauthtype = $this -> get_option('managementauthtype');
@@ -628,7 +634,7 @@ if (!class_exists('wpMail')) {
 			$method = (empty($_GET[$this -> pre . 'method'])) ? $wpmlmethod : $_GET[$this -> pre . 'method'];
 			
 			if (!empty($_GET[$this -> pre . 'link'])) {
-				if ($link = $this -> Link -> find(array('hash' => $_GET[$this -> pre . 'link']))) {
+				if ($link = $this -> Link() -> find(array('hash' => $_GET[$this -> pre . 'link']))) {
 				
 					$email_conditions = array('history_id' => $_GET['history_id']);
 					if (!empty($_GET['subscriber_id'])) { $email_conditions['subscriber_id'] = $_GET['subscriber_id']; }
@@ -651,7 +657,7 @@ if (!class_exists('wpMail')) {
 					
 					$link -> link = html_entity_decode($link -> link);
 					
-					if ($this -> Click -> save($click_data, true)) {
+					if ($this -> Click() -> save($click_data, true)) {
 						
 						do_action('newsletters_click', $click_data, $link);
 						
@@ -670,13 +676,13 @@ if (!class_exists('wpMail')) {
 						$this -> delete_option('showmessage_dbupdate');
 						
 						if (version_compare($cur_version, '1.2') < 0) {	// 1.0						
-							global $wpdb, $Db, $Field, $Mailinglist, $Subscriber, $wpmlGroup, $History;
+							global $wpdb, $Db, $Field, $Mailinglist, $Subscriber, $History;
 					
 							$this -> update_options();
 							
-							$query = "TRUNCATE `" . $wpdb -> prefix . $this -> Option -> table . "`";
+							$query = "TRUNCATE `" . $wpdb -> prefix . $this -> Option() -> table . "`";
 							$wpdb -> query($query);
-							$query = "TRUNCATE `" . $wpdb -> prefix . $this -> SubscribersOption -> table . "`";
+							$query = "TRUNCATE `" . $wpdb -> prefix . $this -> SubscribersOption() -> table . "`";
 							$wpdb -> query($query);
 							
 							$query = "SELECT * FROM " . $wpdb -> prefix . $Field -> table . " WHERE `type` = 'radio' OR `type` = 'select' OR `type` = 'checkbox'";
@@ -696,13 +702,13 @@ if (!class_exists('wpMail')) {
 													'field_id'				=>	$field -> id,
 												);
 												
-												$this -> Option -> save($option_data);	
-												$this -> Option -> id = $this -> Option -> data = false;											
+												$this -> Option() -> save($option_data);	
+												$this -> Option() -> id = $this -> Option() -> data = false;											
 												$o++;
 											}
 											
 											// Subscriber stuff
-											$newfieldoptions = $this -> Option -> find_all(array('field_id' => $field -> id), false, array('order', "ASC"));
+											$newfieldoptions = $this -> Option() -> find_all(array('field_id' => $field -> id), false, array('order', "ASC"));
 											$newfieldoptionsarray = array();
 											foreach ($newfieldoptions as $newfieldoption) {
 												$newfieldoptionsarray[$newfieldoption -> id] = $newfieldoption -> value;
@@ -726,7 +732,7 @@ if (!class_exists('wpMail')) {
 																	'option_id'						=>	$option_id,
 																);
 																
-																$this -> SubscribersOption -> save($subscribers_option_data);
+																$this -> SubscribersOption() -> save($subscribers_option_data);
 																$new_subscriber_fieldoptions[] = $option_id;
 															}
 															
@@ -740,7 +746,7 @@ if (!class_exists('wpMail')) {
 																'option_id'						=>	$option_id,
 															);
 															
-															$this -> SubscribersOption -> save($subscribers_option_data);
+															$this -> SubscribersOption() -> save($subscribers_option_data);
 															$new_subscriber_fieldoptions = $option_id;
 														}
 														
@@ -763,7 +769,7 @@ if (!class_exists('wpMail')) {
 							$query = "ALTER TABLE " . $wpdb -> prefix . $Mailinglist -> table . " CHANGE `title` `title` VARCHAR(255) NOT NULL DEFAULT ''";
 							$wpdb -> query($query);
 							// Increase group title length
-							$query = "ALTER TABLE " . $wpdb -> prefix . $wpmlGroup -> table . " CHANGE `title` `title` VARCHAR(255) NOT NULL DEFAULT ''";
+							$query = "ALTER TABLE " . $wpdb -> prefix . $this -> Group() -> table . " CHANGE `title` `title` VARCHAR(255) NOT NULL DEFAULT ''";
 							$wpdb -> query($query);
 							// Increase history subject length
 							$query = "ALTER TABLE " . $wpdb -> prefix . $History -> table . " CHANGE `subject` `subject` VARCHAR(255) NOT NULL DEFAULT ''";
@@ -795,19 +801,19 @@ if (!class_exists('wpMail')) {
 						}
 						
 						if (version_compare($cur_version, '1.2.2') < 0) {							
-							global $wpdb, $Db, $Field, $Mailinglist, $Subscriber, $wpmlGroup, $History;
+							global $wpdb, $Db, $Field, $Mailinglist, $Subscriber, $History;
 					
 							$this -> update_options();
 							
 							// truncate the SubscribersOption database table.
-							$query = "TRUNCATE `" . $wpdb -> prefix . $this -> SubscribersOption -> table . "`";
+							$query = "TRUNCATE `" . $wpdb -> prefix . $this -> SubscribersOption() -> table . "`";
 							$wpdb -> query($query);
 							
 							$query = "SELECT * FROM " . $wpdb -> prefix . $Field -> table . " WHERE `type` = 'radio' OR `type` = 'select' OR `type` = 'checkbox'";
 							if ($fields = $wpdb -> get_results($query)) {
 								foreach ($fields as $field) {
 									
-									$newfieldoptions = $this -> Option -> find_all(array('field_id' => $field -> id), false, array('order', "ASC"));
+									$newfieldoptions = $this -> Option() -> find_all(array('field_id' => $field -> id), false, array('order', "ASC"));
 									$newfieldoptionsarray = array();
 									foreach ($newfieldoptions as $newfieldoption) {
 										$newfieldoptionsarray[$newfieldoption -> id] = $newfieldoption -> value;
@@ -831,7 +837,7 @@ if (!class_exists('wpMail')) {
 															'option_id'						=>	$option_id,
 														);
 														
-														$this -> SubscribersOption -> save($subscribers_option_data);
+														$this -> SubscribersOption() -> save($subscribers_option_data);
 													}
 												} else {	
 													$option_id = $subscriber_fieldoption;
@@ -842,7 +848,7 @@ if (!class_exists('wpMail')) {
 														'option_id'						=>	$option_id,
 													);
 													
-													$this -> SubscribersOption -> save($subscribers_option_data);
+													$this -> SubscribersOption() -> save($subscribers_option_data);
 												}
 											}						
 										}
@@ -855,13 +861,13 @@ if (!class_exists('wpMail')) {
 						
 						// 1.2.3
 						if (version_compare($cur_version, '1.2.3') < 0) {							
-							global $wpdb, $Db, $Field, $Mailinglist, $Subscriber, $wpmlGroup, $History;
+							global $wpdb, $Db, $Field, $Mailinglist, $Subscriber, $History;
 					
 							$this -> update_options();
 							$this -> initialize_classes();
 							
 							// truncate the SubscribersOption database table.
-							$query = "TRUNCATE `" . $wpdb -> prefix . $this -> SubscribersOption -> table . "`";
+							$query = "TRUNCATE `" . $wpdb -> prefix . $this -> SubscribersOption() -> table . "`";
 							$wpdb -> query($query);
 							
 							$query = "SELECT * FROM " . $wpdb -> prefix . $Field -> table . " WHERE (`type` = 'radio' OR `type` = 'select' OR `type` = 'checkbox') AND `slug` != 'email' AND `slug` != 'list'";
@@ -885,7 +891,7 @@ if (!class_exists('wpMail')) {
 																'option_id'						=>	$option_id,
 															);
 														
-															$this -> SubscribersOption -> save($subscribers_option_data);	
+															$this -> SubscribersOption() -> save($subscribers_option_data);	
 														}
 													}
 												} else {	
@@ -898,7 +904,7 @@ if (!class_exists('wpMail')) {
 															'option_id'						=>	$option_id,
 														);
 													
-														$this -> SubscribersOption -> save($subscribers_option_data);	
+														$this -> SubscribersOption() -> save($subscribers_option_data);	
 													}
 												}
 											}				
@@ -938,12 +944,18 @@ if (!class_exists('wpMail')) {
 											$Db -> model = $Subscriber -> model;
 											$Db -> save_field('cookieauth', $subscriberauth, array('id' => $subscriber -> id));
 											
-											$subject = stripslashes(__($this -> get_option('managementloginsubject')));
-											$message = $this -> render_email('management-login', array('email' => $_POST['email'], 'subscriberauth' => $subscriberauth), false, $this -> htmltf($subscriber -> format), true, $this -> default_theme_id('system'), false);
+											//$subject = stripslashes(__($this -> get_option('managementloginsubject')));
+											//$message = $this -> render_email('management-login', array('email' => $_POST['email'], 'subscriberauth' => $subscriberauth), false, $this -> htmltf($subscriber -> format), true, $this -> default_theme_id('system'), false);
+											
+											$subject = stripslashes(__($this -> et_subject('authenticate', $subscriber)));
+											$fullbody = $this -> et_message('authenticate', $subscriber);
+											$message = $this -> render_email(false, array('subscriber' => $subscriber), false, $this -> htmltf($subscriber -> format), true, $this -> et_template('authenticate'), false, $fullbody);
 											
 											if ($this -> execute_mail($subscriber, false, $subject, $message, false, false, false, false)) {
-												$newsletters_errors[] = __('Authentication email has been sent, please check your inbox.', $this -> plugin_name);
-											} else {
+												//$newsletters_errors[] = __('Authentication email has been sent, please check your inbox.', $this -> plugin_name);
+												$_REQUEST['updated'] = true;
+												$_REQUEST['success'] = __('Authentication email has been sent, please check your inbox.', $this -> plugin_name);
+											} else {												
 												$newsletters_errors[] = __('Authentication email could not be sent.', $this -> plugin_name);	
 											}
 										} else {
@@ -1182,16 +1194,33 @@ if (!class_exists('wpMail')) {
 										if ($Subscriber -> optin($_POST)) {
 											$success = true;
 											
-											if ($this -> get_option('subscriberedirect') == "Y") {
+											$subscriberedirect = $this -> get_option('subscriberedirect');
+											$subscribelist = $Mailinglist -> get($subscriber -> list_id);
+											
+											if (!empty($subscribelist -> subredirect)) {
+												$subscriberedirecturl = $subscribelist -> subredirect;
+											} elseif (!empty($subscriberedirect) && $subscriberedirect == "Y") {
 												$subscriberedirecturl = $this -> get_option('subscriberedirecturl');
+											}
+											
+											if (!empty($subscriberedirecturl)) {
+											
+												?>
 												
-												if ($subscribelist = $Mailinglist -> get($subscriber -> list_id)) {
-													if (!empty($subscribelist -> subredirect)) {
-														$subscriberedirecturl = $subscribelist -> subredirect;
-													}
+												<script type="text/javascript">
+												if (window.opener && window.opener !== window) {
+													window.opener.location = "<?php echo esc_attr($subscriberedirecturl); ?>";
+													window.close();
+												} else if (window.top != window.self) {
+													window.top.location = "<?php echo esc_attr($subscriberedirecturl); ?>";
+												} else {
+													window.location = "<?php echo esc_attr($subscriberedirecturl); ?>";
 												}
+												</script>
 												
-												$this -> redirect($subscriberedirecturl, false, false, true);
+												<?php
+												
+												exit();
 											}
 										}
 									}
@@ -1267,7 +1296,7 @@ if (!class_exists('wpMail')) {
 						die();
 						break;				
 					case 'activate'			:
-						global $wpdb, $Auth, $Mailinglist, $Html, $Db, $History, $HistoriesAttachment, $Email, $Subscriber, $Autoresponderemail, $Autoresponder, $AutorespondersList;
+						global $wpdb, $Auth, $Mailinglist, $Html, $Db, $History, $HistoriesAttachment, $Email, $Subscriber, $AutorespondersList;
 					
 						if (!empty($_GET[$this -> pre . 'subscriber_id'])) {
 							$subscriber_id = $_GET[$this -> pre . 'subscriber_id'];
@@ -1474,9 +1503,22 @@ if (!class_exists('wpMail')) {
 								$sl_conditions = array('subscriber_id' => $subscriber -> id, 'list_id' => $mailinglist -> id);
 								
 								$subscriberslist = $SubscribersList -> find($sl_conditions);
+								
+								if (!empty($subscriberslist) && !empty($custom['subscription_extend'])) {
+									$paid_now = strtotime($subscriberslist -> paid_date);
+									if (strtotime($subscriberslist -> paid_date) < time()) {
+										$paid_now = time();
+									}
+									
+									$paid_stamp = $Mailinglist -> paid_stamp($mailinglist -> interval, $paid_now);
+									$paid_date = $Html -> gen_date("Y-m-d", $paid_stamp);
+								} else {
+									$paid_date = $Html -> gen_date();
+								}
+								
 								$SubscribersList -> save_field('active', "Y", $sl_conditions);
 								$SubscribersList -> save_field('paid', "Y", $sl_conditions);
-								$SubscribersList -> save_field('paid_date', $Html -> gen_date(), $sl_conditions);
+								$SubscribersList -> save_field('paid_date', $paid_date, $sl_conditions);
 								$SubscribersList -> save_field('paid_sent', "0", $sl_conditions);
 								$SubscribersList -> save_field('modified', $Html -> gen_date(), $sl_conditions);
 								
@@ -1497,8 +1539,12 @@ if (!class_exists('wpMail')) {
 									'pmethod'				=>	'pp',
 								);
 								
-								if ($wpmlOrder -> save($orderdata, true)) {									
+								if ($this -> Order() -> save($orderdata, true)) {									
 									//success
+									
+									if (empty($subscriberslist -> order_id)) {
+										$SubscribersList -> save_field('order_id', $this -> Order() -> insertid, $sl_conditions);
+									}
 								}
 								
 								$message = __('Payment received and subscription activated', $this -> plugin_name);
@@ -1571,7 +1617,7 @@ if (!class_exists('wpMail')) {
 										'pmethod'				=>	'2co',
 									);
 									
-									if ($wpmlOrder -> save($orderdata, true)) {
+									if ($this -> Order() -> save($orderdata, true)) {
 										//success
 									}	
 									
@@ -1686,7 +1732,7 @@ if (!class_exists('wpMail')) {
 										'device'			=>	$this -> get_device()
 									);
 									
-									$this -> Click -> save($click_data, true);
+									$this -> Click() -> save($click_data, true);
 								}
 								
 								if (true || !empty($subscriber) || !empty($_GET['fromfeed']) || !empty($_GET['history'])) {																
@@ -1758,7 +1804,7 @@ if (!class_exists('wpMail')) {
 					}
 				}
 				
-				$this -> Click -> delete_all(array('user_id' => $user_id));
+				$this -> Click() -> delete_all(array('user_id' => $user_id));
 			}
 		}
 		
@@ -1855,7 +1901,7 @@ if (!class_exists('wpMail')) {
 						$activatedelete = $this -> get_option('activatedelete');
 						if (!empty($activatedelete)) {
 							$query = "SELECT * FROM `" . $wpdb -> prefix . $SubscribersList -> table . "` WHERE `active` = 'N' AND `created` <= DATE_SUB(CURDATE(), INTERVAL " . $activatedelete . " DAY)";							
-							if ($subscriptions = $wpdb -> get_results($query)) {							
+							if ($subscriptions = $wpdb -> get_results($query)) {															
 								foreach ($subscriptions as $subscription) {
 									$Db -> model = $SubscribersList -> model;
 									$Db -> delete_all(array('rel_id' => $subscription -> rel_id));
@@ -1872,170 +1918,180 @@ if (!class_exists('wpMail')) {
 		}
 		
 		function latestposts_hook($id = null, $preview = false) {			
-			global $wpdb, $post, $Db, $Latestpost, $Template, $Html, $History, $Mailinglist, $Queue, $Subscriber, $SubscribersList;
+			global $wpdb, $post, $Db, $Latestpost, $Html, $History, $Mailinglist, $Queue, $Subscriber, $SubscribersList;
+			$sentmailscount = 0;
 			
-			if (!empty($id) && $latestpostssubscription = $this -> Latestpostssubscription -> find(array('id' => $id))) {				
-				$post_criteria = $this -> get_latestposts($latestpostssubscription);
-				
-				if (!empty($latestpostssubscription -> groupbycategory) && $latestpostssubscription -> groupbycategory == "Y") {
-					$categories_args = array(
-						'type'						=>	'post',
-						'child_of'					=>	false,
-						'parent'					=>	false,
-						'orderby'					=>	"name",
-						'order'						=>	"asc",
-						'hide_empty'				=>	true,
-						'hierarchical'				=>	true,
-						'exclude'					=>	false,
-						'include'					=>	$post_criteria['category'],
-						
-					);
-					
-					$categories_args = apply_filters('newsletters_latest_posts_categories_args', $categories_args);
-					
-					if ($categories = get_categories($categories_args)) {
-						global $shortcode_categories;
-						$c = 0;
-					
-						foreach ($categories as $category) {
-							
-							$post_criteria['category'] = $category -> cat_ID;
-							$posts = get_posts($post_criteria);							
-							
-							if (!empty($posts)) {
-								$shortcode_categories[$c]['category'] = $category;
-								$shortcode_categories[$c]['posts'] = $posts;
-							}
-							
-							$c++;
+			if (!empty($id) && $latestpostssubscription = $this -> Latestpostssubscription() -> find(array('id' => $id))) {				
+				if (!empty($preview) || $latestpostssubscription -> status == "active") {
+					if (!empty($latestpostssubscription -> language)) {
+						global $sitepress;
+						if (method_exists($sitepress, 'switch_lang')) {
+							$sitepress -> switch_lang($latestpostssubscription -> language);
 						}
 					}
-				}
 					
-				if (!empty($shortcode_categories) || $posts = get_posts($post_criteria)) {					
-					if (!empty($posts) || !empty($shortcode_categories)) {
-						if ($this -> language_do()) {							
-							foreach ($posts as $pkey => $post) {
-								$posts[$pkey] = $this -> language_use($latestpostssubscription -> language, $post, false);	
-							}
-						}
-						
-						$subject = stripslashes($latestpostssubscription -> subject);
-						global $shortcode_posts, $shortcode_post_language, $shortcode_categories;
-						$shortcode_posts = $posts;
-						$shortcode_post_language = $latestpostssubscription -> language;
-						//$content = $this -> et_message('latestposts', false, $latestpostssubscription -> language);
-						$content = do_shortcode('[newsletters_latestposts_loop_wrapper]');
-						$attachment = false;
-						$post_id = false;
-						
-						$history_data = array(
-							'subject'			=>	$subject,
-							'message'			=>	$content,
-							'theme_id'			=>	$latestpostssubscription -> theme_id,
-							'mailinglists'		=>	$latestpostssubscription -> lists,
-							'attachment'		=>	"N",
-							'attachmentfile'	=>	false,
+					$post_criteria = $this -> get_latestposts($latestpostssubscription);
+					
+					if (!empty($latestpostssubscription -> groupbycategory) && $latestpostssubscription -> groupbycategory == "Y") {
+						$categories_args = array(
+							'type'						=>	'post',
+							'child_of'					=>	false,
+							'parent'					=>	false,
+							'orderby'					=>	"name",
+							'order'						=>	"asc",
+							'hide_empty'				=>	true,
+							'hierarchical'				=>	true,
+							'exclude'					=>	false,
+							'include'					=>	$post_criteria['category'],
 						);
 						
-						if (!empty($latestpostssubscription -> history_id)) {
-							$history_data['id'] = $latestpostssubscription -> history_id;
-						}
-							
-						$Db -> model = $History -> model;
-						$history_data['sent'] = 1;
-						$History -> save($history_data, false);
-						$history_id = $History -> insertid;						
-						//$this -> update_option('latestposts_historyid', $history_id);
+						$categories_args = apply_filters('newsletters_latest_posts_categories_args', $categories_args);
 						
-						$this -> Latestpostssubscription -> save_field('history_id', $history_id, array('id' => $latestpostssubscription -> id));
+						if ($categories = get_categories($categories_args)) {
+							global $shortcode_categories;
+							$c = 0;
 						
-						if (!empty($preview) && $preview == true) {							
-							$subscriber_id = $Subscriber -> admin_subscriber_id();
-							$subscriber = $Subscriber -> get($subscriber_id);
-							$subscriber -> mailinglists = $email -> mailinglists;
-							$eunique = md5($subscriber -> id . $subscriber -> mailinglist_id . $history_id . date_i18n("YmdH"));
-							$message = $this -> render_email('send', array('message' => $content, 'subject' => $subject, 'subscriber' => $subscriber, 'history_id' => $history_id, 'post_id' => $post_id, 'eunique' => $eunique), false, $this -> htmltf($subscriber -> format), true, $latestpostssubscription -> theme_id);
-							
-							$output = "";
-							ob_start();
-							echo do_shortcode(stripslashes($message));
-							$output = ob_get_clean();
-							ob_start();
-							echo $this -> process_set_variables($subscriber, $user, $output, $history_id);
-							$output = ob_get_clean();
-							
-							return $output;
-						} else {							
-							$sentmailscount = 0; //number of emails sent
-							$q_queries = array();
-							
-							if ($mailinglists = maybe_unserialize($latestpostssubscription -> lists)) {
-								$mailinglistscondition = "(";
-								$m = 1;
+							foreach ($categories as $category) {							
+								$post_criteria['category'] = $category -> cat_ID;
+								$posts = get_posts($post_criteria);							
 								
-								foreach ($mailinglists as $mailinglist_id) {
-									$mailinglistscondition .= $wpdb -> prefix . $SubscribersList -> table . ".list_id = '" . $mailinglist_id . "'";
-									if ($m < count($mailinglists)) { $mailinglistscondition .= " OR "; }
-									$m++;	
+								if (!empty($posts)) {
+									$shortcode_categories[$c]['category'] = $category;
+									$shortcode_categories[$c]['posts'] = $posts;
 								}
 								
-								$query = "SELECT DISTINCT " . $wpdb -> prefix . $Subscriber -> table . ".id, "
-								. $wpdb -> prefix . $Subscriber -> table . ".email FROM " 
-								. $wpdb -> prefix . $Subscriber -> table . " LEFT JOIN "
-								. $wpdb -> prefix . $SubscribersList -> table . " ON "
-								. $wpdb -> prefix . $Subscriber -> table . ".id = " . $wpdb -> prefix . $SubscribersList -> table . ".subscriber_id WHERE "
-								. $mailinglistscondition . ") AND " . $wpdb -> prefix . $SubscribersList -> table . ".active = 'Y'";
-								
-								$subscribers = $wpdb -> get_results($query);
-								
-								if (!empty($subscribers)) {
-									foreach ($subscribers as $subscriber) {
-										$this -> remove_server_limits();
-										$subscriber -> mailinglist_id = $mailinglists[0];
-													
-										if ($this -> get_option('scheduling') == "Y") {
-											$q_queries[] = $Queue -> save($subscriber, false, $subject, $content, $attachment, $post_id, $history_id, true, $latestpostssubscription -> theme_id);
-											$sentmailscount++;
-										} else {
-											$eunique = md5($subscriber -> id . $subscriber -> mailinglist_id . $history_id . date_i18n("YmdH"));
-											$message = $this -> render_email('send', array('message' => $content, 'subject' => $subject, 'subscriber' => $subscriber, 'history_id' => $history_id, 'post_id' => $post_id, 'eunique' => $eunique), false, $this -> htmltf($subscriber -> format), true, $latestpostssubscription -> theme_id);
-											$this -> execute_mail($subscriber, false, $subject, $message, $attachment, $history_id, $eunique);
-											$sentmailscount++;
-										}
-									}
-									
-									if (!empty($q_queries)) {									
-										foreach ($q_queries as $q_query) {
-											if (!empty($q_query)) {
-												$wpdb -> query($q_query);
-											}
-										}
-									}	
-								}
-							}
-							
-							if (!empty($sentmailscount)) {															
-								if (!empty($shortcode_categories)) {									
-									foreach ($shortcode_categories as $shortcode_category) {
-										if (!empty($shortcode_category['posts'])) {
-											foreach ($shortcode_category['posts'] as $post) {
-												$Db -> model = $Latestpost -> model;
-												$Db -> save(array('post_id' => $post -> ID, 'lps_id' => $latestpostssubscription -> id), true);
-											}
-										}
-									}	
-								} else {									
-									foreach ($shortcode_posts as $post) {
-										$Db -> model = $Latestpost -> model;
-										$Db -> save(array('post_id' => $post -> ID, 'lps_id' => $latestpostssubscription -> id), true);
-									}
-								}
+								$c++;
 							}
 						}
 					}
+						
+					if (!empty($shortcode_categories) || $posts = get_posts($post_criteria)) {					
+						if (!empty($posts) || !empty($shortcode_categories)) {
+							if ($this -> language_do()) {							
+								foreach ($posts as $pkey => $post) {
+									$posts[$pkey] = $this -> language_use($latestpostssubscription -> language, $post, false);	
+								}
+							}
+							
+							$subject = stripslashes($latestpostssubscription -> subject);
+							global $shortcode_posts, $shortcode_post_language, $shortcode_categories;
+							$shortcode_posts = $posts;
+							$shortcode_post_language = $latestpostssubscription -> language;
+							//$content = $this -> et_message('latestposts', false, $latestpostssubscription -> language);
+							$content = do_shortcode('[newsletters_latestposts_loop_wrapper]');
+							$attachment = false;
+							$post_id = false;
+							
+							$history_data = array(
+								'subject'			=>	$subject,
+								'message'			=>	$content,
+								'theme_id'			=>	$latestpostssubscription -> theme_id,
+								'mailinglists'		=>	$latestpostssubscription -> lists,
+								'attachment'		=>	"N",
+								'attachmentfile'	=>	false,
+							);
+							
+							if (!empty($latestpostssubscription -> history_id)) {
+								$history_data['id'] = $latestpostssubscription -> history_id;
+							}
+								
+							$Db -> model = $History -> model;
+							$history_data['sent'] = 1;
+							$History -> save($history_data, false);
+							$history_id = $History -> insertid;						
+							//$this -> update_option('latestposts_historyid', $history_id);
+							
+							$this -> Latestpostssubscription() -> save_field('history_id', $history_id, array('id' => $latestpostssubscription -> id));
+							
+							if (!empty($preview) && $preview == true) {							
+								$subscriber_id = $Subscriber -> admin_subscriber_id();
+								$subscriber = $Subscriber -> get($subscriber_id);
+								$subscriber -> mailinglists = $email -> mailinglists;
+								$eunique = md5($subscriber -> id . $subscriber -> mailinglist_id . $history_id . date_i18n("YmdH"));
+								$message = $this -> render_email('send', array('message' => $content, 'subject' => $subject, 'subscriber' => $subscriber, 'history_id' => $history_id, 'post_id' => $post_id, 'eunique' => $eunique), false, $this -> htmltf($subscriber -> format), true, $latestpostssubscription -> theme_id);
+								
+								$output = "";
+								ob_start();
+								echo do_shortcode(stripslashes($message));
+								$output = ob_get_clean();
+								ob_start();
+								echo $this -> process_set_variables($subscriber, $user, $output, $history_id);
+								$output = ob_get_clean();
+								
+								return $output;
+							} else {							
+								$sentmailscount = 0; //number of emails sent
+								$q_queries = array();
+								
+								if ($mailinglists = maybe_unserialize($latestpostssubscription -> lists)) {
+									$mailinglistscondition = "(";
+									$m = 1;
+									
+									foreach ($mailinglists as $mailinglist_id) {
+										$mailinglistscondition .= $wpdb -> prefix . $SubscribersList -> table . ".list_id = '" . $mailinglist_id . "'";
+										if ($m < count($mailinglists)) { $mailinglistscondition .= " OR "; }
+										$m++;	
+									}
+									
+									$query = "SELECT DISTINCT " . $wpdb -> prefix . $Subscriber -> table . ".id, "
+									. $wpdb -> prefix . $Subscriber -> table . ".email FROM " 
+									. $wpdb -> prefix . $Subscriber -> table . " LEFT JOIN "
+									. $wpdb -> prefix . $SubscribersList -> table . " ON "
+									. $wpdb -> prefix . $Subscriber -> table . ".id = " . $wpdb -> prefix . $SubscribersList -> table . ".subscriber_id WHERE "
+									. $mailinglistscondition . ") AND " . $wpdb -> prefix . $SubscribersList -> table . ".active = 'Y'";
+									
+									$subscribers = $wpdb -> get_results($query);
+									
+									if (!empty($subscribers)) {
+										foreach ($subscribers as $subscriber) {
+											$this -> remove_server_limits();
+											$subscriber -> mailinglist_id = $mailinglists[0];
+														
+											if ($this -> get_option('scheduling') == "Y") {
+												$q_queries[] = $Queue -> save($subscriber, false, $subject, $content, $attachment, $post_id, $history_id, true, $latestpostssubscription -> theme_id);
+												$sentmailscount++;
+											} else {
+												$eunique = md5($subscriber -> id . $subscriber -> mailinglist_id . $history_id . date_i18n("YmdH"));
+												$message = $this -> render_email('send', array('message' => $content, 'subject' => $subject, 'subscriber' => $subscriber, 'history_id' => $history_id, 'post_id' => $post_id, 'eunique' => $eunique), false, $this -> htmltf($subscriber -> format), true, $latestpostssubscription -> theme_id);
+												$this -> execute_mail($subscriber, false, $subject, $message, $attachment, $history_id, $eunique);
+												$sentmailscount++;
+											}
+										}
+										
+										if (!empty($q_queries)) {									
+											foreach ($q_queries as $q_query) {
+												if (!empty($q_query)) {
+													$wpdb -> query($q_query);
+												}
+											}
+										}	
+									}
+								}
+								
+								if (!empty($sentmailscount)) {															
+									if (!empty($shortcode_categories)) {									
+										foreach ($shortcode_categories as $shortcode_category) {
+											if (!empty($shortcode_category['posts'])) {
+												foreach ($shortcode_category['posts'] as $post) {
+													$Db -> model = $Latestpost -> model;
+													$Db -> save(array('post_id' => $post -> ID, 'lps_id' => $latestpostssubscription -> id), true);
+												}
+											}
+										}	
+									} else {									
+										foreach ($shortcode_posts as $post) {
+											$Db -> model = $Latestpost -> model;
+											$Db -> save(array('post_id' => $post -> ID, 'lps_id' => $latestpostssubscription -> id), true);
+										}
+									}
+								}
+							}
+						}
+					} else {
+						echo __('No posts with the specified criteria could be found. Are there new posts available to be sent?', $this -> plugin_name);
+					}
 				} else {
-					echo __('No posts with the specified criteria could be found. Are there new posts available to be sent?', $this -> plugin_name);
+					echo __('Latest posts subscription is currently paused.', $this -> plugin_name);	
 				}
 			} else {
 				echo __('No latest posts subscription was specified', $this -> plugin_name);
@@ -2051,16 +2107,19 @@ if (!class_exists('wpMail')) {
 			$Db -> model = $Mailinglist -> model;
 			$importcount = 0;
 			$importuserslists = $this -> get_option('importuserslists');
+			$importusers_updateall = $this -> get_option('importusers_updateall');
 			
-			if (!empty($importuserslists)) {			
-				$userslistquery = "SELECT GROUP_CONCAT(`user_id`) FROM `" . $wpdb -> prefix . $Subscriber -> table . "` WHERE `user_id` != '0'";
-				$userslist = $wpdb -> get_var($userslistquery);
-						
+			if (!empty($importuserslists)) {									
 				$users_arguments = array(
 					'blog_id'				=>	$GLOBALS['blog_id'],
-					'exclude'				=>	$userslist,
 					'fields'				=>	array('ID', 'user_email', 'user_login'),
 				);
+				
+				if (empty($importusers_updateall)) {
+					$userslistquery = "SELECT GROUP_CONCAT(`user_id`) FROM `" . $wpdb -> prefix . $Subscriber -> table . "` WHERE `user_id` != '0'";
+					$userslist = $wpdb -> get_var($userslistquery);
+					$users_arguments['exclude'] = $userslist;
+				}
 			
 				if ($users = get_users($users_arguments)) {					
 					$importusersrequireactivate = $this -> get_option('importusersrequireactivate');
@@ -2136,10 +2195,10 @@ if (!class_exists('wpMail')) {
 			do_action('newsletters_autoresponders_hook_start');
 			
 			/* Do the Autoresponders */
-			global $wpdb, $Db, $Queue, $Html, $History, $HistoriesAttachment, $Subscriber, $SubscribersList, $Autoresponder, $Autoresponderemail;
+			global $wpdb, $Db, $Queue, $Html, $History, $HistoriesAttachment, $Subscriber, $SubscribersList;
 			
 			$query = "SELECT ae.id, sl.list_id, sl.subscriber_id, 
-			ae.autoresponder_id FROM " . $wpdb -> prefix . $Autoresponderemail -> table . " ae LEFT JOIN 
+			ae.autoresponder_id FROM " . $wpdb -> prefix . $this -> Autoresponderemail() -> table . " ae LEFT JOIN 
 			" . $wpdb -> prefix . $SubscribersList -> table . " sl ON ae.subscriber_id = sl.subscriber_id AND ae.list_id = sl.list_id 
 			WHERE sl.active = 'Y' AND (ae.status = 'unsent' OR ae.status != 'sent') AND ae.senddate <= '" . date_i18n("Y-m-d H:i:s", time()) . "';";
 			
@@ -2153,8 +2212,8 @@ if (!class_exists('wpMail')) {
 					. $wpdb -> prefix . $History -> table . ".message, " 
 					. $wpdb -> prefix . $History -> table . ".theme_id FROM " 
 					. $wpdb -> prefix . $History -> table . " LEFT JOIN " 
-					. $wpdb -> prefix . $Autoresponder -> table . " ON " . $wpdb -> prefix . $History -> table . ".id = " . $wpdb -> prefix . $Autoresponder -> table . ".history_id WHERE " 
-					. $wpdb -> prefix . $Autoresponder -> table . ".id = '" . $ae -> autoresponder_id . "' LIMIT 1;";
+					. $wpdb -> prefix . $this -> Autoresponder() -> table . " ON " . $wpdb -> prefix . $History -> table . ".id = " . $wpdb -> prefix . $this -> Autoresponder() -> table . ".history_id WHERE " 
+					. $wpdb -> prefix . $this -> Autoresponder() -> table . ".id = '" . $ae -> autoresponder_id . "' LIMIT 1;";
 					
 					$history = $wpdb -> get_row($query);					
 					$history = stripslashes_deep($history);
@@ -2186,7 +2245,7 @@ if (!class_exists('wpMail')) {
 					$message = $this -> render_email('send', array('message' => $history -> message, 'subject' => $history -> subject, 'subscriber' => $subscriber, 'history_id' => $history -> id, 'post_id' => $history -> post_id, 'eunique' => $eunique), false, $this -> htmltf($subscriber -> format), true, $history -> theme_id);
 					
 					if ($this -> execute_mail($subscriber, false, $history -> subject, $message, $history -> attachments, $history -> id, $eunique)) {								
-						$Db -> model = $Autoresponderemail -> model;
+						$Db -> model = $this -> Autoresponderemail() -> model;
 						$Db -> save_field('status', "sent", array('id' => $ae -> id));
 						$addedtoqueue++;
 						
@@ -2219,43 +2278,38 @@ if (!class_exists('wpMail')) {
 			global $History, $wpdb, $Db, $Email, $History, $Subscriber, $SubscribersList, $Queue;		
 			do_action('newsletters_cron_fired');
 			
+			$this -> scheduling();
+			
 			// Let's do some checks before we get started. Check if queued emails exist and that the table isn't in use?
 			$checkexistsquery = "SELECT EXISTS(SELECT 1 FROM `" . $wpdb -> prefix . $Queue -> table . "` LIMIT 1)";
 			$checkexistsresult = $wpdb -> get_var($checkexistsquery);
 			
-			$checklockquery = "SHOW OPEN TABLES WHERE `Table` LIKE '" . $wpdb -> prefix . $Queue -> table . "' AND `In_use` > 0";
-			$checklockresults = $wpdb -> get_results($checklockquery);
+			/*$checklockquery = "SHOW OPEN TABLES WHERE `Table` LIKE '" . $wpdb -> prefix . $Queue -> table . "' AND `In_use` > 0";
+			$checklockresults = $wpdb -> get_results($checklockquery);*/
 			
-			if (!empty($checkexistsresult) && empty($checklockresults)) {
+			if (!empty($checkexistsresult)/* && empty($checklockresults)*/) {
 				global $queue_status;
 				$queue_status = $this -> get_option('queue_status');
 				
 				if ($transient = get_transient('newsletters_cron')) {
 					echo '<p>' . __('No emails sent out. Cron is already running, please wait a while', $this -> plugin_name) . '</p>';
 					echo '<p><a class="button" href="' . admin_url('admin.php?page=' . $this -> sections -> queue . '&newsletters_method=delete_transient&transient=newsletters_cron') . '">' . __('Reset Transient', $this -> plugin_name) . '</a></p>';
-					
-					$this -> scheduling();
 				} elseif (!empty($queue_status) && $queue_status == "pause") {
 					echo '<p>' . __('The email queue is currently paused, please unpause it to send out emails', $this -> plugin_name) . '</p>';
 					echo '<p><a class="button" href="' . admin_url('admin.php?page=' . $this -> sections -> queue) . '">' . __('Go to Queue', $this -> plugin_name) . '</a></p>';
-					
-					$this -> scheduling();
 				} else {
 					$schedulecrontype = $this -> get_option('schedulecrontype');
 					if (empty($schedulecrontype) || $schedulecrontype == "wp") {
 						$schedules = $this -> cron_schedules($schedules);
 						$interval = $this -> get_option('scheduleinterval');
-						$expiration = ($schedules[$interval]['interval']);
+						$expiration = ($schedules[$interval]['interval'] - 20);
 					} else {
-						$expiration = 150;
+						$expiration = 100;
 					}			
-					$expiration = (empty($expiration)) ? 150 : $expiration;		
+					$expiration = (empty($expiration)) ? 100 : $expiration;		
 					set_transient('newsletters_cron', true, ($expiration));
 				
 					$emailssent = 0;
-				
-					//update scheduling
-					$this -> scheduling();
 					
 					$innodbquery = "SHOW TABLE STATUS WHERE name = '" . $wpdb -> prefix . $Queue -> table . "'";
 					if ($table = $wpdb -> get_row($innodbquery)) {
@@ -2280,7 +2334,7 @@ if (!class_exists('wpMail')) {
 								$subscriber = $Subscriber -> get($subscriber_id, false);
 								$subject = stripslashes($this -> et_subject('schedule', $subscriber));
 								$fullbody = $this -> et_message('schedule', $subscriber);	
-								$message = $this -> render_email(false, array('subscriber' => $subscriber, 'mailinglist' => $mailinglist), false, $this -> htmltf($subscriber -> format), true, $this -> et_template('schedule'), false, $fullbody);
+								$message = $this -> render_email(false, array('subscriber' => $subscriber, 'mailinglist' => $mailinglist), false, $this -> htmltf($subscriber -> format), true, $this -> et_template('schedule'), false, $fullbody);								
 								$this -> execute_mail($subscriber, false, $subject, $message, false, false, false, false);
 							}
 							
@@ -2430,7 +2484,7 @@ if (!class_exists('wpMail')) {
 	    	return $schedules;
 		}
 		
-		function screen_settings($current, $screen) {					
+		function screen_settings($current, $screen) {								
 			if (!empty($_GET['page']) && $_GET['page'] == $this -> sections -> subscribers) {
 			
 				if (!empty($_POST['screenoptions'])) {
@@ -2609,7 +2663,7 @@ if (!class_exists('wpMail')) {
 										//$post_content = $post -> post_content;
 										
 										$post_content = '';
-										$post_content .= '[newsletters_post post_id="' . $post -> ID . '" showdate="Y"';
+										$post_content .= '[newsletters_sendas post_id="' . $post -> ID . '" showdate="Y"';
 										if (!empty($qtranslate_language)) $post_content .= ' language="' . $qtranslate_language . '"';
 										
 										$showdate = (!empty($newsletters_showdate)) ? "Y" : "N";
@@ -2631,7 +2685,7 @@ if (!class_exists('wpMail')) {
 										$post_content .= '<hr style="clear:both; display:block; height:1px; width:100%;" />';*/
 										
 										$post_content = '';
-										$post_content .= '[newsletters_post post_id="' . $post -> ID . '" showdate="Y"';
+										$post_content .= '[newsletters_sendas post_id="' . $post -> ID . '" showdate="Y"';
 										if (!empty($qtranslate_language)) $post_content .= ' language="' . $qtranslate_language . '"';
 										
 										$showdate = (!empty($newsletters_showdate)) ? "Y" : "N";
@@ -2671,8 +2725,6 @@ if (!class_exists('wpMail')) {
 										$subscriberemails = array();
 										
 										if (!empty($mailinglists)) {									
-											//update scheduling
-											$this -> scheduling(true);
 											$mailinglistscondition = "(";
 											$m = 1;
 											
@@ -2802,7 +2854,7 @@ if (!class_exists('wpMail')) {
 				$this -> menus['newsletters-subscribers'] = add_submenu_page($this -> sections -> welcome, __('Subscribers', $this -> plugin_name), __('Subscribers', $this -> plugin_name), 'newsletters_subscribers', $this -> sections -> subscribers, array($this, 'admin_subscribers'));
 				$this -> menus['newsletters-fields'] = add_submenu_page($this -> sections -> welcome, __('Custom Fields', $this -> plugin_name), __('Custom Fields', $this -> plugin_name), 'newsletters_fields', $this -> sections -> fields, array($this, 'admin_fields'));
 				$this -> menus['newsletters-import'] = add_submenu_page($this -> sections -> welcome, __('Import/Export Subscribers', $this -> plugin_name), __('Import/Export', $this -> plugin_name), 'newsletters_importexport', $this -> sections -> importexport, array($this, 'admin_importexport'));
-				$this -> menus['newsletters-themes'] = add_submenu_page($this -> sections -> welcome, __('Templates', $this -> plugin_name), __('Templates', $this -> plugin_name), 'newsletters_themes', $this -> sections -> themes, array($this, 'admin_themes')); 
+				$this -> menus['newsletters-themes'] = add_submenu_page($this -> sections -> welcome, __('Themes/Templates', $this -> plugin_name), __('Themes/Templates', $this -> plugin_name), 'newsletters_themes', $this -> sections -> themes, array($this, 'admin_themes')); 
 				$this -> menus['newsletters-templates'] = add_submenu_page($this -> sections -> welcome, __('Email Snippets', $this -> plugin_name), __('Email Snippets', $this -> plugin_name), 'newsletters_templates', $this -> sections -> templates, array($this, 'admin_templates'));
 				$this -> menus['newsletters-templates-save'] = add_submenu_page($this -> menus['newsletters-templates'], __('Save an Email Snippet', $this -> plugin_name), __('Save an Email Snippet', $this -> plugin_name), 'newsletters_templates_save', $this -> sections -> templates_save, array($this, 'admin_templates'));
 				$this -> menus['newsletters-queue'] = add_submenu_page($this -> sections -> welcome, __('Email Queue', $this -> plugin_name), __('Email Queue', $this -> plugin_name) . ((!empty($queue_count)) ? $queue_count_icon : ''), 'newsletters_queue', $this -> sections -> queue, array($this, 'admin_mailqueue'));
@@ -2824,6 +2876,7 @@ if (!class_exists('wpMail')) {
 			
 			add_action('admin_head-' . $this -> menus['newsletters'], array($this, 'admin_head_welcome'));
 			add_action('admin_head-' . $this -> menus['newsletters-send'], array($this, 'admin_head_send'));
+			add_action('admin_head-' . $this -> menus['newsletters-forms'], array($this, 'admin_head_forms'));
 			add_action('admin_head-' . $this -> menus['newsletters-templates-save'], array($this, 'admin_head_templates_save'));
 			add_action('admin_head-' . $this -> menus['newsletters-settings'], array($this, 'admin_head_settings'));
 			add_action('admin_head-' . $this -> menus['newsletters-settings-system'], array($this, 'admin_head_settings_system'));
@@ -2920,6 +2973,19 @@ if (!class_exists('wpMail')) {
 			do_action('do_meta_boxes', "newsletters_page" . $this -> sections -> welcome, 'advanced');
 		}
 		
+		function admin_head_forms() {
+			global $Metabox;
+			
+			add_meta_box('fieldsdiv', __('Available Fields', $this -> plugin_name), array($Metabox, 'forms_fields'), "newsletters_page_" . $this -> sections -> forms, 'side', 'core');
+			add_meta_box('submitdiv', __('Save Form', $this -> plugin_name), array($Metabox, 'forms_submit'), "newsletters_page_" . $this -> sections -> forms, 'side', 'core');
+			
+			//add_meta_box('formdiv', __('Form Build', $this -> plugin_name), array($Metabox, 'forms_form'), "newsletters_page_" . $this -> sections -> forms, 'normal', 'core');
+			
+			do_action('do_meta_boxes', "newsletters_page" . $this -> sections -> forms, 'side');
+			do_action('do_meta_boxes', "newsletters_page" . $this -> sections -> forms, 'normal');
+			do_action('do_meta_boxes', "newsletters_page" . $this -> sections -> forms, 'advanced');
+		}
+		
 		function admin_head_send() {
 			global $Metabox, $Html;
 		
@@ -2931,11 +2997,12 @@ if (!class_exists('wpMail')) {
 			add_meta_box('mailinglistsdiv', __('Subscribers', $this -> plugin_name) . $Html ->  help(__('Tick/check the group(s) or list(s) that you want to send/queue this newsletter to. The newsletter will only be sent to active subscriptions in the chosen list(s).', $this -> plugin_name)), array($Metabox, 'send_mailinglists'), "newsletters_page_" . $this -> sections -> send, 'side', 'core');
 			add_meta_box('insertdiv', __('Insert into Newsletter', $this -> plugin_name) . $Html -> help(__('Use this box to insert various things into your newsletter such as posts, snippets, custom fields and post thumbnails.', $this -> plugin_name)), array($Metabox, 'send_insert'), "newsletters_page_" . $this -> sections -> send, 'side', 'core');
 			add_meta_box('themesdiv', __('Template', $this -> plugin_name) . $Html -> help(__('Choose the template that you want to use for this newsletter. The content filled into the TinyMCE editor to the left will be inserted into the template where it has the [wpmlcontent] tag inside it.', $this -> plugin_name)), array($Metabox, 'send_theme'), "newsletters_page_" . $this -> sections -> send, 'side', 'core');
+			add_meta_box('authordiv', __('Author/User', $this -> plugin_name), array($Metabox, 'send_author'), "newsletters_page_" . $this -> sections -> send, 'side', 'core');
 			add_meta_box('submitdiv', __('Send Newsletter', $this -> plugin_name), array($Metabox, 'send_submit'), "newsletters_page_" . $this -> sections -> send, 'side', 'core');
 			
 			if (!empty($_GET['method']) && $_GET['method'] == "history" && !empty($_GET['id'])) {
 				$history_id = $_GET['id'];
-				if ($contentareas = $this -> Content -> find_all(array('history_id' => $history_id), false, array('number', "ASC"))) {
+				if ($contentareas = $this -> Content() -> find_all(array('history_id' => $history_id), false, array('number', "ASC"))) {
 					foreach ($contentareas as $contentarea) {					
 						add_meta_box('contentareabox' . $contentarea -> number, sprintf(__('Content Area %s', $this -> plugin_name), $contentarea -> number), array($Metabox, 'send_contentarea'), "newsletters_page_" . $this -> sections -> send, 'normal', 'high', array('contentarea' => $contentarea));
 					}	
@@ -3000,6 +3067,7 @@ if (!class_exists('wpMail')) {
 			$page = "newsletters_page_" . $this -> sections -> settings_templates;
 		
 			add_meta_box('submitdiv', __('Configuration Settings', $this -> plugin_name), array($Metabox, 'settings_submit'), "newsletters_page_" . $this -> sections -> settings_templates, 'side', 'core');
+			add_meta_box('sendasdiv', __('Send as Newsletter', $this -> plugin_name) . $Html -> help(__('The posts template used when sending a post/page as a newsletter.', $this -> plugin_name)), array($Metabox, 'settings_templates_sendas'), "newsletters_page_" . $this -> sections -> settings_templates, 'normal', 'core');
 			add_meta_box('postsdiv', __('Posts', $this -> plugin_name) . $Html -> help(__('The posts template used when using the [wpmlpost...] or [wpmlposts...] shorcodes in your newsletters.', $this -> plugin_name)), array($Metabox, 'settings_templates_posts'), "newsletters_page_" . $this -> sections -> settings_templates, 'normal', 'core');
 			add_meta_box('latestpostsdiv', __('Latest Posts', $this -> plugin_name) . $Html -> help(__('The posts template used for the "Latest Posts Subscriptions" feature which automatically sends out new posts.', $this -> plugin_name)), array($Metabox, 'settings_templates_latestposts'), "newsletters_page_" . $this -> sections -> settings_templates, 'normal', 'core');
 			add_meta_box('confirmdiv', __('Confirmation Email', $this -> plugin_name) . $Html -> help(__('Email message sent to new subscribers to confirm their subscription.', $this -> plugin_name)), array($Metabox, 'settings_templates_confirm'), "newsletters_page_" . $this -> sections -> settings_templates, 'normal', 'core');
@@ -3010,6 +3078,7 @@ if (!class_exists('wpMail')) {
 			add_meta_box('orderdiv', __('Paid Subscription Email', $this -> plugin_name) . $Html -> help(__('Email message sent to the administrator for a new paid subscription order payment.', $this -> plugin_name)), array($Metabox, 'settings_templates_order'), "newsletters_page_" . $this -> sections -> settings_templates, 'normal', 'core');
 			add_meta_box('schedulediv', __('Cron Schedule Email', $this -> plugin_name) . $Html -> help(__('Email message sent to the administrator when the email cron fires.', $this -> plugin_name)), array($Metabox, 'settings_templates_schedule'), "newsletters_page_" . $this -> sections -> settings_templates, 'normal', 'core');
 			add_meta_box('subscribediv', __('New Subscription Email', $this -> plugin_name) . $Html -> help(__('Email message sent to the administrator when a new user subscribes.', $this -> plugin_name)), array($Metabox, 'settings_templates_subscribe'), "newsletters_page_" . $this -> sections -> settings_templates, 'normal', 'core');
+			add_meta_box('authenticatediv', __('Authentication Email', $this -> plugin_name), array($Metabox, 'settings_templates_authenticate'), "newsletters_page_" . $this -> sections -> settings_templates, 'normal', 'core');
 			
 			do_action('newsletters_admin_settingstemplates_metaboxes', $page);
 			
@@ -3134,14 +3203,88 @@ if (!class_exists('wpMail')) {
 		function admin_forms() {
 			
 			switch ($_GET['method']) {
+				case 'save'								:
+					if (!empty($_POST)) {				
+						if ($this -> Subscribeform() -> save($_POST)) {
+							$message = __('Form has been saved', $this -> plugin_name);
+							
+							if (!empty($_POST['continueediting'])) {
+								$this -> redirect(admin_url('admin.php?page=' . $this -> sections -> forms . '&method=save&id=' . $this -> Subscribeform() -> insertid . '&continueediting=1'), 'message', $message);
+							} else {
+								$this -> redirect($this -> url, 'message', $message);
+							}
+						} else {
+							$errors = $this -> Subscribeform() -> errors;
+							$form = $this -> init_class($this -> Subscribeform() -> model, $_POST);
+							$this -> render_error(__('Form could not be saved', $this -> plugin_name));
+						}
+					} else {
+						if (!empty($_GET['id'])) {
+							$form = $this -> Subscribeform() -> find(array('id' => $_GET['id']));
+						}
+					}
+				
+					$this -> render('forms' . DS . 'save', array('form' => $form, 'errors' => $errors), true, 'admin');
+					break;
+				case 'delete'							:
+					if (!empty($_GET['id'])) {
+						if ($this -> Subscribeform() -> delete($_GET['id'])) {
+							$msg_type = 'message';
+							$message = __('Form was deleted', $this -> plugin_name);
+						} else {
+							$msg_type = 'error';
+							$message = __('Form could not be deleted', $this -> plugin_name);
+						}
+					} else {
+						$msg_type = 'error';
+						$message = __('No form was specified');
+					}
+					
+					$this -> redirect($this -> referer, $msg_type, $message);
+					break;
+				case 'settings'							:
+				
+					if (!empty($_POST)) {
+						
+					} else {
+						if (!empty($_GET['id'])) {
+							$form = $this -> Subscribeform() -> find(array('id' => $_GET['id']));
+						}
+					}
+				
+					$this -> render('forms' . DS . 'settings', array('form' => $form), true, 'admin');
+				
+					break;
 				default 								:
-					$this -> render('forms' . DS . 'index', false, true, 'admin');
+					$perpage = (isset($_COOKIE[$this -> pre . 'formsperpage'])) ? $_COOKIE[$this -> pre . 'formsperpage'] : 15;
+					$searchterm = (!empty($_GET[$this -> pre . 'searchterm'])) ? $_GET[$this -> pre . 'searchterm'] : false;
+					$searchterm = (!empty($_POST['searchterm'])) ? $_POST['searchterm'] : $searchterm;
+					
+					if (!empty($_POST['searchterm'])) {
+						$this -> redirect($this -> url . '&' . $this -> pre . 'searchterm=' . urlencode($searchterm));
+					}
+					
+					$conditions = (!empty($searchterm)) ? array('title' => "LIKE '%" . $searchterm . "%'") : false;
+					
+					$orderfield = (empty($_GET['orderby'])) ? 'modified' : $_GET['orderby'];
+					$orderdirection = (empty($_GET['order'])) ? 'DESC' : strtoupper($_GET['order']);
+					$order = array($orderfield, $orderdirection);
+					
+					if (!empty($_GET['showall'])) {
+						$forms = $this -> Subscribeform() -> find_all($conditions, "*", $order, false, true);
+						$data[$this -> Subscribeform() -> model] = $autoresponderemails;
+						$data['Paginate'] = false;	
+					} else {
+						$data = $this -> paginate($this -> Subscribeform() -> model, false, $this -> sections -> forms, $conditions, $searchterm, $perpage, $order);
+					}
+				
+					$this -> render('forms' . DS . 'index', array('forms' => $data[$this -> Subscribeform() -> model], 'paginate' => $data['Paginate']), true, 'admin');
 					break;
 			}
 		}
 		
 		function admin_send() {
-			global $wpdb, $Unsubscribe, $Db, $Template, $Html, $History, $HistoriesAttachment, $Mailinglist, $Queue, $Subscriber, $Field, $SubscribersList;
+			global $wpdb, $Unsubscribe, $Db, $Html, $History, $HistoriesAttachment, $Mailinglist, $Queue, $Subscriber, $Field, $SubscribersList;
 			$user_id = get_current_user_id();
 			$post_id = false;
 			$this -> remove_server_limits();
@@ -3186,14 +3329,15 @@ if (!class_exists('wpMail')) {
 				$this -> update_option('sendonpublish', $currstatus);
 			}
 			
-			switch ($_GET['method']) {			
+			switch ($_GET['method']) {	
+				case 'snippet'		:		
 				case 'template'		:
 					$mailinglists = $Mailinglist -> get_all('*', true);
-					$templates = $Template -> get_all();
+					$templates = $this -> Template() -> get_all();
 				
-					if ($template = $Template -> get($_GET['id'])) {
+					if ($template = $this -> Template() -> get($_GET['id'])) {						
 						$this -> render_message(__('Email template has been loaded into the subject field and editor below.', $this -> plugin_name));
-						$_POST = array('subject' => $template -> title, 'theme_id' => $template -> theme_id, 'inctemplate' => $template -> id, 'content' => $template -> content);
+						$_POST = array('subject' => $template -> title, 'inctemplate' => $template -> id, 'content' => $template -> content);
 						$this -> render_admin('send', array('mailinglists' => $mailinglists, 'themes' => $themes, 'templates' => $templates));
 					} else {
 						$message = __('Email template could not be loaded, please try again.', $this -> plugin_name);
@@ -3202,12 +3346,13 @@ if (!class_exists('wpMail')) {
 					break;				
 				case 'history'		:
 					$mailinglists = $Mailinglist -> get_all('*', true);
-					$templates = $Template -> get_all();
+					$templates = $this -> Template() -> get_all();
 				
 					if ($history = $History -> get($_GET['id'])) {														
 						$_POST = array(
 							'ishistory'			=>	$history -> id,
 							'p_id'				=>	$history -> p_id,
+							'user_id'			=>	$history -> user_id,
 							'from'				=>	$history -> from,
 							'fromname'			=>	$history -> fromname,
 							'subject'			=>	$history -> subject,
@@ -3262,7 +3407,7 @@ if (!class_exists('wpMail')) {
 				default				:								
 					if (!empty($_POST)) {
 						if (!empty($_POST['groups'])) {
-							global $Db, $wpmlGroup, $Mailinglist;
+							global $Db, $Mailinglist;
 							
 							foreach ($_POST['groups'] as $group_id) {
 								$Db -> model = $Mailinglist -> model;
@@ -3322,7 +3467,7 @@ if (!class_exists('wpMail')) {
 							}
 						}
 						
-						$_POST['attachments'] = $newattachments;						
+						$_POST['attachments'] = apply_filters('newsletters_send_attachments', $newattachments);
 						$_POST['subject'] = stripslashes($_POST['subject']);
 						$_POST['content'] = stripslashes($_POST['content']);
 						
@@ -3360,6 +3505,7 @@ if (!class_exists('wpMail')) {
 											'groups'			=>	serialize($_POST['groups']),
 											'roles'				=>	serialize($_POST['roles']),
 											'post_id'			=>	$post_id,
+											'user_id'			=>	$_POST['user_id'],
 											'newattachments'	=>	$newattachments,
 											'senddate'			=>	$_POST['senddate'],
 											'scheduled'			=>	$_POST['scheduled'],
@@ -3387,7 +3533,7 @@ if (!class_exists('wpMail')) {
 										if (!empty($_POST['ishistory'])) {										
 											$history_data['id'] = $_POST['ishistory'];
 											
-											$Db -> model = 'History';
+											$Db -> model = $History -> model;
 											if ($history_curr = $Db -> find(array('id' => $history_data['id']))) {
 												$history_data['sent'] = ($history_curr -> sent + 1);
 											} else {
@@ -3407,7 +3553,7 @@ if (!class_exists('wpMail')) {
 													'content'			=>	$content,
 												);
 											
-												$this -> Content -> save($content_data, true);
+												$this -> Content() -> save($content_data, true);
 											}
 										}
 									
@@ -3420,7 +3566,6 @@ if (!class_exists('wpMail')) {
 											$subscriberemails = array();
 											
 											if (!empty($_POST['mailinglists']) || !empty($_POST['roles'])) {
-												//$this -> scheduling(true);
 												$mailinglistscondition = false;
 												if (!empty($_POST['mailinglists'])) {
 													$mailinglistscondition = "(";
@@ -3455,10 +3600,10 @@ if (!class_exists('wpMail')) {
 																				$condition = $_POST['condquery'][$field_slug];
 																				switch ($condition) {
 																					case 'contains'				:
-																						$fieldsquery .= " wp_wpmlsubscribers.id IN (SELECT subscriber_id FROM " . $wpdb -> prefix . $this -> SubscribersOption -> table . " WHERE `field_id` = '" . $customfield -> id . "' AND `option_id` = '" . $option_value . "')";
+																						$fieldsquery .= " wp_wpmlsubscribers.id IN (SELECT subscriber_id FROM " . $wpdb -> prefix . $this -> SubscribersOption() -> table . " WHERE `field_id` = '" . $customfield -> id . "' AND `option_id` = '" . $option_value . "')";
 																						break;
 																					case 'equals'				:
-																						$fieldsquery .= " wp_wpmlsubscribers.id IN (SELECT subscriber_id FROM " . $wpdb -> prefix . $this -> SubscribersOption -> table . " WHERE `field_id` = '" . $customfield -> id . "' AND `option_id` = '" . $option_value . "')";
+																						$fieldsquery .= " wp_wpmlsubscribers.id IN (SELECT subscriber_id FROM " . $wpdb -> prefix . $this -> SubscribersOption() -> table . " WHERE `field_id` = '" . $customfield -> id . "' AND `option_id` = '" . $option_value . "')";
 																						break;
 																				}
 																				
@@ -3699,7 +3844,7 @@ if (!class_exists('wpMail')) {
 										}
 										
 										if (!empty($_POST['inctemplate'])) {
-											$Template -> inc_sent($_POST['inctemplate']);
+											$this -> Template() -> inc_sent($_POST['inctemplate']);
 										}
 									}
 								}
@@ -3720,6 +3865,7 @@ if (!class_exists('wpMail')) {
 									'daterangefrom'		=>	$_POST['daterangefrom'],
 									'daterangeto'		=>	$_POST['daterangeto'],
 									'post_id'			=>	$post_id,
+									'user_id'			=>	$_POST['user_id'],
 									'mailinglists'		=>	serialize($_POST['mailinglists']),
 									'groups'			=>	serialize($_POST['groups']),
 									'roles'				=>	maybe_serialize($_POST['roles']),
@@ -3766,7 +3912,7 @@ if (!class_exists('wpMail')) {
 												'content'			=>	$content,
 											);
 										
-											$this -> Content -> save($content_data, true);
+											$this -> Content() -> save($content_data, true);
 										}
 									}
 																
@@ -3794,6 +3940,7 @@ if (!class_exists('wpMail')) {
 									'groups'			=>	serialize($_POST['groups']),
 									'roles'				=>	serialize($_POST['roles']),
 									'post_id'			=>	$post_id,
+									'user_id'			=>	$_POST['user_id'],
 									'newattachments'	=>	$newattachments,
 									'recurring'			=>	"N",
 									'senddate'			=>	$_POST['senddate'],
@@ -3837,7 +3984,7 @@ if (!class_exists('wpMail')) {
 											'content'			=>	$content,
 										);
 									
-										$this -> Content -> save($content_data, true);
+										$this -> Content() -> save($content_data, true);
 									}
 								}
 								
@@ -3878,6 +4025,7 @@ if (!class_exists('wpMail')) {
 								$newpost = wp_parse_args(array(
 									'ishistory'			=>	$history -> id,
 									'p_id'				=>	$history -> p_id,
+									'user_id'			=>	$history -> user_id,
 									'from'				=>	$history -> from,
 									'fromname'			=>	$history -> fromname,
 									'subject'			=>	$history -> subject,
@@ -3917,7 +4065,7 @@ if (!class_exists('wpMail')) {
 					
 					if (empty($dontrendersend) || $dontrendersend == false) {
 						$mailinglists = $Mailinglist -> get_all('*', true);
-						$templates = $Template -> get_all();
+						$templates = $this -> Template() -> get_all();
 					
 						$this -> render('send', array('mailinglists' => $mailinglists, 'themes' => $themes, 'templates' => $templates, 'errors' => $errors), true, 'admin');
 					}
@@ -3926,8 +4074,8 @@ if (!class_exists('wpMail')) {
 		}
 		
 		function admin_autoresponders() {
-			global $wpdb, $Db, $Autoresponder, $AutorespondersList, $Autoresponderemail;
-			$Db -> model = $Autoresponder -> model;
+			global $wpdb, $Db, $AutorespondersList;
+			$Db -> model = $this -> Autoresponder() -> model;
 			
 			switch ($_GET['method']) {
 				case 'save'					:
@@ -3936,17 +4084,17 @@ if (!class_exists('wpMail')) {
 							$message = __('Autoresponder has been saved.', $this -> plugin_name);
 							
 							if (!empty($_POST['continueediting'])) {
-								$this -> redirect(admin_url('admin.php?page=' . $this -> sections -> autoresponders . '&method=save&id=' . $Autoresponder -> insertid . '&continueediting=1'), 'message', $message);
+								$this -> redirect(admin_url('admin.php?page=' . $this -> sections -> autoresponders . '&method=save&id=' . $this -> Autoresponder() -> insertid . '&continueediting=1'), 'message', $message);
 							} else {
 								$this -> redirect("?page=" . $this -> sections -> autoresponders, 'message', $message);
 							}
-						} else {
+						} else {							
 							$this -> render_error(__('Autoresponder could not be saved, please try again.', $this -> plugin_name));	
 							$this -> render('autoresponders' . DS . 'save', false, true, 'admin');
 						}
 					} else {
 						if (!empty($_GET['id'])) {
-							$Db -> model = $Autoresponder -> model;
+							$Db -> model = $this -> Autoresponder() -> model;
 							$autoresponder = $Db -> find(array('id' => $_GET['id']));	
 						}
 						
@@ -3978,7 +4126,7 @@ if (!class_exists('wpMail')) {
 								case 'delete'				:
 									foreach ($autoresponders as $autoresponder_id) {
 										//remove the autoresponder
-										$Db -> model = $Autoresponder -> model;
+										$Db -> model = $this -> Autoresponder() -> model;
 										$Db -> delete($autoresponder_id);
 									}
 									
@@ -3987,7 +4135,7 @@ if (!class_exists('wpMail')) {
 									break;
 								case 'activate'				:
 									foreach ($autoresponders as $autoresponder_id) {
-										$Db -> model = $Autoresponder -> model;
+										$Db -> model = $this -> Autoresponder() -> model;
 										$Db -> save_field('status', "active", array('id' => $autoresponder_id));
 									}
 									
@@ -3996,7 +4144,7 @@ if (!class_exists('wpMail')) {
 									break;
 								case 'deactivate'			:
 									foreach ($autoresponders as $autoresponder_id) {
-										$Db -> model = $Autoresponder -> model;
+										$Db -> model = $this -> Autoresponder() -> model;
 										$Db -> save_field('status', "inactive", array('id' => $autoresponder_id));
 									}
 									
@@ -4034,7 +4182,7 @@ if (!class_exists('wpMail')) {
 				
 					$dojoin = false;
 					$conditions_and = array();
-					$autoresponders_table = $wpdb -> prefix . $Autoresponder -> table;
+					$autoresponders_table = $wpdb -> prefix . $this -> Autoresponder() -> table;
 					$autoresponderslist_table = $wpdb -> prefix . $AutorespondersList -> table;
 				
 					$perpage = (isset($_COOKIE[$this -> pre . 'autorespondersperpage'])) ? $_COOKIE[$this -> pre . 'autorespondersperpage'] : 15;
@@ -4088,17 +4236,17 @@ if (!class_exists('wpMail')) {
 					
 					$data = array();
 					if (!empty($_GET['showall'])) {
-						$Db -> model = $Autoresponder -> model;
+						$Db -> model = $this -> Autoresponder() -> model;
 						$autoresponders = $Db -> find_all(false, "*", $order);
-						$data[$Autoresponder -> model] = $autoresponders;
+						$data[$this -> Autoresponder() -> model] = $autoresponders;
 						$data['Paginate'] = false;
 					} else {
 						if ($dojoin) {
 							$data = $this -> paginate($AutorespondersList -> model, false, $sections, $conditions, $searchterm, $perpage, $order, $conditions_and);
 							$autoresponders = $data[$AutorespondersList -> model];
 						} else {
-							$data = $this -> paginate($Autoresponder -> model, false, $sections, $conditions, $searchterm, $perpage, $order, $conditions_and);
-							$autoresponders = $data[$Autoresponder -> model];	
+							$data = $this -> paginate($this -> Autoresponder() -> model, false, $sections, $conditions, $searchterm, $perpage, $order, $conditions_and);
+							$autoresponders = $data[$this -> Autoresponder() -> model];	
 						}
 					}
 					
@@ -4109,19 +4257,19 @@ if (!class_exists('wpMail')) {
 		}
 		
 		function admin_autoresponderemails() {
-			global $wpdb, $Db, $Autoresponder, $Autoresponderemail,
+			global $wpdb, $Db,
 			$History, $Subscriber, $Queue, $SubscribersList, $Html, 
 			$HistoriesAttachment;
 			
 			switch ($_GET['method']) {
 				case 'send'					:
 					if (!empty($_GET['id'])) {
-						$query = "SELECT " . $wpdb -> prefix . $Autoresponderemail -> table . ".id, " 
+						$query = "SELECT " . $wpdb -> prefix . $this -> Autoresponderemail() -> table . ".id, " 
 						. $wpdb -> prefix . $SubscribersList -> table . ".list_id, "
-						. $wpdb -> prefix . $Autoresponderemail -> table . ".subscriber_id, "
-						. $wpdb -> prefix . $Autoresponderemail -> table . ".autoresponder_id FROM " . $wpdb -> prefix . $Autoresponderemail -> table . " LEFT JOIN " 
-						. $wpdb -> prefix . $SubscribersList -> table . " ON " . $wpdb -> prefix . $Autoresponderemail -> table . ".subscriber_id = " . $wpdb -> prefix . $SubscribersList -> table . ".subscriber_id 
-						WHERE " . $wpdb -> prefix . $Autoresponderemail -> table . ".id = '" . $_GET['id'] . "' LIMIT 1";
+						. $wpdb -> prefix . $this -> Autoresponderemail() -> table . ".subscriber_id, "
+						. $wpdb -> prefix . $this -> Autoresponderemail() -> table . ".autoresponder_id FROM " . $wpdb -> prefix . $this -> Autoresponderemail() -> table . " LEFT JOIN " 
+						. $wpdb -> prefix . $SubscribersList -> table . " ON " . $wpdb -> prefix . $this -> Autoresponderemail() -> table . ".subscriber_id = " . $wpdb -> prefix . $SubscribersList -> table . ".subscriber_id 
+						WHERE " . $wpdb -> prefix . $this -> Autoresponderemail() -> table . ".id = '" . $_GET['id'] . "' LIMIT 1";
 						
 						$ae = $wpdb -> get_row($query);
 						
@@ -4131,8 +4279,8 @@ if (!class_exists('wpMail')) {
 							. $wpdb -> prefix . $History -> table . ".message, " 
 							. $wpdb -> prefix . $History -> table . ".theme_id FROM " 
 							. $wpdb -> prefix . $History -> table . " LEFT JOIN " 
-							. $wpdb -> prefix . $Autoresponder -> table . " ON " . $wpdb -> prefix . $History -> table . ".id = " . $wpdb -> prefix . $Autoresponder -> table . ".history_id WHERE " 
-							. $wpdb -> prefix . $Autoresponder -> table . ".id = '" . $ae -> autoresponder_id . "' LIMIT 1;";
+							. $wpdb -> prefix . $this -> Autoresponder() -> table . " ON " . $wpdb -> prefix . $History -> table . ".id = " . $wpdb -> prefix . $this -> Autoresponder() -> table . ".history_id WHERE " 
+							. $wpdb -> prefix . $this -> Autoresponder() -> table . ".id = '" . $ae -> autoresponder_id . "' LIMIT 1;";
 							
 							$history = $wpdb -> get_row($query);
 						
@@ -4163,7 +4311,7 @@ if (!class_exists('wpMail')) {
 							$message = $this -> render_email('send', array('message' => $history -> message, 'subject' => $history -> subject, 'subscriber' => $subscriber, 'history_id' => $history -> id, 'post_id' => $history -> post_id, 'eunique' => $eunique), false, $this -> htmltf($subscriber -> format), true, $history -> theme_id);
 							
 							if ($this -> execute_mail($subscriber, false, $history -> subject, $message, $history -> attachments, $history -> id, $eunique)) {								
-								$Db -> model = $Autoresponderemail -> model;
+								$Db -> model = $this -> Autoresponderemail() -> model;
 								$Db -> save_field('status', "sent", array('id' => $ae -> id));
 								$addedtoqueue++;
 								$msg_type = 'message';
@@ -4185,7 +4333,7 @@ if (!class_exists('wpMail')) {
 					break;
 				case 'delete'				:
 					if (!empty($_GET['id'])) {
-						$Db -> model = $Autoresponderemail -> model;
+						$Db -> model = $this -> Autoresponderemail() -> model;
 						
 						if ($Db -> delete($_GET['id'])) {
 							$msg_type = 'message';
@@ -4210,7 +4358,7 @@ if (!class_exists('wpMail')) {
 								case 'delete'				:
 									foreach ($autoresponderemails as $ae_id) {
 										//remove the autoresponder
-										$Db -> model = $Autoresponderemail -> model;
+										$Db -> model = $this -> Autoresponderemail() -> model;
 										$Db -> delete($ae_id);
 									}
 									
@@ -4219,12 +4367,12 @@ if (!class_exists('wpMail')) {
 									break;
 								case 'send'				:
 									foreach ($autoresponderemails as $ae_id) {
-										$query = "SELECT " . $wpdb -> prefix . $Autoresponderemail -> table . ".id, " 
+										$query = "SELECT " . $wpdb -> prefix . $this -> Autoresponderemail() -> table . ".id, " 
 										. $wpdb -> prefix . $SubscribersList -> table . ".list_id, "
-										. $wpdb -> prefix . $Autoresponderemail -> table . ".subscriber_id, "
-										. $wpdb -> prefix . $Autoresponderemail -> table . ".autoresponder_id FROM " . $wpdb -> prefix . $Autoresponderemail -> table . " LEFT JOIN " 
-										. $wpdb -> prefix . $SubscribersList -> table . " ON " . $wpdb -> prefix . $Autoresponderemail -> table . ".subscriber_id = " . $wpdb -> prefix . $SubscribersList -> table . ".subscriber_id 
-										WHERE " . $wpdb -> prefix . $Autoresponderemail -> table . ".id = '" . $ae_id . "' LIMIT 1";
+										. $wpdb -> prefix . $this -> Autoresponderemail() -> table . ".subscriber_id, "
+										. $wpdb -> prefix . $this -> Autoresponderemail() -> table . ".autoresponder_id FROM " . $wpdb -> prefix . $this -> Autoresponderemail() -> table . " LEFT JOIN " 
+										. $wpdb -> prefix . $SubscribersList -> table . " ON " . $wpdb -> prefix . $this -> Autoresponderemail() -> table . ".subscriber_id = " . $wpdb -> prefix . $SubscribersList -> table . ".subscriber_id 
+										WHERE " . $wpdb -> prefix . $this -> Autoresponderemail() -> table . ".id = '" . $ae_id . "' LIMIT 1";
 										
 										if ($ae = $wpdb -> get_row($query)) {						
 											$query = "SELECT " . $wpdb -> prefix . $History -> table . ".id, " 
@@ -4232,8 +4380,8 @@ if (!class_exists('wpMail')) {
 											. $wpdb -> prefix . $History -> table . ".message, " 
 											. $wpdb -> prefix . $History -> table . ".theme_id FROM " 
 											. $wpdb -> prefix . $History -> table . " LEFT JOIN " 
-											. $wpdb -> prefix . $Autoresponder -> table . " ON " . $wpdb -> prefix . $History -> table . ".id = " . $wpdb -> prefix . $Autoresponder -> table . ".history_id WHERE " 
-											. $wpdb -> prefix . $Autoresponder -> table . ".id = '" . $ae -> autoresponder_id . "' LIMIT 1;";
+											. $wpdb -> prefix . $this -> Autoresponder() -> table . " ON " . $wpdb -> prefix . $History -> table . ".id = " . $wpdb -> prefix . $this -> Autoresponder() -> table . ".history_id WHERE " 
+											. $wpdb -> prefix . $this -> Autoresponder() -> table . ".id = '" . $ae -> autoresponder_id . "' LIMIT 1;";
 											
 											$history = $wpdb -> get_row($query);
 									
@@ -4250,7 +4398,7 @@ if (!class_exists('wpMail')) {
 											$message = $this -> render_email('send', array('message' => $history -> message, 'subject' => $history -> subject, 'subscriber' => $subscriber, 'history_id' => $history -> id, 'post_id' => $history -> post_id, 'eunique' => $eunique), false, $this -> htmltf($subscriber -> format), true, $history -> theme_id);
 											
 											if ($this -> execute_mail($subscriber, false, $history -> subject, $message, $history -> attachments, $history -> id, $eunique)) {								
-												$Db -> model = $Autoresponderemail -> model;
+												$Db -> model = $this -> Autoresponderemail() -> model;
 												$Db -> save_field('status', "sent", array('id' => $ae -> id));
 												$addedtoqueue++;
 											}
@@ -4319,16 +4467,16 @@ if (!class_exists('wpMail')) {
 					$order = array($orderfield, $orderdirection);
 					
 					if (!empty($_GET['showall'])) {
-						$Db -> model = $Autoresponderemail -> model;
+						$Db -> model = $this -> Autoresponderemail() -> model;
 						$autoresponderemails = $Db -> find_all($conditions, "*", $order, false, true);
-						$data[$Autoresponderemail -> model] = $autoresponderemails;
+						$data[$this -> Autoresponderemail() -> model] = $autoresponderemails;
 						$data['Paginate'] = false;	
 					} else {
-						$data = $this -> paginate($Autoresponderemail -> model, false, $this -> sections -> autoresponderemails, $conditions, $searchterm, $perpage, $order);
+						$data = $this -> paginate($this -> Autoresponderemail() -> model, false, $this -> sections -> autoresponderemails, $conditions, $searchterm, $perpage, $order);
 					}
 					
 					$this -> render_message(__('Please note that autoresponder emails are only sent to Active subscriptions. Once a subscription is Active, the autoresponder email will queue.', $this -> plugin_name));
-					$this -> render('autoresponderemails' . DS . 'index', array('autoresponderemails' => $data[$Autoresponderemail -> model], 'paginate' => $data['Paginate']), true, 'admin');
+					$this -> render('autoresponderemails' . DS . 'index', array('autoresponderemails' => $data[$this -> Autoresponderemail() -> model], 'paginate' => $data['Paginate']), true, 'admin');
 					break;	
 			}
 		}
@@ -4619,30 +4767,30 @@ if (!class_exists('wpMail')) {
 		}
 		
 		function admin_groups() {
-			global $wpdb, $Db, $wpmlGroup, $Mailinglist;
-			$Db -> model = $wpmlGroup -> model;
+			global $wpdb, $Db, $Mailinglist;
+			$Db -> model = $this -> Group() -> model;
 			
 			switch ($_GET['method']) {
 				case 'save'						:
-					$Db -> model = $wpmlGroup -> model;
+					$Db -> model = $this -> Group() -> model;
 					
-					if (!empty($_POST)) {
-						if ($Db -> save($_POST)) {
+					if (!empty($_POST)) {						
+						if ($this -> Group() -> save($_POST)) {
 							$message = __('Group has been saved.', $this -> plugin_name);
 							
 							if (!empty($_POST['continueediting'])) {
-								$this -> redirect(admin_url('admin.php?page=' . $this -> sections -> groups . '&method=save&id=' . $wpmlGroup -> insertid . '&continueediting=1'), 'message', $message);
+								$this -> redirect(admin_url('admin.php?page=' . $this -> sections -> groups . '&method=save&id=' . $this -> Group() -> insertid . '&continueediting=1'), 'message', $message);
 							} else {
 								$this -> redirect($this -> url, 'message', $message);
 							}
 						} else {
 							$this -> render_error(__('Group could not be saved.', $this -> plugin_name));
-							$group = $this -> init_class($wpmlGroup -> model, $_POST);
-							$this -> render_admin('groups' . DS . 'save', array('group' => $group, 'errors' => $wpmlGroup -> errors));
+							$group = $this -> init_class($this -> Group() -> model, $_POST);
+							$this -> render_admin('groups' . DS . 'save', array('group' => $group, 'errors' => $this -> Group() -> errors));
 						}
 					} else {
 						if (!empty($_GET['id'])) {
-							$group = $Db -> find(array('id' => $_GET['id']));
+							$group = $this -> Group() -> find(array('id' => $_GET['id']));
 						}
 						
 						$this -> render_admin('groups' . DS . 'save', array('group' => $group), true, 'admin');
@@ -4689,8 +4837,7 @@ if (!class_exists('wpMail')) {
 								case 'delete'			:
 									
 									foreach ($groups as $group_id) {
-										$Db -> model = $wpmlGroup -> model;
-										$Db -> delete($group_id);	
+										$this -> Group() -> delete($group_id);	
 									}
 									
 									$msg_type = "message";
@@ -4724,21 +4871,20 @@ if (!class_exists('wpMail')) {
 					
 					$data = array();
 					if (!empty($_GET['showall'])) {
-						$Db -> model = $wpmlGroup -> model;
-						$groups = $Db -> find_all(false, "*", $order);
-						$data[$wpmlGroup -> model] = $groups;
+						$groups = $this -> Group() -> find_all(false, "*", $order);
+						$data[$this -> Group() -> model] = $groups;
 						$data['Paginate'] = false;
 					} else {
-						$data = $this -> paginate($wpmlGroup -> model, null, $this -> sections -> groups, $conditions, $searchterm, $perpage, $order);
+						$data = $this -> paginate($this -> Group() -> model, null, $this -> sections -> groups, $conditions, $searchterm, $perpage, $order);
 					}
 					
-					$this -> render('groups' . DS . 'index', array('groups' => $data[$wpmlGroup -> model], 'paginate' => $data['Paginate']), true, 'admin');
+					$this -> render('groups' . DS . 'index', array('groups' => $data[$this -> Group() -> model], 'paginate' => $data['Paginate']), true, 'admin');
 					break;	
 			}
 		}
 		
 		function admin_subscribers() {
-			global $wpdb, $Html, $Db, $wpmlOrder, $Email, $Field, $Subscriber, $Unsubscribe, $Bounce, $SubscribersList, $Mailinglist;
+			global $wpdb, $Html, $Db, $Email, $Field, $Subscriber, $Unsubscribe, $Bounce, $SubscribersList, $Mailinglist;
 			$Db -> model = $Subscriber -> model;
 				
 			switch ($_GET['method']) {
@@ -4786,7 +4932,7 @@ if (!class_exists('wpMail')) {
 				case 'view'			:
 					if (!empty($_GET['id'])) {
 						if ($subscriber = $Subscriber -> get($_GET['id'])) {
-							$Db -> model = $wpmlOrder -> model;
+							$Db -> model = $this -> Order() -> model;
 							$orders = $Db -> find_all(array('subscriber_id' => $subscriber -> id));
 							$conditions['subscriber_id'] = $subscriber -> id;
 							$order = array($wpdb -> prefix . $Email -> table . ".modified", "DESC");
@@ -4897,6 +5043,19 @@ if (!class_exists('wpMail')) {
 									$msg_type = 'message';
 									$message = __('Mandatory status has been changed', $this -> plugin_name);
 									break;
+								case 'html'				:
+								case 'text'				:
+								
+									$format = ($_POST['action'] == "html") ? 'html' : 'text';
+									
+									foreach ($subscribers as $subscriber_id) {
+										$Db -> model = $Subscriber -> model;
+										$Db -> save_field('format', $format, array('id' => $subscriber_id));
+									}
+									
+									$msg_type = 'message';
+									$message = __('Format has been set', $this -> plugin_name);
+									break;
 								case 'active'			:
 									if (!empty($subscribers)) {
 										foreach ($subscribers as $subscriber_id) {
@@ -4962,11 +5121,13 @@ if (!class_exists('wpMail')) {
 				            		break;
 				            	case 'deletesubscribers'		:
 				            		foreach ($_POST['bounces'] as $bounce_id) {
-					            		$query = "SELECT `subscriber_id` FROM `" . $wpdb -> prefix . $Bounce -> table . "` WHERE `id` = '" . $bounce_id . "'";
-					            		
-					            		if ($subscriber_id = $wpdb -> get_var($query)) {
+					            		$query = "SELECT `email` FROM `" . $wpdb -> prefix . $Bounce -> table . "` WHERE `id` = '" . $bounce_id . "'";					            		
+					            		if ($email = $wpdb -> get_var($query)) {
 						            		$Db -> model = $Subscriber -> model;
-						            		$Db -> delete($subscriber_id);
+						            		if ($subscriber_id = $Db -> field('id', array('email' => $email))) {
+						            			$Db -> model = $Subscriber -> model;
+						            			$Db -> delete($subscriber_id);
+						            		}
 					            		}
 				            		}
 				            	
@@ -5297,6 +5458,7 @@ if (!class_exists('wpMail')) {
 		
 			if (!empty($_POST)) {
 				$this -> remove_server_limits();
+				define('NEWSLETTERS_IMPORTING', true);
 				
 				switch ($_GET['method']) {
 					case 'import'			:												
@@ -5408,7 +5570,7 @@ if (!class_exists('wpMail')) {
 											$Db -> model = $Bounce -> model;
 											if ($import_progress == true || empty($import_preventbu) || ($import_preventbu == true && !$Db -> find(array('email' => $email)))) {
 												//if (!empty($email) && $Subscriber -> email_validate($email)) {
-												if (!empty($email)) {
+												if (!empty($email) && is_email($email)) {
 													/*if ($user = $Subscriber -> get_user_by_email($email)) {
 														$registered = "Y";
 														$user_id = $user -> ID;
@@ -5484,7 +5646,13 @@ if (!class_exists('wpMail')) {
 														foreach ($_POST['fields'] as $field => $value) {
 															if (!empty($import_overwrite) || empty($datasets[$d][$field])) {
 																$datasets[$d][$field] = ($row[($_POST[$field . 'column'] - 1)]);
-																$datasets[$d][$field] = utf8_encode($datasets[$d][$field]);
+																
+																if (function_exists('mb_detect_encoding')) {
+																	$encoding = mb_detect_encoding($datasets[$d][$field]);	
+																	if ($encoding == "ISO-8859-1" && function_exists('utf8_encode')) {
+																		$datasets[$d][$field] = utf8_encode($datasets[$d][$field]);
+																	}
+																}
 																
 																switch ($field) {
 																	case 'created'					:
@@ -5958,8 +6126,8 @@ if (!class_exists('wpMail')) {
 		}
 		
 		function admin_templates() {
-			global $wpdb, $Db, $Template;
-			$Db -> model = $Template -> model;
+			global $wpdb, $Db;
+			$Db -> model = $this -> Template() -> model;
 			
 			//get the page method
 			$method = (empty($_GET['method'])) ? preg_replace("/newsletters\-templates\-/si", "", $_GET['page']) : $_GET['method'];
@@ -5969,22 +6137,29 @@ if (!class_exists('wpMail')) {
 					$this -> render_message(__('Email Snippets are meant for content only, use the Templates for newsletter layouts.', $this -> plugin_name));
 				
 					if (!empty($_POST)) {
-						if ($Template -> save($_POST)) {
+						if ($this -> Template() -> save($_POST)) {
 							$message = 10;
-							$this -> redirect('?page=' . $this -> sections -> templates, 'message', $message);
+							
+							if (!empty($_POST['continueediting'])) {
+								$this -> redirect(admin_url('admin.php?page=' . $this -> sections -> templates_save . '&continueediting=1&id=' . $this -> Template() -> insertid), 'message', $message);
+							} else {
+								$this -> redirect('?page=' . $this -> sections -> templates, 'message', $message);
+							}
 						} else {
 							$this -> render_error(__('Snippet could not be saved', $this -> plugin_name));
 							$this -> render('templates' . DS . 'save', false, true, 'admin');
 						}
 					} else {
-						$Template -> get($_GET['id']);
-						$_POST['content'] = $Template -> data[$Template -> model] -> content;
-						$this -> render_admin('templates' . DS . 'save');
+						//$this -> Template() -> get($_GET['id']);
+						$this -> Template() -> find(array('id' => $_GET['id']));
+						//$_POST['content'] = $this -> Template() -> data[$this -> Template() -> model] -> content;
+						$_POST['content'] = $this -> Template() -> data -> content;
+						$this -> render('templates' . DS . 'save', false, true, 'admin');
 					}
 					break;
 				case 'delete'					:
 					if (!empty($_GET['id'])) {
-						if ($Template -> delete($_GET['id'])) {
+						if ($this -> Template() -> delete($_GET['id'])) {
 							$message = __('Snippet has been removed', $this -> plugin_name);
 							$this -> redirect($this -> url, 'message', $message);
 						}
@@ -5995,7 +6170,7 @@ if (!class_exists('wpMail')) {
 					break;
 				case 'view'						:
 					if (!empty($_GET['id'])) {
-						if ($template = $Db -> find(array('id' => $_GET['id']))) {
+						if ($template = $this -> Template() -> find(array('id' => $_GET['id']))) {
 							$this -> render_admin('templates' . DS . 'view', array('template' => $template));
 						} else {
 							$message = __('Snippet cannot be read', $this -> plugin_name);
@@ -6009,7 +6184,7 @@ if (!class_exists('wpMail')) {
 				case 'mass'						:
 					if (!empty($_POST['action'])) {
 						if (!empty($_POST['templateslist'])) {
-							if ($Template -> delete_array($_POST['templateslist'])) {
+							if ($this -> Template() -> delete_array($_POST['templateslist'])) {
 								$msg_type = 'message';
 								$message = __('Selected snippets removed', $this -> plugin_name);
 							} else {
@@ -6047,15 +6222,14 @@ if (!class_exists('wpMail')) {
 					$order = array($orderfield, $orderdirection);
 					
 					if (!empty($_GET['showall'])) {
-						$Db -> model = $Template -> model;
-						$templates = $Db -> find_all(false, "*", $order);
-						$data[$Template -> model] = $templates;
+						$templates = $this -> Template() -> find_all(false, "*", $order);
+						$data[$this -> Template() -> model] = $templates;
 						$data['Paginate'] = false;
 					} else {
-						$data = $this -> paginate($Template -> model, null, $this -> sections -> templates, $conditions, $searchterm, $perpage, $order);
+						$data = $this -> paginate($this -> Template() -> model, null, $this -> sections -> templates, $conditions, $searchterm, $perpage, $order);
 					}
 					
-					$this -> render_admin('templates' . DS . 'index', array('templates' => $data[$Template -> model], 'paginate' => $data['Paginate']));	
+					$this -> render_admin('templates' . DS . 'index', array('templates' => $data[$this -> Template() -> model], 'paginate' => $data['Paginate']));	
 					break;
 			}
 		}
@@ -6237,7 +6411,7 @@ if (!class_exists('wpMail')) {
 			$emails_table = $wpdb -> prefix . $Email -> table;
 			$subscribers_table = $wpdb -> prefix . $Subscriber -> table;
 			$histories_table = $wpdb -> prefix . $History -> table;
-			$clicks_table = $wpdb -> prefix . $wpmlClick -> table;
+			$clicks_table = $wpdb -> prefix . $this -> Click() -> table;
 			
 			$method = (empty($_GET['method'])) ? false : $_GET['method'];
 		
@@ -6383,7 +6557,7 @@ if (!class_exists('wpMail')) {
 						$wpdb -> query($query);
 						
 						// Are there content areas that need to be copied as well?
-						if ($contents = $this -> Content -> find_all(array('history_id' => $_GET['id']))) {
+						if ($contents = $this -> Content() -> find_all(array('history_id' => $_GET['id']))) {
 							foreach ($contents as $content) {
 								$new_content = array(
 									'history_id'			=>	$nextid,
@@ -6391,8 +6565,8 @@ if (!class_exists('wpMail')) {
 									'number'				=>	$content -> number
 								);
 								
-								$this -> Content -> data -> id = false;
-								$this -> Content -> save($new_content);
+								$this -> Content() -> data -> id = false;
+								$this -> Content() -> save($new_content);
 							}
 						}
 						
@@ -6993,7 +7167,7 @@ if (!class_exists('wpMail')) {
 			switch ($_GET['method']) {
 				case 'delete'					:
 					if (!empty($_GET['id'])) {
-						if ($this -> Link -> delete($_GET['id'])) {
+						if ($this -> Link() -> delete($_GET['id'])) {
 							$msg_type = 'message';
 							$message = __('Link has been deleted', $this -> plugin_name);
 						} else {
@@ -7015,7 +7189,7 @@ if (!class_exists('wpMail')) {
 							switch ($_POST['action']) {
 								case 'delete'				:
 									foreach ($links as $link_id) {
-										$this -> Link -> delete($link_id);
+										$this -> Link() -> delete($link_id);
 									}
 									
 									$msg_type = 'message';
@@ -7023,7 +7197,7 @@ if (!class_exists('wpMail')) {
 									break;
 								case 'reset'				:
 									foreach ($links as $link_id) {
-										$this -> Click -> delete_all(array('link_id' => $link_id));
+										$this -> Click() -> delete_all(array('link_id' => $link_id));
 									}
 									
 									$msg_type = 'message';
@@ -7057,13 +7231,13 @@ if (!class_exists('wpMail')) {
 					$sub = $this -> sections -> links;
 						
 					if (!empty($_GET['showall'])) {
-						$links = $this -> Link -> find_all(false, "*", $order);
-						$data[$this -> Link -> model] = $links;
+						$links = $this -> Link() -> find_all(false, "*", $order);
+						$data[$this -> Link() -> model] = $links;
 						$data['Paginate'] = false;
 					} else {	
-						$data = $this -> paginate($this -> Link -> model, "*", $sub, $conditions, $searchterm, $perpage, $order);
+						$data = $this -> paginate($this -> Link() -> model, "*", $sub, $conditions, $searchterm, $perpage, $order);
 					}
-					$this -> render('links' . DS . 'index', array('links' => $data[$this -> Link -> model], 'paginate' => $data['Paginate']), true, 'admin');
+					$this -> render('links' . DS . 'index', array('links' => $data[$this -> Link() -> model], 'paginate' => $data['Paginate']), true, 'admin');
 					break;
 			}
 		}
@@ -7075,7 +7249,7 @@ if (!class_exists('wpMail')) {
 			switch ($_GET['method']) {
 				case 'delete'					:
 					if (!empty($_GET['id'])) {
-						if ($this -> Click -> delete($_GET['id'])) {
+						if ($this -> Click() -> delete($_GET['id'])) {
 							$msg_type = 'message';
 							$message = __('Click has been deleted', $this -> plugin_name);
 						} else {
@@ -7096,7 +7270,7 @@ if (!class_exists('wpMail')) {
 						
 						if (!empty($clicks)) {
 							foreach ($clicks as $click_id) {
-								$this -> Click -> delete($click_id);
+								$this -> Click() -> delete($click_id);
 							}
 							
 							$msg_type = 'message';
@@ -7121,7 +7295,7 @@ if (!class_exists('wpMail')) {
 						$this -> redirect($this -> url . '&' . $this -> pre . 'searchterm=' . urlencode($searchterm));
 					}
 					
-					$conditions = (!empty($searchterm)) ? array($wpdb -> prefix . $this -> Link -> table . '.link' => "LIKE '%" . $searchterm . "%'") : false;					
+					$conditions = (!empty($searchterm)) ? array($wpdb -> prefix . $this -> Link() -> table . '.link' => "LIKE '%" . $searchterm . "%'") : false;					
 					$orderfield = (empty($_GET['orderby'])) ? 'modified' : $_GET['orderby'];
 					$orderdirection = (empty($_GET['order'])) ? 'DESC' : strtoupper($_GET['order']);
 					$order = array($orderfield, $orderdirection);
@@ -7142,12 +7316,12 @@ if (!class_exists('wpMail')) {
 					}
 					
 					if (!empty($_GET['showall'])) {
-						$clicks = $this -> Click -> find_all(false, "*", $order);
-						$data[$this -> Click -> model] = $clicks;
+						$clicks = $this -> Click() -> find_all(false, "*", $order);
+						$data[$this -> Click() -> model] = $clicks;
 						$data['Paginate'] = false;
 					} else {
-						$data = $this -> paginate($this -> Click -> model, "*", $sub, $conditions, $searchterm, $perpage, $order, $conditions_and);
-						$clicks = $data[$this -> Click -> model];
+						$data = $this -> paginate($this -> Click() -> model, "*", $sub, $conditions, $searchterm, $perpage, $order, $conditions_and);
+						$clicks = $data[$this -> Click() -> model];
 					}
 					
 					$this -> render('clicks' . DS . 'index', array('clicks' => $clicks, 'paginate' => $data['Paginate']), true, 'admin');
@@ -7156,13 +7330,13 @@ if (!class_exists('wpMail')) {
 		}
 		
 		function admin_orders() {
-			global $wpdb, $Db, $wpmlOrder, $Subscriber, $Mailinglist;
-			$Db -> model = $wpmlOrder -> model;
+			global $wpdb, $Db, $Subscriber, $Mailinglist;
+			$Db -> model = $this -> Order() -> model;
 			
 			switch ($_GET['method']) {
 				case 'view'			:
 					if (!empty($_GET['id'])) {
-						if ($order = $wpmlOrder -> get($_GET['id'])) {
+						if ($order = $this -> Order() -> get($_GET['id'])) {
 							$subscriber = $Subscriber -> get($order -> subscriber_id, false);
 							$mailinglist = $Mailinglist -> get($order -> list_id, false);
 							$this -> render_admin('orders' . DS . 'view', array('order' => $order, 'subscriber' => $subscriber, 'mailinglist' => $mailinglist));
@@ -7177,23 +7351,23 @@ if (!class_exists('wpMail')) {
 					if (!empty($_POST)) {
 						$_POST['completed'] = "Y";
 					
-						if ($wpmlOrder -> save($_POST, true)) {
+						if ($this -> Order() -> save($_POST, true)) {
 							$message = __('Order has been saved', $this -> plugin_name);
 						
 							if (!empty($_POST['continueediting'])) {
-								$this -> redirect(admin_url('admin.php?page=' . $this -> sections -> orders . '&method=save&id=' . $wpmlOrder -> insertid . '&continueediting=1'), 'message', $message);
+								$this -> redirect(admin_url('admin.php?page=' . $this -> sections -> orders . '&method=save&id=' . $this -> Order() -> insertid . '&continueediting=1'), 'message', $message);
 							} else {
 								$this -> render_message($message);
-								$data = $wpmlOrder -> get_all_paginated();
-								$this -> render_admin('orders' . DS . 'index', array('orders' => $data[$wpmlOrder -> model], 'paginate' => $data['Pagination']));
+								$data = $this -> Order() -> get_all_paginated();
+								$this -> render_admin('orders' . DS . 'index', array('orders' => $data[$this -> Order() -> model], 'paginate' => $data['Pagination']));
 							}
 						} else {
 							$this -> render_error(__('Order could not be saved', $this -> plugin_name));
-							$this -> render_admin('orders' . DS . 'save', array('order' => new wpmlOrder($_POST), 'errors' => $wpmlOrder -> errors));
+							$this -> render_admin('orders' . DS . 'save', array('order' => new wpmlOrder($_POST), 'errors' => $this -> Order() -> errors));
 						}
 					} else {
 						if (!empty($_GET['id'])) {
-							if ($order = $wpmlOrder -> get($_GET['id'])) {
+							if ($order = $this -> Order() -> get($_GET['id'])) {
 								$this -> render_admin('orders' . DS . 'save', array('order' => $order));
 							} else {
 								$this -> render_error(__('Order could not be read', $this -> plugin_name));
@@ -7205,7 +7379,7 @@ if (!class_exists('wpMail')) {
 					break;
 				case 'delete'		:
 					if (!empty($_GET['id'])) {
-						if ($wpmlOrder -> delete($_GET['id'])) {
+						if ($this -> Order() -> delete($_GET['id'])) {
 							$this -> render_message(__('Order successfully removed', $this -> plugin_name));
 						} else {
 							$this -> render_error(__('Order could not be removed', $this -> plugin_name));
@@ -7214,8 +7388,8 @@ if (!class_exists('wpMail')) {
 						$this -> render_error(__('No order ID was specified', $this -> plugin_name));
 					}
 					
-					$data = $wpmlOrder -> get_all_paginated();
-					$this -> render_admin('orders' . DS . 'index', array('orders' => $data[$wpmlOrder -> model], 'paginate' => $data['Pagination']));
+					$data = $this -> Order() -> get_all_paginated();
+					$this -> render_admin('orders' . DS . 'index', array('orders' => $data[$this -> Order() -> model], 'paginate' => $data['Pagination']));
 					break;
 				case 'mass'			:
 					if (!empty($_POST)) {
@@ -7224,9 +7398,9 @@ if (!class_exists('wpMail')) {
 								$orders = $_POST['orderslist'];
 								
 								switch ($_POST['action']) {
-									case 'delete'		:
+									case 'delete'		:									
 										foreach ($orders as $order_id) {
-											$wpmlOrder -> delete($order_id);
+											$this -> Order() -> delete($order_id);
 										}
 										
 										$msg_type = 'message';
@@ -7264,15 +7438,15 @@ if (!class_exists('wpMail')) {
 					$order = array($orderfield, $orderdirection);
 						
 					if (!empty($_GET['showall'])) {
-						$Db -> model = $wpmlOrder -> model;
+						$Db -> model = $this -> Order() -> model;
 						$orders = $Db -> find_all(false, "*", $order);
-						$data[$wpmlOrder -> model] = $orders;
+						$data[$this -> Order() -> model] = $orders;
 						$data['Paginate'] = false;
 					} else {	
-						$data = $this -> paginate($wpmlOrder -> model, null, $this -> sections -> orders, $conditions, $searchterm, $perpage, $order);
+						$data = $this -> paginate($this -> Order() -> model, null, $this -> sections -> orders, $conditions, $searchterm, $perpage, $order);
 					}
 					
-					$this -> render_admin('orders' . DS . 'index', array('orders' => $data[$wpmlOrder -> model], 'paginate' => $data['Paginate']));
+					$this -> render_admin('orders' . DS . 'index', array('orders' => $data[$this -> Order() -> model], 'paginate' => $data['Paginate']));
 					break;
 			}
 		}
@@ -7515,6 +7689,7 @@ if (!class_exists('wpMail')) {
 						$this -> delete_option('inlinestyles');
 						$this -> delete_option('themeintextversion');
 						$this -> delete_option('emailarchive');
+						$this -> delete_option('showpostattachments');
 						$this -> delete_option('excerpt_settings');
 						$this -> delete_option('defaulttemplate');
 						$this -> delete_option('loadstyles');
@@ -7574,7 +7749,9 @@ if (!class_exists('wpMail')) {
 									}																	
 									$this -> update_option('embed', $val);
 									break;
-								case 'excerpt_more'			:
+								case 'smtpfromname'			:
+								case 'smtpfrom'				:
+								case 'excerpt_more'			:								
 									if ($this -> language_do()) {
 										$this -> update_option($key, $this -> language_join($val));
 									} else {
@@ -7601,10 +7778,6 @@ if (!class_exists('wpMail')) {
 						$this -> scheduling();
 	                    $this -> pop_scheduling();
 	                    $this -> optimize_scheduling();
-	                    
-	                    if (!empty($_POST['latestposts_updateinterval']) && $_POST['latestposts_updateinterval'] == "Y") {
-	                    	$this -> latestposts_scheduling();
-	                    }
 	
 						$message = 6;
 						$this -> redirect(admin_url('admin.php?page=' . $this -> sections -> settings), 'message', $message);
@@ -7633,6 +7806,7 @@ if (!class_exists('wpMail')) {
 						case 'onlinelinktext'				:
 						case 'printlinktext'				:
 						case 'activationlinktext'			:
+						case 'authenticatelinktext'			:
 						case 'unsubscribetext'				:
 						case 'unsubscribealltext'			:
 						case 'resubscribetext'				:
@@ -7694,6 +7868,7 @@ if (!class_exists('wpMail')) {
 				$this -> delete_option('language_external');
 				$this -> delete_option('wpmailconf');
 				$this -> delete_option('custompostarchive');
+				$this -> delete_option('importusers_updateall');
 			
 				foreach ($_POST as $key => $val) {				
 					$this -> update_option($key, $val);
@@ -7803,9 +7978,6 @@ if (!class_exists('wpMail')) {
 								break;
 							case 'pophook'			:
 								$this -> pop_scheduling();
-								break;
-							case 'latestposts'		:
-								$this -> latestposts_scheduling();
 								break;
 							case 'autoresponders'	:
 								wp_clear_scheduled_hook($this -> pre . '_autoresponders');
@@ -8063,17 +8235,17 @@ require_once(dirname(__FILE__) . DS . 'models' . DS . 'histories_attachment.php'
 require_once(dirname(__FILE__) . DS . 'models' . DS . 'email.php');
 require_once(dirname(__FILE__) . DS . 'models' . DS . 'queue.php');
 require_once(dirname(__FILE__) . DS . 'models' . DS . 'theme.php');
-require_once(dirname(__FILE__) . DS . 'models' . DS . 'template.php');
+//require_once(dirname(__FILE__) . DS . 'models' . DS . 'template.php');
 require_once(dirname(__FILE__) . DS . 'models' . DS . 'post.php');
-require_once(dirname(__FILE__) . DS . 'models' . DS . 'order.php');
+//require_once(dirname(__FILE__) . DS . 'models' . DS . 'order.php');
 require_once(dirname(__FILE__) . DS . 'models' . DS . 'field.php');
 require_once(dirname(__FILE__) . DS . 'models' . DS . 'fields_list.php');
 require_once(dirname(__FILE__) . DS . 'models' . DS . 'subscribers_list.php');
 require_once(dirname(__FILE__) . DS . 'models' . DS . 'country.php');
-require_once(dirname(__FILE__) . DS . 'models' . DS . 'autoresponder.php');
+//require_once(dirname(__FILE__) . DS . 'models' . DS . 'autoresponder.php');
 require_once(dirname(__FILE__) . DS . 'models' . DS . 'autoresponders_list.php');
-require_once(dirname(__FILE__) . DS . 'models' . DS . 'autoresponderemail.php');
-require_once(dirname(__FILE__) . DS . 'models' . DS . 'group.php');
+//require_once(dirname(__FILE__) . DS . 'models' . DS . 'autoresponderemail.php');
+//require_once(dirname(__FILE__) . DS . 'models' . DS . 'group.php');
 require_once(dirname(__FILE__) . DS . 'vendors' . DS . 'class.pagination.php');
 require_once(dirname(__FILE__) . DS . 'helpers' . DS . 'db.php');
 require_once(dirname(__FILE__) . DS . 'helpers' . DS . 'html.php');

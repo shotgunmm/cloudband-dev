@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>CloudBand Newsletter - Alcatel-Lucent</title>
+<meta charset="UTF-8">
+</head>
+
+<body style="margin:0;padding:0;" link="#2978bd" bgcolor="#f0f0f0">
+<style>
+p{margin:6px 0;}
+</style>
+<table bgcolor="#f0f0f0" border="0" width="100%">
+<tbody><tr><td>
+<table align="center" bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" width="600">
+<tbody><tr><td align="center" bgcolor="#f0f0f0" valign="top"><img src="cbEcosystem201501_files/69a851d91115ac05fbc94f05fbcfeff7.gif" alt="Alcatel-Lucent" height="60" width="600"></td></tr>
+<tr><td height="10" bgcolor="#f0f0f0"></td></tr>
+<tr><td>
+<table border="0" cellpadding="12" cellspacing="0" width="600">
+<tbody><tr bgcolor="#0069aa"><td style="font:bold 22px/26px Trebuchet MS;color:#ffffff;">
+CLOUDBAND ECOSYSTEM
+<br>
+<span style="font:18px/22px Trebuchet MS;color:#ffffff;">
+JANUARY MONTHLY UPDATE</span>
+</td></tr>
+</tbody></table>
+</td></tr>
+
+<tr><td align="left" bgcolor="#ffffff" valign="top">
+<table border="0" cellpadding="12" cellspacing="0" width="600">
+<tbody><tr><td valign="top" width="382">
+
+<table border="0" cellpadding="0" cellspacing="0" width="382">
+<tbody><tr><td height="10" align="left" bgcolor="#ffffff" valign="top"></td></tr>
+<tr><td style="font:14px/18px Trebuchet MS; color:#333;" align="left" bgcolor="#ffffff" valign="top"> <!-- Issue Copy -->
+
+Dear NFV friends,
+<br><br>
+
+Is it just me or can you feel a new wind blowing over the NFV community?
+ There is a different energy in the air as we are starting 2015. 
+<br><br>
+VNF vendors need to achieve NFV maturity and be able to prove their 
+capabilities. Service Providers need to evolve their network and IT 
+organizations towards unified teams and processes; Network solution 
+providers like ALU need to redefine without compromising the carrier 
+grade excellence our customers expect from us. 
+<br><br>
+This month’s newsletter illustrates just that. Portugal Telecom Inovacao
+ shares with us their NFV vision. Guy Shemesh reports real life customer
+ conversations and Ron Haberman redefines the MANO in a very concrete 
+way. 
+<br><br>
+Enjoy, and let's continue the great work!<br>
+Valerie &amp; team
+
+
+
+<br><br>
+<strong>Follow us on Twitter:</strong>
+<br><br>
+<a href="http://twitter.com/valerienoto" _label="twitter-valerienoto"><img src="cbEcosystem201501_files/1279246f6227e3163849d8c36f52efb6.gif" alt="" height="14" border="0" width="14"></a> <a href="http://twitter.com/valerienoto" _label="twitter-valerienoto">@valerienoto</a><br>
+<a href="http://twitter.com/dawnpatroldeb" _label="twitter-dawnpatroldeb"><img src="cbEcosystem201501_files/1279246f6227e3163849d8c36f52efb6.gif" alt="" height="14" border="0" width="14"></a> <a href="http://twitter.com/dawnpatroldeb" _label="twitter-dawnpatroldeb">@dawnpatroldeb</a>
+
+<!-- End Issue Copy -->
+</td></tr>
+<tr><td height="10" bgcolor="#ffffff"></td></tr>
+</tbody></table>
+</td>
+<td valign="top" width="182"> <!-- right column -->
+
+<table style="border:1px solid #c3b9a5;" border="0" cellpadding="6" cellspacing="0">
+<tbody><tr><td>
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr><td height="10"></td></tr>
+<tr><td><a href="http://ecosystem.cloud-band.com/" _label="website" style="font:14px/18px Trebuchet MS;color:#3387bb;">CloudBand Ecosystem Website</a>
+</td></tr>
+
+<tr><td height="10"></td></tr>
+<tr><td style="font:bold 12px/24px Trebuchet MS;color:#333;">Follow Us:
+
+<table border="0" cellpadding="2" cellspacing="0">
+<tbody><tr><td valign="middle"><a href="http://twitter.com/ALU_Cloud"><img src="cbEcosystem201501_files/1279246f6227e3163849d8c36f52efb6.gif" alt="" height="14" border="0" width="14"></a>
+</td><td valign="middle"><a href="http://twitter.com/ALU_Cloud" style="font:14px/18px Trebuchet MS;color:#3387bb;">Twitter@ALU_Cloud</a>
+</td></tr>
+<tr><td valign="middle"><a href="http://www.linkedin.com/groups/Carrier-Cloud-4397691?trk=my_groups-b-grp-v"><img src="cbEcosystem201501_files/6d42ed2cc98e3dca6deccc5d0212a3af.gif" alt="" height="14" border="0" width="14"></a>
+</td><td valign="middle"><a href="http://www.linkedin.com/groups/Carrier-Cloud-4397691?trk=my_groups-b-grp-v" style="font:14px/18px Trebuchet MS;color:#3387bb;">LinkedIn</a>
+</td></tr>
+</tbody></table>
+
+</td></tr>
+<tr><td height="10"></td></tr>
+</tbody></table>
+
+</td></tr>
+</tbody></table>
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="10" bgcolor="#f0f0f0"></td></tr>
+
+<tr><td bgcolor="#ffffff">
+<a name="sec1"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="600">
+<tbody><tr bgcolor="#0069aa"><td height="25" width="15"></td><td style="font:bold 14px/18px Trebuchet MS;color:#fff;" align="left">
+BLOG SERIES
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="12" cellspacing="0" width="600">
+<tbody><tr><td style="font:bold 14px/18px Trebuchet MS;"> 
+<!--copy -->
+
+<table border="0" cellpadding="6" cellspacing="0">
+<tbody><tr><td style="font:12px/18px Trebuchet MS;" valign="top" width="125"><a href="http://ecosystem.cloud-band.com/2015/01/26/first-lesson-understanding-the-customers-challenges/" _label="blog1"><img src="cbEcosystem201501_files/b181430b4e8056c83e66728ad1d5821e.png" alt="NFWare" height="141" border="0" width="125"></a>
+<br>
+<b>Guy Shemesh</b>,<br> Sr. Director of Product CloudBand
+</td><td style="font:14px/18px Trebuchet MS;" align="top">
+
+<b>Transformation for NFV</b>
+<br><br>
+Network Function Virtualization has affected everything in the Telco 
+industry over the past several years – both on the Carriers side as well
+ as the Vendors angle and to everything in between – and all this has 
+happened with only the beginnings of commercial deployments starting to 
+make themselves known.  Follow my  personal blog series that builds on 
+my own experience of creating what we all know today as NFV, with 
+CloudBand and Alcatel-Lucent. I’ll discuss some of the areas that made 
+us think differently and adjust the way we build a product, price it and
+ discuss NFV strategy with our customers.
+<br><br>
+<a href="http://ecosystem.cloud-band.com/2015/01/26/first-lesson-understanding-the-customers-challenges/" _label="blog1">First lesson – Understanding the customer’s challenges…</a>
+
+</td></tr>
+<tr><td height="10"></td></tr>
+</tbody></table>
+
+<!-- end copy -->
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="10" bgcolor="#f0f0f0"></td></tr>
+
+
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="0" cellspacing="0" width="600">
+<tbody><tr bgcolor="#0069aa"><td height="25" width="15"></td><td style="font:bold 14px/18px Trebuchet MS;color:#fff;" align="left">
+PRESENTATIONS
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="12" cellspacing="0" width="600">
+<tbody><tr><td style="font:14px/18px Trebuchet MS;"> 
+<center>
+<img src="cbEcosystem201501_files/44ab98200a285d5ad9700a51493d8f77.JPG" height="226" width="475"><br><br>
+<b>Demystifying the MANO, Ron Haberman at Carrier Network Virtualization</b>
+</center>
+<br><br>
+We recently took part in the Carrier Network Virtualization event in 
+Palo Alto where Ron Haberman, CloudBand's GM gave a session focused on 
+"Demystifying the MANO” - as operators continue their aggressive plans 
+for NFV, the attention is now on the management and orchestration layer,
+ called MANO in ETSI NFV. The role of MANO is causing some confusion in 
+the industry as it’s not clearly defined and yet it plays a critical 
+role in making NFV a reality. In this presentation Ron helps demystify 
+the role of MANO by addressing some key questions.  
+<br><br>
+<a href="https://www.youtube.com/watch?x-yt-cl=84359240&amp;v=EOxF4Med2PE&amp;x-yt-ts=1421782837" _label="presentation">Listen here</a>.
+
+
+
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="10" bgcolor="#f0f0f0"></td></tr>
+
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="0" cellspacing="0" width="600">
+<tbody><tr bgcolor="#0069aa"><td height="25" width="15"></td><td style="font:bold 14px/18px Trebuchet MS;color:#fff;" align="left">
+JANUARY NFV MASHUP  #14 WITH PORTUGAL TELECOM INOVAÇÃO
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="12" cellspacing="0" width="600">
+<tbody><tr><td style="font:14px/18px Trebuchet MS;"> 
+
+<b>An NFV/SDN Enabled Service Provider: A New Generation of Digital Services</b><br><br>
+<img src="cbEcosystem201501_files/0b6848f7859261e5720a294f9db9bdaa.png" height="175" hspace="15" align="right" border="0" vspace="10" width="175">
+
+Operators are facing today an enormous pressure coming from the 
+“Internet Industry”. OTT players are usually agile, able to launch new 
+services faster and cheaper than traditional operators, providing higher
+ levels of customer experience with less resources. To cope with these 
+challenges, operators need to do much more with much less. To address 
+this, operators are adopting the cloud paradigm, separating the services
+ logic (software) from the infrastructural resources, moving away from 
+the traditional software/hardware appliance model. In this context, NFV 
+arises as the standard to virtualize network functions, while SDN 
+technologies come along NFV in order to improve the network flexibility 
+and configurability. Together they are leveraging a significant mutation
+ in traditional network and service structure.
+<br><br>
+Portugal Telecom Inovação (PTIn), as a telecom software/hardware vendor,
+ is currently working in order to introduce the SDN/NFV concepts into 
+its portfolio of products, by collaborating with operators and relevant 
+vendors to reach the best architectures and solutions. This webinar 
+describes PTIn’s vision for an NFV/SDN-enabled Service Provider, 
+focusing on the architectural impact and challenges that are still to be
+ undertaken to fulfill this paradigm. 
+<br><br>
+<a href="http://w.on24.com/r.htm?e=916706&amp;s=1&amp;k=FA3AFACD50EB5318A25AE9558AF2255E" _label="listen">Listen to the replay</a>
+
+
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="10" bgcolor="#f0f0f0"></td></tr>
+
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="0" cellspacing="0" width="600">
+<tbody><tr bgcolor="#0069aa"><td height="25" width="15"></td><td style="font:bold 14px/18px Trebuchet MS;color:#fff;" align="left">
+UPCOMING EVENTS
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="12" cellspacing="0" width="600">
+<tbody><tr><td style="font:14px/18px Trebuchet MS;"> 
+<center><img src="cbEcosystem201501_files/f229ca5545ee63e70cfdff9eb2f01301.jpg" height="191" hspace="15" border="0" width="475">
+<br><br>
+<b>Please join Alcatel-Lucent at Mobile World Congress this year – stand # 3K10 in Hall 3.</b></center>
+
+<br><br>
+Alcatel-Lucent knows that Every Success has its Network and, at MWC 
+2015, we will illustrate how to remove constraints that stand in the way
+ of your success.  Throughout our booth (#3K10, Hall 3) and in 
+discussions with our executives and experts, you will discover how we 
+are focusing on your key challenges:
+<ul>
+<li>Demonstrating how CloudBand Management system sits at the centre of a Lean Operations model</li>
+<li>Delivering an ultra-broadband mobile experience today with a realistic path to 5G</li>
+<li>Evolving operations to be more efficient and improve the subscriber experience</li>
+<li>Partnering to create new features and services you can sell today</li>
+<li>Defining a 2020 network vision and a plan to get there</li>
+</ul>
+Alcatel-Lucent can help you to address these constraints and create 
+sustainable value for your business, your subscribers and your 
+shareholders.
+<br><br>
+We look forward to seeing you in March!
+<br><br>
+<a href="http://www.alcatel-lucent.com/mwc2015" _label="mwc2015">http://www.alcatel-lucent.com/mwc2015</a>
+
+
+
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="10" bgcolor="#f0f0f0"></td></tr>
+
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="0" cellspacing="0" width="600">
+<tbody><tr bgcolor="#0069aa"><td height="25" width="15"></td><td style="font:bold 14px/18px Trebuchet MS;color:#fff;" align="left">
+WELCOME BHASKAR GORTI TO THE TEAM
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td bgcolor="#ffffff">
+<table border="0" cellpadding="12" cellspacing="0" width="600">
+<tbody><tr><td style="font:14px/18px Trebuchet MS;"> 
+
+<b>Alcatel-Lucent appoints Bhaskar Gorti as President to lead IP Platforms </b>
+<br><br>
+Alcatel-Lucent has appointed Oracle executive Bhaskar Gorti to lead its 
+IP Platforms business, taking charge of the development of cloud and 
+software applications for the global adoption by telecommunications 
+operators, large enterprises and other institutions. 
+<br><br>
+With Alcatel-Lucent continuing its transformation under The Shift Plan 
+to become a specialist focused on IP, cloud and ultra-broadband access, 
+Mr. Gorti will oversee business units developing technologies for 
+cloud-based networking and virtualization, including NFV (network 
+functions virtualization), as well as OSS, the Charging/Policy/Payments 
+activity, Customer Experience Management, Network Performance, and the 
+Cyber-Security monitoring and prevention software platforms. 
+<br><br>
+<a href="http://www.marketwatch.com/story/alcatel-lucent-appoints-bhaskar-gorti-as-president-to-lead-ip-platforms-2015-01-12" _label="readMore">Read More</a>
+
+
+
+</td></tr>
+</tbody></table>
+</td></tr>
+<tr><td height="10" bgcolor="#f0f0f0"></td></tr>
+
+</tbody></table>
+</td></tr></tbody></table>
+
+
+
+</body></html>

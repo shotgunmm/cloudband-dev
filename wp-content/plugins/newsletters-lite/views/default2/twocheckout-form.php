@@ -3,7 +3,8 @@
 		<?php foreach ($checkoutdata as $key => $val) : ?>
 			<input type="hidden" name="<?php echo $key; ?>" value="<?php echo $val; ?>" />
 		<?php endforeach; ?>
-		<input type="submit" class="<?php echo $this -> pre; ?>button btn btn-success paybutton" value="<?php _e('Pay Now', $this -> plugin_name); ?>" name="checkout" />
+		<?php $buttontext = (empty($extend)) ? __('Pay Now', $this -> plugin_name) : __('Extend', $this -> plugin_name); ?>
+		<input type="submit" class="<?php echo $this -> pre; ?>button btn btn-success paybutton" value="<?php echo $buttontext; ?>" name="checkout" />
 	</form>
 	
 	<?php if ($autosubmit) : ?>

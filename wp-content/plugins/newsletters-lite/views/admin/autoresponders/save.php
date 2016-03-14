@@ -6,8 +6,11 @@ global $ID, $post_ID, $post;
 $ID = $this -> get_option('imagespost');
 $post_ID = $this -> get_option('imagespost');
 
-$alwayssend = $Autoresponder -> data -> alwayssend;
-$sendauto = $Autoresponder -> data -> sendauto;
+$alwayssend = $this -> Autoresponder() -> data -> alwayssend;
+$sendauto = $this -> Autoresponder() -> data -> sendauto;
+
+$Html -> field_value('Autoresponder[title]');
+$Html -> field_value('Autoresponder[lists]');
 
 ?>
 
@@ -17,7 +20,7 @@ $sendauto = $Autoresponder -> data -> sendauto;
     <form action="?page=<?php echo $this -> sections -> autoresponders; ?>&amp;method=save" method="post">
     	<?php echo $Form -> hidden('Autoresponder[id]'); ?>
     	
-    	<?php do_action('newsletters_admin_autoresponder_save_fields_before', $Autoresponder -> data); ?>
+    	<?php do_action('newsletters_admin_autoresponder_save_fields_before', $this -> Autoresponder() -> data); ?>
     
     	<table class="form-table">
         	<tbody>
@@ -38,7 +41,7 @@ $sendauto = $Autoresponder -> data -> sendauto;
                         	<!-- loop of mailing lists -->
                         	<div class="scroll-list">
                             	<?php foreach ($mailinglists as $list_id => $list_title) : ?>
-                                	<div><label><input <?php echo (!empty($Autoresponder -> data -> lists) && in_array($list_id, $Autoresponder -> data -> lists)) ? 'checked="checked"' : ''; ?> type="checkbox" name="Autoresponder[lists][]" value="<?php echo $list_id; ?>" id="checklist<?php echo $list_id; ?>" /> <?php echo $list_title; ?></label></div>
+                                	<div><label><input <?php echo (!empty($this -> Autoresponder() -> data -> lists) && in_array($list_id, $this -> Autoresponder() -> data -> lists)) ? 'checked="checked"' : ''; ?> type="checkbox" name="Autoresponder[lists][]" value="<?php echo $list_id; ?>" id="checklist<?php echo $list_id; ?>" /> <?php echo $list_title; ?></label></div>
                                 <?php endforeach; ?>
                             </div>
                         <?php else : ?>
@@ -77,8 +80,8 @@ $sendauto = $Autoresponder -> data -> sendauto;
                 	<th><label for="Autoresponder.newsletter.exi"><?php _e('Newsletter', $this -> plugin_name); ?></label>
                 	<?php echo $Html -> help(__('The email which will be used for the autoresponder can be either an existing sent/draft email from the Newsletters > Sent &amp; Draft Emails section or you can choose to create a new email below.', $this -> plugin_name)); ?></th>
                     <td>                    
-                    	<label><input onclick="jQuery('#newsletterdiv_exi').show(); jQuery('#newsletterdiv_new').hide();" <?php echo (empty($Autoresponder -> data -> newsletter) || (!empty($Autoresponder -> data -> newsletter) && $Autoresponder -> data -> newsletter == "exi")) ? 'checked="checked"' : ''; ?> type="radio" name="Autoresponder[newsletter]" value="exi" id="Autoresponder.newsletter.exi" /> <?php _e('Choose Newsletter', $this -> plugin_name); ?></label>
-                        <label><input onclick="jQuery('#newsletterdiv_exi').hide(); jQuery('#newsletterdiv_new').show();" <?php echo (!empty($Autoresponder -> data -> newsletter) && $Autoresponder -> data -> newsletter == "new") ? 'checked="checked"' : ''; ?> type="radio" name="Autoresponder[newsletter]" value="new" id="Autoresponder.newsletter.new" /> <?php _e('Create Newsletter', $this -> plugin_name); ?></label>
+                    	<label><input onclick="jQuery('#newsletterdiv_exi').show(); jQuery('#newsletterdiv_new').hide();" <?php echo (empty($this -> Autoresponder() -> data -> newsletter) || (!empty($this -> Autoresponder() -> data -> newsletter) && $this -> Autoresponder() -> data -> newsletter == "exi")) ? 'checked="checked"' : ''; ?> type="radio" name="Autoresponder[newsletter]" value="exi" id="Autoresponder.newsletter.exi" /> <?php _e('Choose Newsletter', $this -> plugin_name); ?></label>
+                        <label><input onclick="jQuery('#newsletterdiv_exi').hide(); jQuery('#newsletterdiv_new').show();" <?php echo (!empty($this -> Autoresponder() -> data -> newsletter) && $this -> Autoresponder() -> data -> newsletter == "new") ? 'checked="checked"' : ''; ?> type="radio" name="Autoresponder[newsletter]" value="new" id="Autoresponder.newsletter.new" /> <?php _e('Create Newsletter', $this -> plugin_name); ?></label>
                         <?php echo $Html -> field_error('Autoresponder[newsletter]'); ?>
                         <span class="howto"><?php _e('You can choose an existing newsletter or create one now.', $this -> plugin_name); ?></span>
                     </td>
@@ -86,7 +89,7 @@ $sendauto = $Autoresponder -> data -> sendauto;
             </tbody>
         </table>
         
-        <div id="newsletterdiv_exi" style="display:<?php echo (empty($Autoresponder -> data -> newsletter) || (!empty($Autoresponder -> data -> newsletter) && $Autoresponder -> data -> newsletter == "exi")) ? 'block' : 'none'; ?>;">
+        <div id="newsletterdiv_exi" style="display:<?php echo (empty($this -> Autoresponder() -> data -> newsletter) || (!empty($this -> Autoresponder() -> data -> newsletter) && $this -> Autoresponder() -> data -> newsletter == "exi")) ? 'block' : 'none'; ?>;">
         	<table class="form-table">
             	<tbody>
                 	<tr>
@@ -97,12 +100,12 @@ $sendauto = $Autoresponder -> data -> sendauto;
                             	<select name="Autoresponder[history_id]" id="Autoresponder.history_id">
                                 	<option value=""><?php _e('- Select -', $this -> plugin_name); ?></option>
                                     <?php foreach ($histories as $h_id => $h_subject) : ?>
-                                    	<option <?php echo (!empty($Autoresponder -> data -> history_id) && $Autoresponder -> data -> history_id == $h_id) ? 'selected="selected"' : ''; ?> value="<?php echo $h_id; ?>"><?php echo __($h_subject); ?></option>
+                                    	<option <?php echo (!empty($this -> Autoresponder() -> data -> history_id) && $this -> Autoresponder() -> data -> history_id == $h_id) ? 'selected="selected"' : ''; ?> value="<?php echo $h_id; ?>"><?php echo __($h_subject); ?></option>
                                     <?php endforeach; ?>
                                 </select>
                                 <?php _e('Current:', $this -> plugin_name); ?>
-                                <a target="_blank" href="<?php echo admin_url('admin.php?page=' . $this -> sections -> send . '&method=history&id=' . $Autoresponder -> data -> history_id); ?>"><i class="fa fa-pencil"></i></a>
-                                <a target="_blank" href="<?php echo admin_url('admin.php?page=' . $this -> sections -> history . '&method=view&id=' . $Autoresponder -> data -> history_id); ?>"><i class="fa fa-eye"></i></a>
+                                <a target="_blank" href="<?php echo admin_url('admin.php?page=' . $this -> sections -> send . '&method=history&id=' . $this -> Autoresponder() -> data -> history_id); ?>"><i class="fa fa-pencil"></i></a>
+                                <a target="_blank" href="<?php echo admin_url('admin.php?page=' . $this -> sections -> history . '&method=view&id=' . $this -> Autoresponder() -> data -> history_id); ?>"><i class="fa fa-eye"></i></a>
                             <?php else : ?>
                             	<div class="alert alert-danger ui-state-error ui-corner-all">
 	                            	<p><?php _e('No sent/draft emails found, please add.', $this -> plugin_name); ?></p>
@@ -116,11 +119,11 @@ $sendauto = $Autoresponder -> data -> sendauto;
             </table>
         </div>
         
-        <div id="newsletterdiv_new" style="display:<?php echo (!empty($Autoresponder -> data -> newsletter) && $Autoresponder -> data -> newsletter == "new") ? 'block' : 'none'; ?>;">
+        <div id="newsletterdiv_new" style="display:<?php echo (!empty($this -> Autoresponder() -> data -> newsletter) && $this -> Autoresponder() -> data -> newsletter == "new") ? 'block' : 'none'; ?>;">
 	        <div id="post-body-content">
 				<div id="titlediv">
             		<div id="titlewrap">
-            			<input placeholder="<?php echo esc_attr(stripslashes(__('Enter email subject here', $this -> plugin_name))); ?>" class="widefat" type="text" id="title" name="Autoresponder[nnewsletter][subject]" value="<?php echo esc_attr(stripslashes($Autoresponder -> data -> nnewsletter['subject'])); ?>" id="Autoresponder_nnewsletter_subject" />
+            			<input placeholder="<?php echo esc_attr(stripslashes(__('Enter email subject here', $this -> plugin_name))); ?>" class="widefat" type="text" id="title" name="Autoresponder[nnewsletter][subject]" value="<?php echo esc_attr(stripslashes($this -> Autoresponder() -> data -> nnewsletter['subject'])); ?>" id="Autoresponder_nnewsletter_subject" />
             		</div>
             	</div>
                 <?php echo $Html -> field_error('Autoresponder[nnewsletter_subject]'); ?>
@@ -130,9 +133,9 @@ $sendauto = $Autoresponder -> data -> sendauto;
                     <div id="<?php echo (user_can_richedit()) ? 'postdivrich' : 'postdiv'; ?>" class="postarea edit-form-section">                                    
                         <!-- The Editor -->
 						<?php if (version_compare(get_bloginfo('version'), "3.3") >= 0) : ?>
-							<?php wp_editor(stripslashes($Autoresponder -> data -> nnewsletter['content']), 'content', array('tabindex' => 2, 'textarea_rows' => 20, 'editor_height' => 500)); ?>
+							<?php wp_editor(stripslashes($this -> Autoresponder() -> data -> nnewsletter['content']), 'content', array('tabindex' => 2, 'textarea_rows' => 20, 'editor_height' => 500)); ?>
 						<?php else : ?>
-							<?php the_editor(stripslashes($Autoresponder -> data -> nnewsletter['content']), 'content', 'title', true, 2); ?>
+							<?php the_editor(stripslashes($this -> Autoresponder() -> data -> nnewsletter['content']), 'content', 'title', true, 2); ?>
 						<?php endif; ?>
                         
                         <table id="post-status-info" cellpadding="0" cellspacing="0">
@@ -166,10 +169,10 @@ $sendauto = $Autoresponder -> data -> sendauto;
                     	<?php echo $Html -> help(__('Choose the template to use for the email that will be sent to the subscribers for this autoresponder. The content above will be put into this template where the [wpmlcontent] shortcode was specified.', $this -> plugin_name)); ?></th>
                         <td>
                         	<?php if ($themes = $Theme -> select()) : ?>
-                            	<div><label><input <?php echo (empty($Autoresponder -> data -> nnewsletter['theme_id'])) ? 'checked="checked"' : ''; ?> type="radio" name="Autoresponder[nnewsletter][theme_id]" id="Autoresponder_nnewsletter_theme_id_0" value="0"> <?php _e('NONE', $this -> plugin_name); ?></label></div>
+                            	<div><label><input <?php echo (empty($this -> Autoresponder() -> data -> nnewsletter['theme_id'])) ? 'checked="checked"' : ''; ?> type="radio" name="Autoresponder[nnewsletter][theme_id]" id="Autoresponder_nnewsletter_theme_id_0" value="0"> <?php _e('NONE', $this -> plugin_name); ?></label></div>
                             	<div class="scroll-list">
 	                            	<?php foreach ($themes as $theme_id => $theme_title) : ?>
-	                                	<div><label><input <?php echo (!empty($Autoresponder -> data -> nnewsletter['theme_id']) && $Autoresponder -> data -> nnewsletter['theme_id'] == $theme_id) ? 'checked="checked"' : ''; ?> type="radio" name="Autoresponder[nnewsletter][theme_id]" value="<?php echo $theme_id; ?>" id="Autoresponder.nnewsletter.theme_id.<?php echo $theme_id; ?>" /> <?php echo $theme_title; ?></label></div>
+	                                	<div><label><input <?php echo (!empty($this -> Autoresponder() -> data -> nnewsletter['theme_id']) && $this -> Autoresponder() -> data -> nnewsletter['theme_id'] == $theme_id) ? 'checked="checked"' : ''; ?> type="radio" name="Autoresponder[nnewsletter][theme_id]" value="<?php echo $theme_id; ?>" id="Autoresponder.nnewsletter.theme_id.<?php echo $theme_id; ?>" /> <?php echo $theme_title; ?></label></div>
 	                                <?php endforeach; ?>
 	                            </div>
                             <?php else : ?>
@@ -188,14 +191,14 @@ $sendauto = $Autoresponder -> data -> sendauto;
 	        	<tr>
 		        	<th><label for="Autoresponder_sendauto"><?php _e('Send Automatically?', $this -> plugin_name); ?></label></th>
 		        	<td>
-			        	<label><input <?php echo (!empty($sendauto) || empty($Autoresponder -> data -> id)) ? 'checked="checked"' : ''; ?> onclick="if (jQuery(this).is(':checked')) { jQuery('#Autoresponder_sendauto_div').show(); } else { jQuery('#Autoresponder_sendauto_div').hide(); }" type="checkbox" name="Autoresponder[sendauto]" id="Autoresponder_sendauto" value="1" /> <?php _e('Yes, send/schedule automatically upon subscribe', $this -> plugin_name); ?></label>
+			        	<label><input <?php echo (!empty($sendauto) || empty($this -> Autoresponder() -> data -> id)) ? 'checked="checked"' : ''; ?> onclick="if (jQuery(this).is(':checked')) { jQuery('#Autoresponder_sendauto_div').show(); } else { jQuery('#Autoresponder_sendauto_div').hide(); }" type="checkbox" name="Autoresponder[sendauto]" id="Autoresponder_sendauto" value="1" /> <?php _e('Yes, send/schedule automatically upon subscribe', $this -> plugin_name); ?></label>
 			        	<span class="howto"><?php _e('Specify if this will be sent automatically or untick to use for another purpose.', $this -> plugin_name); ?></span>
 		        	</td>
 	        	</tr>
         	</tbody>
         </table>
         
-        <div id="Autoresponder_sendauto_div" style="display:<?php echo (!empty($sendauto) || empty($Autoresponder -> data -> id)) ? 'block' : 'none'; ?>;">
+        <div id="Autoresponder_sendauto_div" style="display:<?php echo (!empty($sendauto) || empty($this -> Autoresponder() -> data -> id)) ? 'block' : 'none'; ?>;">
 	        <table class="form-table">
 		        <tbody>
 			    	<tr>
@@ -219,15 +222,15 @@ $sendauto = $Autoresponder -> data -> sendauto;
                 	<th><label for="Autoresponder.status.active"><?php _e('Status', $this -> plugin_name); ?></label>
                 	<?php echo $Html -> help(__('The status of this autoresponder will determine if it is effective or not. If it is Active, it will be effective and this autoresponder will be sent to subscribers accordingly. If it is Inactive, it will be ignored and will not be used and no messages will be sent from this autoresponder.', $this -> plugin_name)); ?></th>
                     <td>
-                    	<label><input <?php echo (empty($Autoresponder -> data -> status) || (!empty($Autoresponder -> data -> status) && $Autoresponder -> data -> status == "active")) ? 'checked="checked"' : ''; ?> type="radio" name="Autoresponder[status]" value="active" id="Autoresponder.status.active" /> <?php _e('Active', $this -> plugin_name); ?></label>
-                        <label><input <?php echo (!empty($Autoresponder -> data -> status) && $Autoresponder -> data -> status == "inactive") ? 'checked="checked"' : ''; ?> type="radio" name="Autoresponder[status]" value="inactive" id="Autoresponder.status.inactive" /> <?php _e('Inactive', $this -> plugin_name); ?></label>
+                    	<label><input <?php echo (empty($this -> Autoresponder() -> data -> status) || (!empty($this -> Autoresponder() -> data -> status) && $this -> Autoresponder() -> data -> status == "active")) ? 'checked="checked"' : ''; ?> type="radio" name="Autoresponder[status]" value="active" id="Autoresponder.status.active" /> <?php _e('Active', $this -> plugin_name); ?></label>
+                        <label><input <?php echo (!empty($this -> Autoresponder() -> data -> status) && $this -> Autoresponder() -> data -> status == "inactive") ? 'checked="checked"' : ''; ?> type="radio" name="Autoresponder[status]" value="inactive" id="Autoresponder.status.inactive" /> <?php _e('Inactive', $this -> plugin_name); ?></label>
                     	<span class="howto"><?php _e('Deactivating this autoresponder will prevent it from sending out any messages to subscribers.', $this -> plugin_name); ?></span>
                     </td>
                 </tr>
             </tbody>
         </table>
         
-        <?php do_action('newsletters_admin_autoresponder_save_fields_after', $Autoresponder -> data); ?>
+        <?php do_action('newsletters_admin_autoresponder_save_fields_after', $this -> Autoresponder() -> data); ?>
     
     	<p class="submit">
         	<?php echo $Form -> submit(__('Save Autoresponder', $this -> plugin_name)); ?>

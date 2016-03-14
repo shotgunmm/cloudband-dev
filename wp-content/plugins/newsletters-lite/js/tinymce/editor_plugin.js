@@ -305,7 +305,7 @@
 							type: 'listbox',
 							name: 'newsletters_posts_category',
 							label: 'Category',
-							values: tinymce.settings.newsletters_post_categories,
+							values: tinymce.settings.newsletters_posts_categories,
 							tooltip: 'Choose the category to take posts from'
 						});
 						

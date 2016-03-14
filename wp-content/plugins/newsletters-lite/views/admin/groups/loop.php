@@ -77,7 +77,7 @@
 					</tr>
 				<?php else : ?>
 					<?php foreach ($groups as $group) : ?>
-					<?php $class = ($class == 'alternate') ? '' : 'alternate'; ?>
+						<?php $class = ($class == 'alternate') ? '' : 'alternate'; ?>
 						<tr class="<?php echo $class; ?>" id="grouprow<?php echo $group -> id; ?>">
 							<th class="check-column"><input id="checklist<?php echo $group -> id; ?>" type="checkbox" name="groupslist[]" value="<?php echo $group -> id; ?>" /></th>
 							<td><label for="checklist<?php echo $group -> id; ?>"><?php echo $group -> id; ?></label></td>

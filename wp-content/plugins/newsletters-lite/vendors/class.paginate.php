@@ -61,15 +61,15 @@ class wpmlpaginate extends wpMailPlugin {
 	
 	function start_paging($page = null) {
 		global $wpdb, $Html, $Subscriber, $wpmlClick, $wpmlLink, $Bounce, $Email, $SubscribersList, $History, $HistoriesList, 
-		$Autoresponder, $AutorespondersList;
+		$AutorespondersList;
 	
 		$page = (empty($page)) ? 1 : $page;
 		
-		$autoresponders_table = $wpdb -> prefix . $Autoresponder -> table;
+		$autoresponders_table = $wpdb -> prefix . $this -> Autoresponder() -> table;
 		$subscribers_table = $wpdb -> prefix . $Subscriber -> table;
 		$emails_table = $wpdb -> prefix . $Email -> table;
-		$clicks_table = $wpdb -> prefix . $wpmlClick -> table;
-		$links_table = $wpdb -> prefix . $wpmlLink -> table;
+		$clicks_table = $wpdb -> prefix . $this -> Click() -> table;
+		$links_table = $wpdb -> prefix . $this -> Link() -> table;
 		$bounces_table = $wpdb -> prefix . $Bounce -> table;
 	
 		if (!empty($page)) {
@@ -109,8 +109,8 @@ class wpmlpaginate extends wpMailPlugin {
 				$countquery .= " LEFT JOIN " . $wpdb -> prefix . $History -> table . " ON " . $wpdb -> prefix . $HistoriesList -> table . ".history_id = " . $wpdb -> prefix . $History -> table . ".id";	
 				break;
 			case 'AutorespondersList'			:
-				$query .= " LEFT JOIN " . $wpdb -> prefix . $Autoresponder -> table . " ON " . $wpdb -> prefix . $AutorespondersList -> table . ".autoresponder_id = " . $wpdb -> prefix . $Autoresponder -> table . ".id";	
-				$countquery .= " LEFT JOIN " . $wpdb -> prefix . $Autoresponder -> table . " ON " . $wpdb -> prefix . $AutorespondersList -> table . ".autoresponder_id = " . $wpdb -> prefix . $Autoresponder -> table . ".id";	
+				$query .= " LEFT JOIN " . $wpdb -> prefix . $this -> Autoresponder() -> table . " ON " . $wpdb -> prefix . $AutorespondersList -> table . ".autoresponder_id = " . $wpdb -> prefix . $this -> Autoresponder() -> table . ".id";	
+				$countquery .= " LEFT JOIN " . $wpdb -> prefix . $this -> Autoresponder() -> table . " ON " . $wpdb -> prefix . $AutorespondersList -> table . ".autoresponder_id = " . $wpdb -> prefix . $this -> Autoresponder() -> table . ".id";	
 				break;
 		}
 		

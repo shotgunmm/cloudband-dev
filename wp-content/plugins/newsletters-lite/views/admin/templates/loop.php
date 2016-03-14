@@ -98,7 +98,8 @@
 								<div class="row-actions">
 									<span class="edit"><?php echo $Html -> link(__('Edit', $this -> plugin_name), '?page=' . $this -> sections -> templates_save . '&amp;id=' . $template -> id); ?> |</span>
 									<span class="delete"><?php echo $Html -> link(__('Delete', $this -> plugin_name), $this -> url . '&amp;method=delete&amp;id=' . $template -> id, array('onclick' => "if (!confirm('" . __('Are you sure you want to delete this template?', $this -> plugin_name) . "')) { return false; }", 'class' => "submitdelete")); ?> |</span>
-									<span class="view"><?php echo $Html -> link(__('View', $this -> plugin_name), $this -> url . '&amp;method=view&amp;id=' . $template -> id); ?></span>
+									<span class="view"><?php echo $Html -> link(__('View', $this -> plugin_name), $this -> url . '&amp;method=view&amp;id=' . $template -> id); ?> |</span>
+									<span class="edit"><?php echo $Html -> link(__('Send', $this -> plugin_name), admin_url('admin.php?page=' . $this -> sections -> send . '&method=template&id=' . $template -> id)); ?></span>
 								</div>
 							</td>
 							<td><label for="checklist<?php echo $template -> id; ?>"><?php echo $template -> sent; ?></label></td>

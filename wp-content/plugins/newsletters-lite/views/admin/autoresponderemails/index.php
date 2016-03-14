@@ -12,7 +12,7 @@
             </select>
             <select name="filter_autoresponder_id" onchange="changefilter('autoresponder_id', this.value);">
             	<option value=""><?php _e('All Autoresponders', $this -> plugin_name); ?></option>
-                <?php if ($autoresponders = $Autoresponder -> select()) : ?>
+                <?php if ($autoresponders = $this -> Autoresponder() -> select()) : ?>
                 	<?php foreach ($autoresponders as $akey => $aval) : ?>
                     	<option <?php echo (isset($_COOKIE[$this -> pre . 'autoresponderemailsfilter_autoresponder_id']) && $_COOKIE[$this -> pre . 'autoresponderemailsfilter_autoresponder_id'] == $akey) ? 'selected="selected"' : ''; ?> value="<?php echo esc_attr(stripslashes($akey)); ?>"><?php echo $aval; ?></option>
                     <?php endforeach; ?>

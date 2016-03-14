@@ -143,18 +143,20 @@ jQuery(document).ready(function() {
 			//return false;
 		});
 		
-		jQuery('#<?php echo $widget_id; ?>-form').ajaxForm({
-			url: wpmlajaxurl + 'action=wpmlsubscribe&widget=<?php echo $widget; ?>&widget_id=<?php echo $widget_id; ?>&number=<?php echo $number; ?>',
-			data: jQuery('#<?php echo $widget_id; ?>-form').serialize(),
-			type: "POST",
-			cache: false,
-			success: function(response) {				
-				jQuery('#<?php echo $widget_id; ?>-wrapper').html(response);
-				<?php if (!empty($scroll)) : ?>
-					wpml_scroll(jQuery('#<?php echo $widget_id; ?>'));
-				<?php endif; ?>
-			}
-		});
+		if (jQuery.isFunction(jQuery.fn.ajaxForm)) {
+			jQuery('#<?php echo $widget_id; ?>-form').ajaxForm({
+				url: wpmlajaxurl + 'action=wpmlsubscribe&widget=<?php echo $widget; ?>&widget_id=<?php echo $widget_id; ?>&number=<?php echo $number; ?>',
+				data: jQuery('#<?php echo $widget_id; ?>-form').serialize(),
+				type: "POST",
+				cache: false,
+				success: function(response) {				
+					jQuery('#<?php echo $widget_id; ?>-wrapper').html(response);
+					<?php if (!empty($scroll)) : ?>
+						wpml_scroll(jQuery('#<?php echo $widget_id; ?>'));
+					<?php endif; ?>
+				}
+			});
+		}
 	<?php endif; ?>
 	
 	if (jQuery.isFunction(jQuery.fn.select2)) {

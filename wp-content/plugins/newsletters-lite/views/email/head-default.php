@@ -281,9 +281,6 @@
 		    width: 100% !important;
 		  }
 		}
-		
-		/*# sourceMappingURL=styles.css.map */
-
 		</style>
 	</head>
 	

@@ -9,11 +9,11 @@
 	
 	<div class="tablenav">
 		<div class="alignleft actions">				
-			<a href="?page=<?php echo $this -> sections -> subscribers; ?>&amp;method=save&amp;id=<?php echo $subscriber -> id; ?>" class="button"><?php _e('Edit', $this -> plugin_name); ?></a>
-			<a href="?page=<?php echo $this -> sections -> subscribers; ?>&amp;method=delete&amp;id=<?php echo $subscriber -> id; ?>" onclick="if (!confirm('<?php _e('Are you sure you wish to remove this subscriber?', $this -> plugin_name); ?>')) { return false; }" class="button button-highlighted"><?php _e('Delete', $this -> plugin_name); ?></a>
-			<a href="#emails" class="button"><?php _e('Emails Sent', $this -> plugin_name); ?></a>
+			<a href="?page=<?php echo $this -> sections -> subscribers; ?>&amp;method=save&amp;id=<?php echo $subscriber -> id; ?>" class="button"><i class="fa fa-pencil"></i> <?php _e('Edit', $this -> plugin_name); ?></a>
+			<a href="?page=<?php echo $this -> sections -> subscribers; ?>&amp;method=delete&amp;id=<?php echo $subscriber -> id; ?>" onclick="if (!confirm('<?php _e('Are you sure you wish to remove this subscriber?', $this -> plugin_name); ?>')) { return false; }" class="button button-highlighted"><i class="fa fa-times"></i> <?php _e('Delete', $this -> plugin_name); ?></a>
+			<a href="#emails" class="button"><i class="fa fa-envelope"></i> <?php _e('Emails Sent', $this -> plugin_name); ?></a>
 			<?php if (!empty($orders)) : ?>
-				<a href="#orders" class="button"><?php _e('Paid Orders', $this -> plugin_name); ?></a>
+				<a href="#orders" class="button"><i class="fa fa-money"></i> <?php _e('Paid Orders', $this -> plugin_name); ?></a>
 			<?php endif; ?>
 		</div>
 	</div>
@@ -121,7 +121,7 @@
 			</tr>
 			<tr class="<?php echo $class = (empty($class)) ? 'alternate' : ''; ?>">
 				<th><?php _e('Links Clicked', $this -> plugin_name); ?></th>
-				<td><?php echo $Html -> link($this -> Click -> count(array('subscriber_id' => $subscriber -> id)), '?page=' . $this -> sections -> clicks . '&amp;subscriber_id=' . $subscriber -> id); ?></td>
+				<td><?php echo $Html -> link($this -> Click() -> count(array('subscriber_id' => $subscriber -> id)), '?page=' . $this -> sections -> clicks . '&amp;subscriber_id=' . $subscriber -> id); ?></td>
 			</tr>
 			<tr class="<?php echo $class = (empty($class)) ? 'alternate' : ''; ?>">
 				<th><?php _e('Email Format', $this -> plugin_name); ?></th>

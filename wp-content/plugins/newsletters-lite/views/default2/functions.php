@@ -129,7 +129,7 @@ if (!class_exists('newslettersBootstrap')) {
 			}
 			
 			$currentDate = "";
-			if (!empty($_POST[$field -> slug])) {
+			if (!empty($_POST[$field -> slug]) && $_POST[$field -> slug] != "0000-00-00") {
 				if (is_array($_POST[$field -> slug])) {
 					$currentDate = date_i18n(get_option('date_format'), strtotime($_POST[$field -> slug]['d'] . '/' . $_POST[$field -> slug]['m'] . '/' . $_POST[$field -> slug]['y']));
 				} else {

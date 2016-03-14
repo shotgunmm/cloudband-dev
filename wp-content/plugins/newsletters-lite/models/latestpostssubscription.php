@@ -23,6 +23,7 @@ if (!class_exists('wpmlLatestpostssubscription')) {
 			'startdate'				=>	array("DATETIME", "NOT NULL DEFAULT '0000-00-00 00:00:00'"),
 			'interval'				=>	array("VARCHAR(50)", "NOT NULL DEFAULT ''"),
 			'theme_id'				=>	array("INT(11)", "NOT NULL DEFAULT '0'"),
+			'status'				=>	array("ENUM('active','inactive')", "NOT NULL DEFAULT 'active'"),
 			'created'				=>	array("DATETIME", "NOT NULL DEFAULT '0000-00-00 00:00:00'"),
 			'modified'				=>	array("DATETIME", "NOT NULL DEFAULT '0000-00-00 00:00:00'"),
 			'key'					=>	"PRIMARY KEY (`id`), INDEX(`history_id`), INDEX(`theme_id`)",
@@ -46,8 +47,8 @@ if (!class_exists('wpmlLatestpostssubscription')) {
 					$this -> {$dkey} = stripslashes_deep($dval);
 				}
 				
-				if (!wp_get_schedule('newsletters_latestposts', array($this -> id))) {
-					$this -> latestposts_scheduling($this -> interval, $this -> startdate, array($this -> id));
+				if (!wp_get_schedule('newsletters_latestposts', array((int) $this -> id))) {
+					$this -> latestposts_scheduling($this -> interval, $this -> startdate, array((int) $this -> id));
 				}
 			}
 			

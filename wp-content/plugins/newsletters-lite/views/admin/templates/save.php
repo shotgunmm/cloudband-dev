@@ -23,7 +23,7 @@ $post_ID = $this -> get_option('imagespost');
 					<div id="titlediv">
 						<div id="titlewrap">
                             <label class="screen-reader-text" for="title"></label>
-							<input placeholder="<?php echo esc_attr(stripslashes(__('Enter template title here', $this -> plugin_name))); ?>" onclick="jQuery('iframe#content_ifr').attr('tabindex', '2');" tabindex="1" id="title" autocomplete="off" type="text" name="Template[title]" value="<?php echo esc_attr(stripslashes($Html -> field_value('Template[title]'))); ?>" />
+							<input placeholder="<?php echo esc_attr(stripslashes(__('Enter snippet title here', $this -> plugin_name))); ?>" onclick="jQuery('iframe#content_ifr').attr('tabindex', '2');" tabindex="1" id="title" autocomplete="off" type="text" name="Template[title]" value="<?php echo esc_attr(stripslashes($Html -> field_value('Template[title]'))); ?>" />
                         </div>
                     </div>
                     <div id="<?php echo (user_can_richedit()) ? 'postdivrich' : 'postdiv'; ?>" class="postarea edit-form-section">                        

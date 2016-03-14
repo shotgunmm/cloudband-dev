@@ -25,11 +25,11 @@ class wpmlDbHelper extends wpMailPlugin {
 	}
 
 	
-	function save($data = array(), $validate = true) {		
+	function save($data = array(), $validate = true) {						
 		if (!empty($this -> model)) {
 			global $wpdb, ${$this -> model};
 			
-			$object = (!is_object(${$this -> model})) ? $this : ${$this -> model};
+			$object = (!is_object(${$this -> model})) ? $this -> {$this -> model}() : ${$this -> model};
 
 			if (!empty($data)) {
 				$defaults = array();
@@ -44,9 +44,9 @@ class wpmlDbHelper extends wpMailPlugin {
 				$r = wp_parse_args($data, $defaults);
 				$object -> data = (object) $r;
 				
-				if ($validate == true) {
-					if (method_exists($object, 'validate')) {
-						$object -> validate($data);
+				if ($validate == true) {					
+					if (method_exists($object, 'validate')) {						
+						$object -> errors = $object -> validate($data);
 					}
 				}
 				
@@ -56,7 +56,7 @@ class wpmlDbHelper extends wpMailPlugin {
 					$object -> data -> nnewsletter['content'] = $_POST['content'];	
 				}
 				
-				$object -> errors = apply_filters('newsletters_' . strtolower(str_replace("wpml", "", $object -> model)) . '_before_save', $this -> errors, $object -> data, $object);
+				$object -> errors = apply_filters('newsletters_' . strtolower(str_replace("wpml", "", $object -> model)) . '_before_save', $object -> errors, $object -> data, $object);
 				
 				if (empty($object -> errors)) {
 					switch ($object -> model) {
@@ -66,14 +66,39 @@ class wpmlDbHelper extends wpMailPlugin {
 					}
 					
 					$query = (empty($id)) ? $this -> iquery($object -> model) : $this -> uquery($object -> model);
+					$result = $wpdb -> query($query);
 					
-					if ($wpdb -> query($query)) {
-						$object -> insertid = (empty($id)) ? $wpdb -> insert_id : $id;
+					if ($result !== false && $result >= 0) {
+						$object -> insertid = $insertid = (empty($id)) ? $wpdb -> insert_id : $id;
+						$this -> {$object -> model} -> insertid = $insertid;
+						global $Db;
+						$Db -> {$object -> model} -> insertid = $insertid;
+						
 						$oldmodel = $object -> model;
 						
 						switch ($object -> model) {
+							case 'Subscribeform'			:								
+								if (!empty($object -> data -> form_fields)) {
+									$order = 1;
+									
+									foreach ($object -> data -> form_fields as $field_id => $form_field) {
+										$fieldform_data = array(
+											'id'						=>	$form_field['id'],
+											'form_id'					=>	$insertid,
+											'field_id'					=>	$field_id,
+											'order'						=>	$order,
+											'label'						=>	$form_field['label'],
+											'caption'					=>	$form_field['caption'],
+											'placeholder'				=>	$form_field['placeholder'],
+										);
+										
+										$this -> FieldsForm() -> save($fieldform_data);
+										$order++;
+									}
+								}							
+								break;
 							case 'Latestpostssubscription'	:
-								$this -> latestposts_scheduling($object -> data -> interval, $object -> data -> startdate, array($object -> insertid));								
+								$this -> latestposts_scheduling($object -> data -> interval, $object -> data -> startdate, array((int) $object -> insertid));								
 								break;
 							case 'Theme'					:
 								$themeoptions = array(
@@ -95,8 +120,8 @@ class wpmlDbHelper extends wpMailPlugin {
 								}
 								break;
 							case 'Autoresponder'			:															
-								global $Html, $Autoresponder, $AutorespondersList, $History,
-								$Subscriber, $SubscribersList, $Autoresponderemail;
+								global $Html, $AutorespondersList, $History,
+								$Subscriber, $SubscribersList;
 							
 								/* Create the History email if needed */
 								if (!empty($object -> data -> newsletter) && $object -> data -> newsletter == "new") {									
@@ -110,24 +135,24 @@ class wpmlDbHelper extends wpMailPlugin {
 									if ($History -> save($history_data, true)) {
 										$history_id = $History -> insertid;
 										
-										$this -> model = $Autoresponder -> model;
-										$this -> save_field('history_id', $history_id, array('id' => ${$oldmodel} -> insertid));
+										$this -> model = $this -> Autoresponder() -> model;
+										$this -> save_field('history_id', $history_id, array('id' => $this -> Autoresponder() -> insertid));
 									}
 								}
 								
 								/* Do the Autoresponder > List associations */
-								if (!empty(${$oldmodel} -> insertid)) {
+								if (!empty($this -> Autoresponder() -> insertid)) {
 									$this -> model = $AutorespondersList -> model;								
-									$this -> delete_all(array('autoresponder_id' => ${$oldmodel} -> insertid));
+									$this -> delete_all(array('autoresponder_id' => $this -> Autoresponder() -> insertid));
 									$listsquery = "";
 									$l = 1;
 									
-									foreach (${$oldmodel} -> data -> lists as $list_id) {
+									foreach ($this -> Autoresponder() -> data -> lists as $list_id) {
 										$listsquery .= $wpdb -> prefix . $SubscribersList -> table . ".list_id = '" . $list_id . "'";
-										if (count(${$oldmodel} -> data -> lists) > $l) { $listsquery .= " OR "; }
+										if (count($this -> Autoresponder() -> data -> lists) > $l) { $listsquery .= " OR "; }
 										
 										$autoresponderslist_data = array(
-											'autoresponder_id'	=>	${$oldmodel} -> insertid,
+											'autoresponder_id'	=>	$this -> Autoresponder() -> insertid,
 											'list_id'			=>	$list_id,
 										);
 										
@@ -137,8 +162,8 @@ class wpmlDbHelper extends wpMailPlugin {
 									}
 								}
 								
-								if (${$oldmodel} -> data -> applyexisting == "Y" && ${$oldmodel} -> data -> status == "active") {
-									$senddate = $Html -> gen_date("Y-m-d H:i:s", strtotime("+ " . ${$oldmodel} -> data -> delay . " " . ${$oldmodel} -> data -> delayinterval));
+								if ($this -> Autoresponder() -> data -> applyexisting == "Y" && $this -> Autoresponder() -> data -> status == "active") {
+									$senddate = $Html -> gen_date("Y-m-d H:i:s", strtotime("+ " . $this -> Autoresponder() -> data -> delay . " " . $this -> Autoresponder() -> data -> delayinterval));
 									
 									$query1 = "SELECT DISTINCT " 
 									. $wpdb -> prefix . $SubscribersList -> table . ".subscriber_id as sid, "
@@ -150,9 +175,9 @@ class wpmlDbHelper extends wpMailPlugin {
 									. $wpdb -> prefix . $SubscribersList -> table . ".list_id = "
 									. $wpdb -> prefix . $AutorespondersList -> table . ".list_id)"
 									. " WHERE (" . $listsquery . ") AND "
-									. $wpdb -> prefix . $AutorespondersList -> table . ".autoresponder_id = '" . ${$oldmodel} -> insertid . "'";
+									. $wpdb -> prefix . $AutorespondersList -> table . ".autoresponder_id = '" . $this -> Autoresponder() -> insertid . "'";
 									
-									$query2 = "INSERT INTO " . $wpdb -> prefix . $Autoresponderemail -> table 
+									$query2 = "INSERT INTO " . $wpdb -> prefix . $this -> Autoresponderemail() -> table 
 									. " (subscriber_id, list_id, autoresponder_id, created, modified, senddate) (" . $query1 . ")";
 									
 									$wpdb -> query($query2);
@@ -180,7 +205,7 @@ class wpmlDbHelper extends wpMailPlugin {
 		if (!empty($this -> model)) {
 			global $wpdb, ${$this -> model};
 			
-			$object = (!is_object(${$this -> model})) ? $this : ${$this -> model};
+			$object = (!is_object(${$this -> model})) ? $this -> {$this -> model}() : ${$this -> model};
 
 			if (!empty($field)) {			
 				$query = "UPDATE `" . $wpdb -> prefix . "" . $object -> table . "` SET `" . $field . "` = '" . $value . "'";
@@ -205,13 +230,13 @@ class wpmlDbHelper extends wpMailPlugin {
 				if ($result !== false && $result >= 0) {					
 					switch ($this -> model) {
 						case 'Subscriber'						:
-							global $Field, $wpmlSubscribersOption;
+							global $Field;
 							$this -> model = $Field -> model;
 							if ($customfield = $this -> find(array('slug' => $field))) {
 								$subscriber_id = $conditions['id'];
 								
 								if (!empty($subscriber_id)) {
-									$wpmlSubscribersOption -> delete_all(array('subscriber_id' => $subscriber_id, 'field_id' => $customfield -> id));
+									$this -> SubscribersOption() -> delete_all(array('subscriber_id' => $subscriber_id, 'field_id' => $customfield -> id));
 									
 									if ($customfield -> type == "radio" || $customfield -> type == "checkbox" || $customfield -> type == "select") {
 										$subscriber_fieldoptions = maybe_unserialize($value);								
@@ -230,7 +255,7 @@ class wpmlDbHelper extends wpMailPlugin {
 														'option_id'						=>	$option_id,
 													);
 													
-													$wpmlSubscribersOption -> save($subscribers_option_data);
+													$this -> SubscribersOption() -> save($subscribers_option_data);
 												}
 											} else {	
 												$option_id = $subscriber_fieldoption;
@@ -241,7 +266,7 @@ class wpmlDbHelper extends wpMailPlugin {
 													'option_id'						=>	$option_id,
 												);
 												
-												$wpmlSubscribersOption -> save($subscribers_option_data);
+												$this -> SubscribersOption() -> save($subscribers_option_data);
 											}
 										}
 									}
@@ -261,17 +286,17 @@ class wpmlDbHelper extends wpMailPlugin {
 		return false;
 	}
 	
-	function iquery($model = null) {	
+	function iquery($model = null) {			
 		if (!empty($model)) {
 			global $wpdb, ${$model};
 			
-			$object = (!is_object(${$model})) ? $this : ${$model};
+			$object = (!is_object(${$model})) ? $this -> {$this -> model}() : ${$model};
 			
-			if (!empty($object -> data)) {
+			if (!empty($object -> data)) {				
 				$data = $object -> data;
 			
-				if (empty($data -> id)) {
-					if (!empty($object -> fields)) {
+				if (empty($data -> id)) {					
+					if (!empty($object -> fields)) {						
 						$query1 = "INSERT INTO `" . $wpdb -> prefix . "" . $object -> table . "` (";
 						$query2 = "";
 						$c = 1;
@@ -313,7 +338,7 @@ class wpmlDbHelper extends wpMailPlugin {
 	function uquery($model = null) {
 		global $wpdb, ${$model};
 		
-		$object = (!is_object(${$model})) ? $this : ${$model};
+		$object = (!is_object(${$model})) ? $this -> {$this -> model}() : ${$model};
 		
 		if (!empty($model)) {
 			$data = $object -> data;
@@ -328,7 +353,7 @@ class wpmlDbHelper extends wpMailPlugin {
 					
 					$object -> fields = apply_filters('newsletters_db_update_fields', $object -> fields, $object -> model);
 					
-					foreach (array_keys($object -> fields) as $field) {						
+					foreach (array_keys($object -> fields) as $field) {												
 						if (!empty($data -> {$field}) || $data -> {$field} == "0") {
 							$query .= "`" . $field . "` = '" . $data -> {$field} . "'";
 					
@@ -340,6 +365,7 @@ class wpmlDbHelper extends wpMailPlugin {
 						$c++;
 					}
 					
+					$query = rtrim($query, ",");
 					$query .= " WHERE `id` = '" . $data -> id . "';";
 					return $query;
 				}
@@ -356,8 +382,10 @@ class wpmlDbHelper extends wpMailPlugin {
 		if (!empty($this -> model)) {
 			global $wpdb, ${$this -> model};
 			
+			$object = (!is_object(${$this -> model})) ? $this -> {$this -> model}() : ${$this -> model};
+			
 			if (!empty($conditions) && is_array($conditions)) {
-				$query = "SELECT `" . $field . "` FROM `" . $wpdb -> prefix . "" . ${$this -> model} -> table . "` WHERE";
+				$query = "SELECT `" . $field . "` FROM `" . $wpdb -> prefix . "" . $object -> table . "` WHERE";
 				$c = 1;
 				
 				foreach ($conditions as $ckey => $cval) {
@@ -388,7 +416,7 @@ class wpmlDbHelper extends wpMailPlugin {
 		if (!empty($this -> model)) {
 			global $wpdb, ${$this -> model};
 			
-			$object = (!is_object(${$this -> model})) ? $this : ${$this -> model};
+			$object = (!is_object(${$this -> model})) ? $this -> {$this -> model}() : ${$this -> model};
 		
 			if (!empty($record_id)) {
 				$query = "DELETE FROM `" . $wpdb -> prefix . "" . $object -> table . "` WHERE `id` = '" . $record_id . "' LIMIT 1";
@@ -397,20 +425,21 @@ class wpmlDbHelper extends wpMailPlugin {
 					switch ($this -> model) {
 						case 'Latestpostssubscription'	:
 							global $Latestpost;
-							wp_clear_scheduled_hook('newsletters_latestposts', array($record_id));
+							wp_clear_scheduled_hook('newsletters_latestposts', array((int) $record_id));
 							$this -> model = $Latestpost -> model;
 							$this -> delete_all(array('lps_id' => $record_id));
 							break;
 						case 'Link'					:
-							global $wpmlClick;
-							$wpmlClick -> delete_all(array('link_id' => $record_id));
+							//global $wpmlClick;
+							//$wpmlClick -> delete_all(array('link_id' => $record_id));
+							$this -> Click() -> delete_all(array('link_id' => $record_id));
 							break;
 						case 'Subscriber'			:
 							//global variables
-							global $wpmlClick, $wpmlSubscribersOption, $Autoresponderemail, $AutorespondersList, $Email, $wpmlOrder, $Queue, $SubscribersList;
+							global $wpmlClick, $AutorespondersList, $Email, $Queue, $SubscribersList;
 						
 							//remove all Orders
-							$this -> model = $wpmlOrder -> model;
+							$this -> model = $this -> Order() -> model;
 							$this -> delete_all(array('subscriber_id' => $record_id));
 							
 							//remove all List associations
@@ -426,11 +455,12 @@ class wpmlDbHelper extends wpMailPlugin {
                             $this -> delete_all(array('subscriber_id' => $record_id));
                             
                             //remove all autoresponder emails
-                            $this -> model = $Autoresponderemail -> model;
+                            $this -> model = $this -> Autoresponderemail() -> model;
                             $this -> delete_all(array('subscriber_id' => $record_id));
                             
-                            $wpmlClick -> delete_all(array('subscriber_id' => $record_id));
-                            $wpmlSubscribersOption -> delete_all(array('subscriber_id' => $record_id));
+                            //$wpmlClick -> delete_all(array('subscriber_id' => $record_id));
+                            $this -> Click() -> delete_all(array('subscriber_id' => $record_id));
+                            $this -> SubscribersOption() -> delete_all(array('subscriber_id' => $record_id));
 							return true;
 							break;
 						case 'Mailinglist'			:
@@ -443,11 +473,11 @@ class wpmlDbHelper extends wpMailPlugin {
 							$this -> model = $AutorespondersList -> model;
 							$this -> delete_all(array('list_id' => $record_id));
 							
-							$this -> model = $Autoresponderemail -> model;
+							$this -> model = $this -> Autoresponderemail() -> model;
 							$this -> delete_all(array('list_id' => $record_id));
 							break;
 						case 'History'				:
-							global $Queue, $wpmlClick, $Email, $Autoresponder;
+							global $Queue, $wpmlClick, $Email;
 						
 							$this -> model = 'HistoriesList';
 							$this -> delete_all(array('history_id' => $record_id));
@@ -464,10 +494,11 @@ class wpmlDbHelper extends wpMailPlugin {
                             $this -> model = $Email -> model;
                             $this -> delete_all(array('history_id' => $record_id));
                             
-                            $wpmlClick -> delete_all(array('history_id' => $record_id));
+                            //$wpmlClick -> delete_all(array('history_id' => $record_id));
+                            $this -> Click() -> delete_all(array('history_id' => $record_id));
 							break;
 						case 'Autoresponder'		:
-							global $AutorespondersList, $Autoresponderemail;
+							global $AutorespondersList;
 							$oldmodel = $this -> model;
 							
 							//remove the AutorespondersList associations
@@ -475,7 +506,7 @@ class wpmlDbHelper extends wpMailPlugin {
 							$this -> delete_all(array('autoresponder_id' => $record_id));
 							
 							//remove the Autoresponderemail records
-							$this -> model = $Autoresponderemail -> model;
+							$this -> model = $this -> Autoresponderemail() -> model;
 							$this -> delete_all(array('autoresponder_id' => $record_id));
 							
 							$this -> model = $oldmodel;
@@ -494,7 +525,7 @@ class wpmlDbHelper extends wpMailPlugin {
 		if (!empty($this -> model)) {
 			global $wpdb, ${$this -> model};
 			
-			$object = (!is_object(${$this -> model})) ? $this : ${$this -> model};
+			$object = (!is_object(${$this -> model})) ? $this -> {$this -> model}() : ${$this -> model};
 			
 			if (!empty($conditions) && is_array($conditions)) {
 				$query = "DELETE FROM `" . $wpdb -> prefix . "" . $object -> table . "` WHERE";
@@ -525,7 +556,7 @@ class wpmlDbHelper extends wpMailPlugin {
 		if (!empty($this -> model)) {
 			global $wpdb, ${$this -> model};
 			
-			$object = (!is_object(${$this -> model})) ? $this : ${$this -> model};
+			$object = (!is_object(${$this -> model})) ? $this -> {$this -> model}() : ${$this -> model};
 			
 			$query = "SELECT COUNT(*) FROM `" . $wpdb -> prefix . "" . $object -> table . "`";
 			
@@ -561,7 +592,7 @@ class wpmlDbHelper extends wpMailPlugin {
 		if (!empty($this -> model)) {
 			global $wpdb, ${$this -> model};
 			
-			$object = (!is_object(${$this -> model})) ? $this : ${$this -> model};
+			$object = (!is_object(${$this -> model})) ? $this -> {$this -> model}() : ${$this -> model};
 			
 			if (empty($object -> table)) {
 				return false;
@@ -602,6 +633,9 @@ class wpmlDbHelper extends wpMailPlugin {
 					
 					if ($assign == true) {
 						$object -> data = $data;
+						
+						global $Db;
+						$Db -> {$object -> model}() -> data = $data;
 					}
 					
 					$this -> set_cache($query_hash, $data);
@@ -617,7 +651,7 @@ class wpmlDbHelper extends wpMailPlugin {
 		if (!empty($this -> model)) {
 			global $wpdb, ${$this -> model};
 			
-			$object = (!is_object(${$this -> model})) ? $this : ${$this -> model};
+			$object = (!is_object(${$this -> model})) ? $this -> {$this -> model}() : ${$this -> model};
 			$fields = (empty($fields) || !is_array($fields)) ? "*" : implode(", ", $fields);
 			$query = "SELECT " . $fields . " FROM `" . $wpdb -> prefix . "" . $object -> table . "`";
 			

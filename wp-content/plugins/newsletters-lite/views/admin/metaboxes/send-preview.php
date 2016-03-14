@@ -11,7 +11,7 @@ $src = (!empty($history_id)) ? admin_url('admin-ajax.php') . '?action=' . $this 
 	<span id="previewrunnerloading" style="display:none;"><i class="fa fa-refresh fa-spin fa-fw"></i></span>
 </p>
 
-<?php
+<?php /*<?php
 	
 $fromname = (!empty($_POST['fromname'])) ? $_POST['fromname'] : $this -> get_option('smtpfromname');
 $subject = (!empty($_POST['subject'])) ? $_POST['subject'] : false;
@@ -29,7 +29,7 @@ $preheader = (!empty($_POST['preheader'])) ? $_POST['preheader'] : (!empty($_POS
 	<div class="newsletters-preview-preheader">
 		<?php echo $preheader; ?>
 	</div>
-</div>
+</div>*/ ?>
 
 <iframe width="100%" height="300" frameborder="0" scrolling="auto" class="autoHeight widefat" style="width:100%; margin:15px 0 0 0; border:1px #CCCCCC solid;" src="<?php echo $src; ?>" id="previewiframe">
 	<?php _e('Nothing to show yet, please add a subject, content and choose at least one mailing list.', $this -> plugin_name); ?>

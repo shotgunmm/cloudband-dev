@@ -403,10 +403,10 @@ class wpmlHistory extends wpMailPlugin {
 											$condition = $condquery[$customfield -> slug];
 											switch ($condition) {
 												case 'contains'				:
-													$query .= " wp_wpmlsubscribers.id IN (SELECT subscriber_id FROM " . $wpdb -> prefix . $this -> SubscribersOption -> table . " WHERE `field_id` = '" . $field_id . "' AND `option_id` = '" . $field[1] . "')";
+													$query .= " wp_wpmlsubscribers.id IN (SELECT subscriber_id FROM " . $wpdb -> prefix . $this -> SubscribersOption() -> table . " WHERE `field_id` = '" . $field_id . "' AND `option_id` = '" . $field[1] . "')";
 													break;
 												case 'equals'				:
-													$query .= " wp_wpmlsubscribers.id IN (SELECT subscriber_id FROM " . $wpdb -> prefix . $this -> SubscribersOption -> table . " WHERE `field_id` = '" . $field_id . "' AND `option_id` = '" . $field[1] . "')";
+													$query .= " wp_wpmlsubscribers.id IN (SELECT subscriber_id FROM " . $wpdb -> prefix . $this -> SubscribersOption() -> table . " WHERE `field_id` = '" . $field_id . "' AND `option_id` = '" . $field[1] . "')";
 													break;
 											}
 											
@@ -655,7 +655,9 @@ class wpmlHistory extends wpMailPlugin {
 				foreach (array_keys($this -> table_fields) as $field) {				
 					switch ($field) {
 						case 'user_id'			:
-							$user_id = get_current_user_id();
+							if (empty($user_id)) {
+								$user_id = get_current_user_id();
+							}
 							break;
 						case 'mailinglists'		:
 							if (!empty($mailinglists) && is_array($mailinglists)) {
@@ -695,7 +697,9 @@ class wpmlHistory extends wpMailPlugin {
 							}
 							break;
 						case 'user_id'			:
-							$user_id = get_current_user_id();
+							if (empty($user_id)) {
+								$user_id = get_current_user_id();
+							}
 							break;
 					}
 				
@@ -881,13 +885,10 @@ class wpmlHistory extends wpMailPlugin {
 	 *
 	 */
 	function delete($id = null) {
-		global $wpdb, $Db, $Email, $wpmlClick, $Autoresponder, $HistoriesAttachment, $HistoriesList, $Queue;
+		global $wpdb, $Db, $Email, $wpmlClick, $HistoriesAttachment, $HistoriesList, $Queue;
 	
 		if (!empty($id)) {
 			if ($wpdb -> query("DELETE FROM `" . $wpdb -> prefix . "" . $this -> table_name . "` WHERE `id` = '" . $id . "' LIMIT 1")) {
-			
-				//$Db -> model = $Autoresponder -> model;
-				//$Db -> delete_all(array('history_id' => $id));
 				
 				$Db -> model = $Email -> model;
 				$Db -> delete_all(array('history_id' => $id));
@@ -901,7 +902,8 @@ class wpmlHistory extends wpMailPlugin {
 				$Db -> model = $Queue -> model;
 				$Db -> delete_all(array('history_id' => $id));
 				
-				$wpmlClick -> delete_all(array('history_id' => $id));
+				//$wpmlClick -> delete_all(array('history_id' => $id));
+				$this -> Click() -> delete_all(array('history_id' => $id));
 			
 				return true;
 			}
