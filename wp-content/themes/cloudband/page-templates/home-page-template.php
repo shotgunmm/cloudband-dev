@@ -266,7 +266,7 @@ get_header(); ?>
                      foreach ($virtual_network as $key => $value) {?>
                       <?php $item = wp_get_attachment_url(get_post_thumbnail_id($value->ID)); ?>
                       
-                       <div class="item"><img src="<?php echo $item;?>" alt="Owl Image"></div> 
+                       <div class="item vertically-aligned"><img src="<?php echo $item;?>" alt="Owl Image"></div> 
                       
                      <?php 
                       //wp_get_attachment_url(get_post_thumbnail_id($value->ID));

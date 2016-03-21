@@ -530,7 +530,14 @@ input.wpcf7-form-control.wpcf7-captchar{border:1px solid #000 !important;margin-
 .sub-menu li a{ height:auto; line-height:20px; padding:5px 15px; display:block;}
 footer {float: left;width: 100%;}
 
-
+.item.vertically-aligned {
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  align-items: center;
+  display: flex;
+  height: 170px;
+  justify-content: center;
+}
 @media(max-width:991px) {
 .row{
   padding: 0;

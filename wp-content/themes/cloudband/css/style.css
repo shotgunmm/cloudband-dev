@@ -508,6 +508,13 @@ input.wpcf7-form-control.wpcf7-captchar{border:1px solid #000 !important;}
 .sub-menu li	{ list-style:none; padding:0 5px; }
 .sub-menu li a{ height:auto; line-height:20px; padding:5px 15px; display:block;}
 
+
+.inner-banner img {width:100%; height:auto; }
+
+
+
+
+
 @media(max-width:991px) {
 .row{
   padding: 0;
@@ -621,4 +628,3 @@ input.css-checkbox[type="checkbox"] + label.css-label{font-size:14px;}
 .nav li:hover .sub-menu{ display:block;}
 }
 
-.inner-banner img {width:100%; height:auto; }
