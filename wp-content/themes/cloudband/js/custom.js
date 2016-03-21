@@ -18,4 +18,17 @@ $(document).ready(function(){
     $postsList.html(ListHTML);
     createHTML(secondList);
     $('.read-news').append(ListHTML);
+
+    menu();
+
+});
+
+function menu(){
+    $('#navbar-collapse-1 .navbar-nav .menu-item a').unbind('click').click(function(){
+      $(this).parent().find('.sub-menu').slideToggle();
+    });    
+}
+
+$(window).resize(function(){
+    menu();
 });
